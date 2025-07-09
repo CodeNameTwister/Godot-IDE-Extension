@@ -22,6 +22,8 @@ How it works is also described in each link.
   https://github.com/CodeNameTwister/GD-Override-Functions
 * Fancy Filters Script:
   *Integrated with this plugin, not repository released.*
+* Fancy Search Files:
+  *Integrated with this plugin, not repository released.*
 
 # Objetive
 The goal of this project is to provide godot with some additional features without worrying about adding extra load to the CPU if it means improving the development experience.
@@ -40,6 +42,26 @@ In Issue tab, you can write you request/changes for the future of this plugin.
 ### FAQ
 * Why called \_Godot-IDE\_ folder?
 	* This is due to the way addons are loaded in Godot, currently in alphabetical order giving priority to this addon avoiding any incompatibility for the plugins.
+
+# Quick Tips
+
+* Split Windows:
+	* Can use [Ctrl + 1, Ctrl + 2, Ctrl + 3, Ctrl + 4] for change of type split (Required more than 1 script opened)
+  	* You can create/remove split with Right mouse Button Context Menu. (Depend of script opened or split current count)
+
+* Quick Flods:
+	* Can use [Atl + 1, Atl + 2, ... Atl + 9, Atl + 0] for fold lines.
+	* Can use [Ctrl + Atl + 1, Ctrl + Atl + 2, ... Ctrl + Atl + 9, Ctrl + Atl + 0] for show lines.
+
+* GD Override Functions
+	* RMB (Right Mouse Button) On editing Script for show Override Functions: Can generate functions inherited.
+
+* Fancy Search Files
+	* [Ctrl + Atl + Space] Invoke Easy Searcher Window
+
+* Fancy Filters Script
+	* In File tab on editor, you can Show/Hide/Toggle The neighbor panel of the editor.
+
 
 # TODO
 * Documentation.
