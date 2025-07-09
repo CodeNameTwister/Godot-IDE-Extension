@@ -1,0 +1,5 @@
+[gd_resource type="InputEventKey" format=3 uid="uid://c20ijrpka324x"]
+
+[resource]
+alt_pressed = true
+key_label = 4194319

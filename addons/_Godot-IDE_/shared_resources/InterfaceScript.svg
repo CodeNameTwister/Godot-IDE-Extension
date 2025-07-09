@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 20.48 20.48"
+   class="icon"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="InterfaceScript.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="11.313709"
+     inkscape:cx="10.208854"
+     inkscape:cy="-1.4584077"
+     inkscape:window-width="1286"
+     inkscape:window-height="745"
+     inkscape:window-x="66"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g2" />
+  <g
+     id="g2"
+     transform="matrix(0.0242433,0,0,0.02327624,-2.3636068,-1.6754564)">
+    <g
+       id="g4">
+      <g
+         id="g3">
+        <rect
+           style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:202.057;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+           id="rect2"
+           width="726.20215"
+           height="870.5434"
+           x="111.19719"
+           y="76.738472" />
+        <path
+           d="m 182.52,146.2 h 585.14 v 392.7051 h 73.15 V 73.06 H 109.38 l 2.33337,877.71 H 837.55823 V 877.63 H 184.85337 Z"
+           fill="#0f1f3c"
+           id="path1"
+           style="display:inline;fill:#000000;fill-opacity:1"
+           sodipodi:nodetypes="ccccccccccc" />
+        <path
+           d="m 255.67,219.34 h 438.86 v 73.14 H 255.67 Z m 0,146.29 h 365.71 v 73.14 H 255.67 Z m 0,146.28 H 475.1 v 73.14 H 255.67 Z M 775.22,458.24 439.04,794.42 438.52,949.06 594.2,949.58 930.38,613.4 Z m 51.72,155.16 -25.43,25.43 -51.73,-51.72 25.44,-25.44 z M 749.8,690.55 620.58,819.77 568.86,768.05 698.08,638.83 Z m -237.89,185.61 0.17,-51.34 5.06,-5.06 51.72,51.72 -4.85,4.85 z"
+           fill="#0f1f3c"
+           id="path2"
+           style="fill:#000000;fill-opacity:1"
+           sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccc" />
+        <path
+           d="m 780.35105,697.50699 h 57.07814 v 180.54566 h -57.07814 z"
+           style="fill:#000000;fill-opacity:1"
+           id="path1-8"
+           sodipodi:nodetypes="ccccc" />
+      </g>
+    </g>
+  </g>
+</svg>

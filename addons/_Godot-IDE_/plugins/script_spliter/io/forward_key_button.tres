@@ -1,0 +1,5 @@
+[gd_resource type="InputEventKey" format=3 uid="uid://b0c8oqj8xpl7x"]
+
+[resource]
+alt_pressed = true
+physical_keycode = 4194321

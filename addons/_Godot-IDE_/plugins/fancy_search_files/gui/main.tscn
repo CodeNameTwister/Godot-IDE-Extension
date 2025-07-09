@@ -1,0 +1,101 @@
+[gd_scene load_steps=4 format=3 uid="uid://cddiai7iiut3l"]
+
+[ext_resource type="Script" uid="uid://dvsbvurbdecex" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/main.gd" id="1_0f0lw"]
+[ext_resource type="Script" uid="uid://cpdqmdfvgpxmv" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/close.gd" id="2_ydlx0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f6tk3"]
+content_margin_left = 3.0
+content_margin_top = 3.0
+content_margin_right = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0.1155, 0.132, 0.1595, 1)
+corner_detail = 1
+anti_aliasing = false
+
+[node name="Window" type="Popup" node_paths=PackedStringArray("_container", "_tree", "_tree_recents")]
+title = "Fancy Search Files"
+initial_position = 4
+size = Vector2i(500, 500)
+visible = true
+script = ExtResource("1_0f0lw")
+_container = NodePath("Main/MainContainer/HBoxContainer/BoxContainer/Container")
+_tree = NodePath("Main/MainContainer/HBoxContainer/BoxContainer/Resource/Tree")
+_tree_recents = NodePath("Main/MainContainer/HBoxContainer/RecentsContainer/SCroll/Recents")
+
+[node name="Main" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(200, 500)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_f6tk3")
+
+[node name="MainContainer" type="MarginContainer" parent="Main"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Main/MainContainer"]
+layout_mode = 2
+
+[node name="BoxContainer" type="VBoxContainer" parent="Main/MainContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Tittle" type="Label" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+layout_mode = 2
+text = "Search Files By Type"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Separator" type="HSeparator" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+layout_mode = 2
+
+[node name="Container" type="TabContainer" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="All" type="Control" parent="Main/MainContainer/HBoxContainer/BoxContainer/Container"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Resource" type="ScrollContainer" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Tree" type="Tree" parent="Main/MainContainer/HBoxContainer/BoxContainer/Resource"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Bottom" type="HSeparator" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+layout_mode = 2
+
+[node name="close" type="Button" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+layout_mode = 2
+text = "Close"
+script = ExtResource("2_ydlx0")
+
+[node name="RecentsContainer" type="VBoxContainer" parent="Main/MainContainer/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+
+[node name="Tittle" type="Label" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
+layout_mode = 2
+text = "Recents"
+horizontal_alignment = 1
+
+[node name="Sep" type="HSeparator" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
+layout_mode = 2
+
+[node name="SCroll" type="ScrollContainer" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Recents" type="Tree" parent="Main/MainContainer/HBoxContainer/RecentsContainer/SCroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

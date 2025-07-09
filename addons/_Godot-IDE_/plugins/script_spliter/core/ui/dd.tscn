@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://mb7w1375g3ie"]
+
+[ext_resource type="Script" uid="uid://dlrymqc5e0sad" path="res://addons/_Godot-IDE_/plugins/script_spliter/core/ui/dd.gd" id="1_ru73s"]
+[ext_resource type="Texture2D" uid="uid://ckdup4okp1rsf" path="res://addons/_Godot-IDE_/plugins/script_spliter/assets/dd.png" id="2_cgmhu"]
+
+[node name="Dd" type="ColorRect" node_paths=PackedStringArray("lbl")]
+modulate = Color(0.8, 0.8, 0.8, 0.501533)
+self_modulate = Color(1, 1, 1, 0.4)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Drop the current dragged tab for change window!"
+color = Color(1.3236e-07, 0.348188, 0.0242278, 1)
+script = ExtResource("1_ru73s")
+lbl = NodePath("Label")
+
+[node name="Label" type="TextureRect" parent="."]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_cgmhu")
+stretch_mode = 3

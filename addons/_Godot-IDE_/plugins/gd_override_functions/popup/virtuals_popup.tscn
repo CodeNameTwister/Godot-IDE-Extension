@@ -1,0 +1,196 @@
+[gd_scene load_steps=10 format=3 uid="uid://hxjjupcjoat8"]
+
+[ext_resource type="Script" uid="uid://bnbi70ajc0nbg" path="res://addons/_Godot-IDE_/plugins/gd_override_functions/popup/virtuals_popup.gd" id="1_afp4m"]
+[ext_resource type="Texture2D" uid="uid://bgjo43cuidob1" path="res://addons/_Godot-IDE_/shared_resources/up.svg" id="2_v42ap"]
+[ext_resource type="Texture2D" uid="uid://dg7rdmg80x4jv" path="res://addons/_Godot-IDE_/shared_resources/func_virtual.svg" id="3_t5ujg"]
+[ext_resource type="Texture2D" uid="uid://bjmtfc58y1sbs" path="res://addons/_Godot-IDE_/shared_resources/InterfaceScript.svg" id="4_yees5"]
+[ext_resource type="StyleBox" uid="uid://daq1bri8pp6lp" path="res://addons/_Godot-IDE_/plugins/gd_override_functions/popup/button/pressed.tres" id="5_obeej"]
+[ext_resource type="Texture2D" uid="uid://ckc3yk6f8y3ob" path="res://addons/_Godot-IDE_/shared_resources/func_public.svg" id="6_kuyjr"]
+[ext_resource type="Texture2D" uid="uid://do4gmovks0mn6" path="res://addons/_Godot-IDE_/shared_resources/func_private.svg" id="7_edrjb"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iq5ej"]
+bg_color = Color(0.352765, 0.124129, 0.353458, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_color = Color(0.631373, 0.270588, 0.631373, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knkse"]
+bg_color = Color(0.196078, 0.392157, 0.588235, 1)
+
+[node name="Virtuals" type="PopupPanel" node_paths=PackedStringArray("tree", "accept_button", "cancel_button", "check_generate_at_line", "interface_generate_button", "virtual_generate_button", "order_button", "public_button", "protected_button", "private_button", "interface_button")]
+title = "GD Override Functions"
+initial_position = 4
+size = Vector2i(1024, 512)
+visible = true
+transient_to_focused = true
+unresizable = false
+borderless = false
+script = ExtResource("1_afp4m")
+tree = NodePath("Container/Tree")
+accept_button = NodePath("Container/FooterContainer/OkButton")
+cancel_button = NodePath("Container/FooterContainer/CancelButton")
+check_generate_at_line = NodePath("Container/CheckConfig0")
+interface_generate_button = NodePath("Container/HBoxContainer/interface_generate_btn")
+virtual_generate_button = NodePath("Container/HBoxContainer/virtual_generate_btn")
+order_button = NodePath("Container/HBoxContainer/order")
+public_button = NodePath("Container/HBoxContainer/public_btn")
+protected_button = NodePath("Container/HBoxContainer/protected_btn")
+private_button = NodePath("Container/HBoxContainer/private_btn")
+interface_button = NodePath("Container/HBoxContainer/interface_btn")
+
+[node name="Container" type="VBoxContainer" parent="."]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 1020.0
+offset_bottom = 508.0
+
+[node name="TittleContainer" type="PanelContainer" parent="Container"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_iq5ej")
+
+[node name="Tittle" type="Label" parent="Container/TittleContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Select Methods to Override/Implement"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Container/TittleContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 8
+expand_mode = 1
+stretch_mode = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Container"]
+layout_mode = 2
+
+[node name="order" type="Button" parent="Container/HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Order by class inherited."
+text = "Order"
+icon = ExtResource("2_v42ap")
+
+[node name="virtual_generate_btn" type="Button" parent="Container/HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Implement all custom virtual methods.
+(Only custom virtuals methods!)"
+disabled = true
+text = "Generate"
+icon = ExtResource("3_t5ujg")
+
+[node name="interface_generate_btn" type="Button" parent="Container/HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Implement all interface methods."
+disabled = true
+text = "Generate"
+icon = ExtResource("4_yees5")
+
+[node name="Label" type="Label" parent="Container/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Filters Methods"
+
+[node name="public_btn" type="Button" parent="Container/HBoxContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+tooltip_text = "Public methods.
+
+Example:
+func public_method()
+func my_method()
+func foo()"
+theme_override_font_sizes/font_size = 16
+theme_override_styles/pressed = ExtResource("5_obeej")
+toggle_mode = true
+icon = ExtResource("6_kuyjr")
+icon_alignment = 1
+
+[node name="protected_btn" type="Button" parent="Container/HBoxContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+tooltip_text = "Protected/Virtual Methods.
+
+Example:
+func _virtual_method()
+func _my_virtual_method()
+func _ready()"
+theme_override_styles/pressed = ExtResource("5_obeej")
+toggle_mode = true
+button_pressed = true
+icon = ExtResource("3_t5ujg")
+icon_alignment = 1
+
+[node name="private_btn" type="Button" parent="Container/HBoxContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+tooltip_text = "Private Methods.
+
+Example:
+func __private_method()
+func __my_private_method
+func __foo()"
+theme_override_styles/pressed = ExtResource("5_obeej")
+toggle_mode = true
+icon = ExtResource("7_edrjb")
+icon_alignment = 1
+
+[node name="interface_btn" type="Button" parent="Container/HBoxContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+tooltip_text = "Interfaces.
+This include all interface methods.
+
+Interfaces are the \"custom classes\" begin with \"I\" character.
+
+Example:
+class_name IMyClass
+class_name IDummy_Class
+class_name Ifoo_class
+
+Files without class_name but begin with \"I\" also work!
+
+Example:
+IMyInterface.gd
+IDummy_Script.gd
+Ifoo_script.gd"
+theme_override_styles/pressed = ExtResource("5_obeej")
+toggle_mode = true
+button_pressed = true
+icon = ExtResource("4_yees5")
+icon_alignment = 1
+
+[node name="Tree" type="Tree" parent="Container"]
+custom_minimum_size = Vector2(128, 256)
+layout_mode = 2
+size_flags_vertical = 3
+columns = 3
+column_titles_visible = true
+hide_root = true
+select_mode = 2
+
+[node name="CheckConfig0" type="CheckBox" parent="Container"]
+layout_mode = 2
+button_pressed = true
+text = "Generate at end of line"
+
+[node name="FooterContainer" type="HBoxContainer" parent="Container"]
+layout_mode = 2
+
+[node name="OkButton" type="Button" parent="Container/FooterContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_knkse")
+disabled = true
+text = "Create"
+
+[node name="CancelButton" type="Button" parent="Container/FooterContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"

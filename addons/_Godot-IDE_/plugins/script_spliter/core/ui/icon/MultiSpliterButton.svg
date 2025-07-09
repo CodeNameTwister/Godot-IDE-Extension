@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="ControlItemButton.svg"
+   inkscape:export-filename="ToShare\favoritedock\addons\script-ide\split_gui\icon\MultiSpliterButton.svg"
+   inkscape:export-xdpi="768"
+   inkscape:export-ydpi="768"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="15.999999"
+     inkscape:cx="4.4375002"
+     inkscape:cy="8.5937504"
+     inkscape:window-width="1287"
+     inkscape:window-height="745"
+     inkscape:window-x="65"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="16"
+       height="16"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <rect
+     style="fill:#bfbfbf;fill-opacity:1;stroke:#757575;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke markers fill"
+     id="rect1"
+     width="12"
+     height="15"
+     x="2"
+     y="0.45580584"
+     ry="2" />
+  <circle
+     style="fill:#ffffff;fill-opacity:1;stroke:#bbbbbb;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+     id="path1"
+     cy="2.8863502"
+     cx="5.3863502"
+     r="1.8863502" />
+  <circle
+     style="fill:#ffffff;fill-opacity:1;stroke:#bbbbbb;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+     id="path1-1"
+     cy="7.965826"
+     cx="5.3863502"
+     r="1.8863502" />
+  <circle
+     style="fill:#ffffff;fill-opacity:1;stroke:#bbbbbb;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+     id="path1-1-7"
+     cy="7.965826"
+     cx="10.465826"
+     r="1.8863502" />
+  <circle
+     style="fill:#ffffff;fill-opacity:1;stroke:#bbbbbb;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+     id="path1-1-7-2"
+     cy="13.0453"
+     cx="5.3863502"
+     r="1.8863502" />
+  <circle
+     style="fill:#ffffff;fill-opacity:1;stroke:#bbbbbb;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+     id="path1-1-7-2-7"
+     cy="13.0453"
+     cx="10.465826"
+     r="1.8863502" />
+  <circle
+     style="fill:#ffffff;fill-opacity:1;stroke:#bbbbbb;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+     id="path1-5"
+     cy="2.8863502"
+     cx="10.465826"
+     r="1.8863502" />
+</svg>

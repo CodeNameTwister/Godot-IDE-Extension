@@ -1,0 +1,10 @@
+CREDITS
+
+Icons may vary from those:
+	* Downloaded from godot repository.
+	* Created by CodeNameTwister.
+	* Created by Community.
+	
+URL:
+	github: https://github.com/godotengine/godot
+	github: https://github.com/CodeNameTwister

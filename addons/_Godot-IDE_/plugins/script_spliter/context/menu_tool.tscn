@@ -1,0 +1,226 @@
+[gd_scene load_steps=15 format=3 uid="uid://bwu1734u3ty42"]
+
+[ext_resource type="Script" uid="uid://c5ccmrfhnavjr" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/menu_tool.gd" id="1_eyluc"]
+[ext_resource type="Texture2D" uid="uid://dun0kkreog4xj" path="res://addons/_Godot-IDE_/plugins/script_spliter/assets/github_CodeNameTwister.png" id="2_5gosm"]
+[ext_resource type="Texture2D" uid="uid://cc4rglfx6oawr" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_disable.png" id="3_4ewwr"]
+[ext_resource type="Script" uid="uid://csrh26peqqkyy" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/split_type_button.gd" id="4_bbkwv"]
+[ext_resource type="Texture2D" uid="uid://5o8huqgt5mt4" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_2H.png" id="5_dw26u"]
+[ext_resource type="Texture2D" uid="uid://dpndvpt3ag0lx" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_2V.png" id="6_xnjrm"]
+[ext_resource type="Texture2D" uid="uid://ck5nff60m4k0x" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_3H.png" id="7_3y7iy"]
+[ext_resource type="Texture2D" uid="uid://dedsmby3k50vm" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_3V.png" id="8_u6531"]
+[ext_resource type="Texture2D" uid="uid://bp3ijs3jkph7n" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_4S.png" id="9_in11t"]
+[ext_resource type="Texture2D" uid="uid://b3ukn8g5iik64" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_custom.png" id="10_rhsmg"]
+[ext_resource type="Script" uid="uid://dpyycb77a8euk" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/custom_options.gd" id="11_yamp6"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_00j1l"]
+font_size = 28
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_2o3ku"]
+font_size = 12
+font_color = Color(1, 1, 1, 0.4)
+
+[sub_resource type="LabelSettings" id="LabelSettings_0n25h"]
+font_size = 12
+
+[node name="MenuTool" type="PopupPanel" node_paths=PackedStringArray("_container", "_custom_options")]
+title = "Script Splitter Menu"
+position = Vector2i(0, 36)
+size = Vector2i(602, 382)
+visible = true
+script = ExtResource("1_eyluc")
+_container = NodePath("MarginContainer/MenContainer/Body")
+_custom_options = NodePath("MarginContainer/MenContainer/COptions")
+
+[node name="BG" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.249011, 0.114569, 0.435571, 1)
+
+[node name="BGTX" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.34902)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_5gosm")
+stretch_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="MenContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/MenContainer"]
+layout_mode = 2
+
+[node name="Tittle" type="Label" parent="MarginContainer/MenContainer/PanelContainer2"]
+layout_mode = 2
+text = "Menu Split Selection"
+label_settings = SubResource("LabelSettings_00j1l")
+horizontal_alignment = 1
+uppercase = true
+
+[node name="Label" type="Label" parent="MarginContainer/MenContainer"]
+visible = false
+layout_mode = 2
+text = "Version 0.2
+Rows are created based on the maximum number of columns reached.
+Example: If you want two vertical scripts, you must define a maximum of one column."
+label_settings = SubResource("LabelSettings_2o3ku")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Body" type="GridContainer" parent="MarginContainer/MenContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="splited_off" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
+layout_mode = 2
+tooltip_text = "Disabled Splited"
+button_pressed = true
+text = "Disabled"
+icon = ExtResource("3_4ewwr")
+script = ExtResource("4_bbkwv")
+
+[node name="splited_two_horizontal" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
+layout_mode = 2
+tooltip_text = "Two Horizontal Splited"
+text = "Two Horizontal"
+icon = ExtResource("5_dw26u")
+script = ExtResource("4_bbkwv")
+columns = 2
+rows = 1
+
+[node name="splited_two_vertical" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
+layout_mode = 2
+tooltip_text = "Two Vertical Splited"
+text = "Two Vertical"
+icon = ExtResource("6_xnjrm")
+script = ExtResource("4_bbkwv")
+columns = 1
+rows = 2
+
+[node name="splited_three_horizontal" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
+layout_mode = 2
+tooltip_text = "Three Horizontal Splited"
+text = "Three Horizontal"
+icon = ExtResource("7_3y7iy")
+script = ExtResource("4_bbkwv")
+columns = 3
+rows = 1
+
+[node name="splited_three_vertical" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
+layout_mode = 2
+tooltip_text = "Three Vertical Splited"
+text = "Three Vertical"
+icon = ExtResource("8_u6531")
+script = ExtResource("4_bbkwv")
+columns = 1
+rows = 3
+
+[node name="splited_four_square" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
+layout_mode = 2
+tooltip_text = "Square Splited"
+text = "Four Squared"
+icon = ExtResource("9_in11t")
+script = ExtResource("4_bbkwv")
+columns = 2
+rows = 2
+
+[node name="CheckBox" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
+layout_mode = 2
+text = "Custom Split"
+icon = ExtResource("10_rhsmg")
+script = ExtResource("4_bbkwv")
+is_custom = true
+
+[node name="COptions" type="VBoxContainer" parent="MarginContainer/MenContainer" node_paths=PackedStringArray("columns", "rows")]
+visible = false
+layout_mode = 2
+script = ExtResource("11_yamp6")
+columns = NodePath("ValueOptions/ColumnsValue")
+rows = NodePath("ValueOptions/RowsValue")
+
+[node name="Label" type="Label" parent="MarginContainer/MenContainer/COptions"]
+layout_mode = 2
+text = "Custom Split Options"
+label_settings = SubResource("LabelSettings_0n25h")
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/MenContainer/COptions"]
+layout_mode = 2
+texture = ExtResource("10_rhsmg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ValueOptions" type="HBoxContainer" parent="MarginContainer/MenContainer/COptions"]
+layout_mode = 2
+
+[node name="ColumnsValue" type="SpinBox" parent="MarginContainer/MenContainer/COptions/ValueOptions"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 30.0
+value = 1.0
+alignment = 1
+prefix = "Columns"
+
+[node name="RowsValue" type="SpinBox" parent="MarginContainer/MenContainer/COptions/ValueOptions"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 30.0
+value = 1.0
+alignment = 1
+prefix = "Rows"
+
+[node name="Separator" type="HSeparator" parent="MarginContainer/MenContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="Footer" type="HBoxContainer" parent="MarginContainer/MenContainer"]
+layout_mode = 2
+
+[node name="OK" type="Button" parent="MarginContainer/MenContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Accept"
+
+[node name="Cancel" type="Button" parent="MarginContainer/MenContainer/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Exit"
+
+[connection signal="pressed" from="MarginContainer/MenContainer/Footer/OK" to="." method="_on_ok_pressed"]
+[connection signal="pressed" from="MarginContainer/MenContainer/Footer/Cancel" to="." method="_on_cancel_pressed"]
