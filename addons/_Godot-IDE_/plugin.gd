@@ -12,6 +12,7 @@ var _plugins : Array[EditorPlugin] = []
 var _enable_plugins : Dictionary = {}
 
 func _ready() -> void:
+	debug = false
 	_initialize()
 	
 func _enter_tree() -> void:	
@@ -26,7 +27,6 @@ func _process(_delta: float) -> void:
 	set_process(false)
 	var base : String = get_script().resource_path.get_base_dir()
 	var path : String = base.path_join("plugins")
-	debug = false
 	
 	_init_config(1)
 	_load_plugins(path)
