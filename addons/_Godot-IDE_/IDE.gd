@@ -213,6 +213,26 @@ static func _generate(script : Script, data : Dictionary = {}, index : int = -1)
 			if clazz.has(k):
 				if !"||overrided" in clazz[k]:
 					clazz[k] += "||overrided"
+	for x : int in range(0, index, 1):
+		var clazz : Dictionary = data[x]["properties"]
+		for k : Variant in props.keys():
+			if clazz.has(k):
+				if !"||overrided" in clazz[k]:
+					clazz[k] += "||overrided"
+	for x : int in range(0, index, 1):
+		var clazz : Dictionary = data[x]["signals"]
+		for k : Variant in signals.keys():
+			if clazz.has(k):
+				if !"||overrided" in clazz[k]:
+					clazz[k] += "||overrided"
+	for x : int in range(0, index, 1):
+		var clazz : Dictionary = data[x]["constants"]
+		for k : Variant in constants.keys():
+			if clazz.has(k):
+				if !"||overrided" in clazz[k]:
+					clazz[k] += "||overrided"
+			else:
+				clazz[k] = constants[k] + "||overrided"
 	return _generate(script.get_base_script(), data, index)
 	
 
@@ -263,10 +283,28 @@ static func _generate_native(native :  StringName, data : Dictionary = {}, index
 	for dict : String in ClassDB.class_get_integer_constant_list(native, true):
 		var pro_name: StringName = dict
 		constants[pro_name] = "{0}||int||void".format([dict])
-
+		
 	for x : int in range(0, index, 1):
 		var clazz : Dictionary = data[x]["functions"]
 		for k : Variant in funcs.keys():
+			if clazz.has(k):
+				if !"||overrided" in clazz[k]:
+					clazz[k] += "||overrided"
+	for x : int in range(0, index, 1):
+		var clazz : Dictionary = data[x]["properties"]
+		for k : Variant in props.keys():
+			if clazz.has(k):
+				if !"||overrided" in clazz[k]:
+					clazz[k] += "||overrided"
+	for x : int in range(0, index, 1):
+		var clazz : Dictionary = data[x]["signals"]
+		for k : Variant in signals.keys():
+			if clazz.has(k):
+				if !"||overrided" in clazz[k]:
+					clazz[k] += "||overrided"
+	for x : int in range(0, index, 1):
+		var clazz : Dictionary = data[x]["constants"]
+		for k : Variant in constants.keys():
 			if clazz.has(k):
 				if !"||overrided" in clazz[k]:
 					clazz[k] += "||overrided"

@@ -2247,6 +2247,8 @@ func search_by_symbol(reference : Node) -> void:
 			prefx = "class_signal"
 		elif ClassDB.class_has_enum(class_nm, symbol, true):
 			prefx = "class_constant"
+		elif ClassDB.class_has_integer_constant(class_nm, symbol):
+			prefx = "class_constant"
 		else:
 			var list : Array[Dictionary] = ClassDB.class_get_property_list(class_nm, true)
 			for x : Dictionary in list:

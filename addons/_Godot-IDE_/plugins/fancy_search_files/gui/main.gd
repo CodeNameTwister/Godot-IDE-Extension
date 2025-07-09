@@ -41,6 +41,10 @@ func _on_visible() -> void:
 	else:
 		_save()
 		queue_free()
+		
+func clear() -> void:
+	_recents.clear()
+	_tree_recents.clear()
 	
 func _on_activate(tree : Tree) -> void:
 	if !tree:

@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dhlxe0qj82e8y"]
+[gd_scene load_steps=10 format=3 uid="uid://dhlxe0qj82e8y"]
 
 [ext_resource type="Script" uid="uid://bwtq1pkujrb1d" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/script_info.gd" id="1_5gq01"]
 [ext_resource type="Script" uid="uid://gct2x12uf8jj" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/button_filter.gd" id="2_djmkv"]
+[ext_resource type="Texture2D" uid="uid://cjpyaeqxjujsy" path="res://addons/_Godot-IDE_/shared_resources/MethodOverride.svg" id="3_7xcf1"]
 [ext_resource type="Texture2D" uid="uid://dqfn3tghaer0y" path="res://addons/_Godot-IDE_/shared_resources/ScriptExtend.svg" id="3_nynvq"]
 [ext_resource type="Texture2D" uid="uid://ouml4wypk5bq" path="res://addons/_Godot-IDE_/shared_resources/MemberConstant.svg" id="4_7xcf1"]
 [ext_resource type="Texture2D" uid="uid://bu2y52as0gijo" path="res://addons/_Godot-IDE_/shared_resources/MemberSignal.svg" id="5_2xgjc"]
@@ -46,6 +47,17 @@ layout_mode = 2
 toggle_mode = true
 button_pressed = true
 text = "All"
+icon_alignment = 1
+script = ExtResource("2_djmkv")
+
+[node name="show_inheritance" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
+modulate = Color(0.960784, 0.960784, 0.960784, 1)
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+tooltip_text = "Show inheritance"
+toggle_mode = true
+button_pressed = true
+icon = ExtResource("3_7xcf1")
 icon_alignment = 1
 script = ExtResource("2_djmkv")
 

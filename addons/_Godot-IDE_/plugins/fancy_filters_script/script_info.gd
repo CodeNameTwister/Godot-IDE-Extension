@@ -40,6 +40,7 @@ var show_constants : bool = true
 var show_parent_class : bool = true
 var show_native_class : bool = false
 var show_functions : bool = true
+var show_inheritance : bool = true
 
 var show_properties_color : Color = Color.ORANGE
 var show_signals_color : Color = Color.GREEN
@@ -104,28 +105,75 @@ func force_update() -> void:
 		
 func _on_activate() -> void:
 	if tree_container:
-		if _last:
-			var st : String = _last.resource_path
-			if !FileAccess.file_exists(st):
-				return
-				
+		if is_instance_valid(_last):
+			var current : Script = _last
 			var item : TreeItem = tree_container.get_selected()
+			if !item:
+				return
 			var symbol_name : String = item.get_text(0).split(" ", false, 1)[0]
-			var script_content : String = FileAccess.get_file_as_string(st)
-			var lines : PackedStringArray = script_content.split("\n", true)
-			var line_number = -1
-
-			var pattern : RegEx = RegEx.create_from_string("\\s*var\\s+\\b" + symbol_name + "\\b.*|\\s*const\\s+\\b" + symbol_name + "\\b.*|\\s*func\\s+\\b" + symbol_name + "|\\s*signal\\s+\\b" + symbol_name)
-			
-			for x : int in range(lines.size()):
-				var line = lines[x]
-				if pattern.search(line):
-					line_number = x
-					break
+			while true:
+				var st : String = current.resource_path
+				if !FileAccess.file_exists(st):
+					return
 					
-			if line_number > -1:
-				var script_editor: ScriptEditor = EditorInterface.get_script_editor()
-				script_editor.goto_line(line_number)
+				var script_content : String = FileAccess.get_file_as_string(st)
+				var lines : PackedStringArray = script_content.split("\n", true)
+				var line_number : int = -1
+
+				var pattern : RegEx = RegEx.create_from_string("[\\n\\t\\s]*var[\\n\\t\\s]+\\b" + symbol_name + "\\b.*|\\s*const[\\n\\t\\s]+\\b" + symbol_name + "\\b.*|\\s*func[\\n\\t\\s]+\\b" + symbol_name + "|\\s*signal[\\n\\t\\s]+\\b" + symbol_name)
+				for x : int in range(lines.size()):
+					var line = lines[x]
+					if pattern.search(line):
+						line_number = x
+						break
+						
+				if line_number > -1:
+					var sce: ScriptEditor = EditorInterface.get_script_editor()
+					if !sce:
+						return
+					if sce.get_current_script() != current:
+						EditorInterface.edit_script(current, line_number, 0)
+					else:
+						sce.goto_line(line_number)
+					return
+				var base : Script = current.get_base_script()	
+				if base != null:
+					current = base
+				break
+			var type : StringName = current.get_instance_base_type()
+			while !type.is_empty():
+				if ClassDB.class_exists(type):
+					var symbol : String = item.get_tooltip_text(0)
+					var prefx : String = ""
+					if type == "GraphNode":
+						prefx = "class_theme_item"
+					if symbol.begins_with("@"):
+						prefx = "class_annotation"
+					elif ClassDB.class_has_signal(type, symbol_name):
+						prefx = "class_signal"
+					elif ClassDB.class_has_enum(type, symbol_name, true):
+						prefx = "class_constant"
+					elif ClassDB.class_has_integer_constant(type, symbol_name):
+						prefx = "class_constant"
+					else:
+						var list : Array[Dictionary] = ClassDB.class_get_property_list(type, true)
+						for x : Dictionary in list:
+							if x.name == symbol_name:
+								prefx = "class_property"
+								break
+						if prefx.is_empty():
+							list = ClassDB.class_get_method_list(type, true)
+							for x : Dictionary in list:
+								if x.name == symbol_name:
+									prefx = "class_method"
+									break
+					if !prefx.is_empty():
+						var path : String = "{0}:{1}:{2}".format([prefx, type, symbol_name])
+						EditorInterface.get_script_editor().goto_help(path)
+						return
+					type = ClassDB.get_parent_class(type)
+					continue
+				break
 
 func _on_change_script(script : Script) -> void:
 	if _last == script:
@@ -189,12 +237,19 @@ func _on_change_script(script : Script) -> void:
 		if sc["tool"]:
 			tree_item.set_icon(0, SCRIPT_TOOL_ICON)
 			tree_item.set_icon_modulate(0, Color.DEEP_SKY_BLUE)
+			if index > 0:
+				tree_item.set_icon_overlay(0, OVERRIDED_ICON)
 		elif sc["abstract"]:
 			tree_item.set_icon(0, SCRIPT_ABSTRACT_ICON)
+			if index > 0:
+				tree_item.set_icon_overlay(0, OVERRIDED_ICON)
 		elif sc["path"] == "NativeScript":
 			tree_item.set_icon(0, SCRIPT_NATIVE_ICON)
 		else:
-			tree_item.set_icon(0, SCRIPT_ICON)
+			if index > 0:
+				tree_item.set_icon(0, SCRIPT_EXTEND_ICON)
+			else:
+				tree_item.set_icon(0, SCRIPT_ICON)
 		tree_item.set_selectable(0, false)
 		
 		var sc_data : Dictionary = {}
@@ -227,7 +282,7 @@ func _on_change_script(script : Script) -> void:
 						_item.set_icon(0, PROTECTED_ICON)
 					else:
 						_item.set_icon(0, PUBLIC_ICON)
-					if "overrided" in packed:
+					if show_inheritance and "overrided" in packed:
 						_item.set_icon_overlay(0, OVERRIDED_ICON)
 					_item.set_custom_color(0, SECONDARY_COLOR)
 					_item.set_text(0, text)
@@ -246,8 +301,13 @@ func _on_change_script(script : Script) -> void:
 				if _buffer.has(meta):
 					mthds.collapsed = _buffer[meta]
 				for fnc : String in sc_data.keys():
-					var _item : TreeItem = mthds.create_child()
 					var packed : PackedStringArray = sc_data[fnc].split("||")
+					var override : bool = false
+					if "overrided" in packed:
+						if !show_inheritance:
+							continue
+						override = true
+					var _item : TreeItem = mthds.create_child()
 					var text : String = "{0} : {1}".format([packed[0], packed[1]])
 					_item.set_text(0, text)
 					_item.set_custom_color(0, SECONDARY_COLOR)
@@ -266,6 +326,8 @@ func _on_change_script(script : Script) -> void:
 						_item.set_icon(0, PROTECTED_ICON)
 					else:
 						_item.set_icon(0, PUBLIC_ICON)
+					if override:
+						_item.set_icon_overlay(0, OVERRIDED_ICON)
 						
 		if show_signals:
 			sc_data = sc["signals"]
@@ -281,12 +343,21 @@ func _on_change_script(script : Script) -> void:
 				if _buffer.has(meta):
 					mthds.collapsed = _buffer[meta]
 				for fnc : String in sc_data.keys():
-					var _item : TreeItem = mthds.create_child()
 					var packed : PackedStringArray = sc_data[fnc].split("||")
+					var override : bool = false
+					if "overrided" in packed:
+						if !show_inheritance:
+							continue
+						override = true
+					var _item : TreeItem = mthds.create_child()
 					_item.set_text(0, "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]]))
 					
 					_item.set_icon(0, MEMBER_SIGNAL_ICON)
 					_item.set_custom_color(0, SECONDARY_COLOR)
+					if show_inheritance and "overrided" in packed:
+						_item.set_icon_overlay(0, OVERRIDED_ICON)
+					if override:
+						_item.set_icon_overlay(0, OVERRIDED_ICON)
 					
 		if show_constants:
 			sc_data = sc["constants"]
@@ -302,11 +373,18 @@ func _on_change_script(script : Script) -> void:
 				if _buffer.has(meta):
 					mthds.collapsed = _buffer[meta]
 				for fnc : String in sc_data.keys():
-					var _item : TreeItem = mthds.create_child()
 					var packed : PackedStringArray = sc_data[fnc].split("||")
+					var override : bool = false
+					if "overrided" in packed:
+						if !show_inheritance:
+							continue
+						override = true
+					var _item : TreeItem = mthds.create_child()
 					_item.set_text(0, "{0} : {1}".format([packed[0], packed[1]]))
 					_item.set_icon(0, MEMBER_CONSTANT_ICON)
 					_item.set_custom_color(0, SECONDARY_COLOR)
+					if override:
+						_item.set_icon_overlay(0, OVERRIDED_ICON)
 					
 func _ready() -> void:
 	var editor : ScriptEditor  = EditorInterface.get_script_editor()

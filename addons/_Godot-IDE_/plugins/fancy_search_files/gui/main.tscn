@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cddiai7iiut3l"]
 
 [ext_resource type="Script" uid="uid://dvsbvurbdecex" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/main.gd" id="1_0f0lw"]
-[ext_resource type="Script" uid="uid://cpdqmdfvgpxmv" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/close.gd" id="2_ydlx0"]
+[ext_resource type="Script" uid="uid://cpdqmdfvgpxmv" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/button.gd" id="2_ydlx0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f6tk3"]
 content_margin_left = 3.0
@@ -99,3 +99,8 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="clear" type="Button" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
+layout_mode = 2
+text = "Clear"
+script = ExtResource("2_ydlx0")
