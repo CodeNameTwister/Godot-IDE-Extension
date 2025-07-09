@@ -51,7 +51,7 @@ In Issue tab, you can write you request/changes for the future of this plugin.
 
 * Quick Flods:
 	* Can use [Atl + 1, Atl + 2, ... Atl + 9, Atl + 0] for fold lines.
-	* Can use [Shift + Atl + 1, Shift + Atl + 2, ... Shift + Atl + 9, Shift + Atl + 0] for show lines.
+	* Can use [Shift + Atl + 1, Shift + Atl + 2, ... Shift + Atl + 9, Shift + Atl + 0] as inversed for show lines.
 
 * GD Override Functions
 	* RMB (Right Mouse Button) On editing Script for show Override Functions: Can generate functions inherited.
