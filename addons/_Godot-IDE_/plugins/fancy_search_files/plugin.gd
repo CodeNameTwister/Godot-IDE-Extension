@@ -2,7 +2,7 @@
 extends EditorPlugin
 # =============================================================================	
 # Author: Twister
-# Fancy Searc Files
+# Fancy Search Files
 #
 # Addon for Godot
 # =============================================================================	
