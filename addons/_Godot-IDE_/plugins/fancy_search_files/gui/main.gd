@@ -1,5 +1,12 @@
 @tool
 extends Window
+# =============================================================================	
+# Author: Twister
+# Fancy Searc Files
+#
+# Addon for Godot
+# =============================================================================	
+
 
 @export var _container : TabContainer = null
 @export var _tree : Tree = null

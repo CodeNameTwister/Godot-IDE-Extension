@@ -1,5 +1,12 @@
 @tool
 extends EditorPlugin
+# =============================================================================	
+# Author: Twister
+# Fancy Search Class
+#
+# Addon for Godot
+# =============================================================================	
+
 
 const FANCY_SEARCH : PackedScene = preload("res://addons/_Godot-IDE_/plugins/fancy_search_class/gui/main.tscn")
 

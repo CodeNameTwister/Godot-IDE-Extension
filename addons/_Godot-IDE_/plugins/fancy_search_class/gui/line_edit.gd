@@ -1,5 +1,12 @@
 @tool
 extends LineEdit
+# =============================================================================	
+# Author: Twister
+# Fancy Search Class
+#
+# Addon for Godot
+# =============================================================================	
+
 
 @export var tree : Tree = null
 

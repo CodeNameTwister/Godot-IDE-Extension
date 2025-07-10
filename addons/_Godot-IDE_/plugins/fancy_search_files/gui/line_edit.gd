@@ -1,5 +1,12 @@
 @tool
 extends LineEdit
+# =============================================================================	
+# Author: Twister
+# Fancy Searc Files
+#
+# Addon for Godot
+# =============================================================================	
+
 
 @export var tree : Tree = null
 
