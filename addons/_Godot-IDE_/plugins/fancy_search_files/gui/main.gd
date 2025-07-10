@@ -94,8 +94,11 @@ func get_icon(type : String) -> Texture2D:
 			
 func _update_tree(filter : StringName) -> void:
 	_tree.clear()
+	if files.size() == 0:
+		return
 	if filter == &"All":
 		var root : TreeItem = _tree.create_item()
+		root.set_selectable(0, false)
 		for k : StringName in files.keys():
 			var item : TreeItem = root.create_child()
 			var icon : Texture2D = get_icon(k)
@@ -106,7 +109,15 @@ func _update_tree(filter : StringName) -> void:
 			item.set_icon(0, icon)
 			for f : String in files[k]:
 				var fitem : TreeItem = item.create_child()
-				fitem.set_text(0, f.get_file())
+				var slice : int = f.get_slice_count("/")
+				if slice > 5:
+					var txt : String = ""
+					for x : int in range(slice - 1, 3, -1):
+						txt = f.get_slice("/", x).path_join(txt)
+					txt = "...".path_join(txt)
+					fitem.set_text(0, txt)
+				else:
+					fitem.set_text(0, f)
 				fitem.set_icon(0, icon)
 				fitem.set_metadata(0, f)
 				fitem.set_icon_modulate(0, Color.GRAY)

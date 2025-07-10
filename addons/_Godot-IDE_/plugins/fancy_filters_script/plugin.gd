@@ -29,7 +29,7 @@ func _apply_changes() -> void:
 	if _container:
 		if _container.has_method(&"force_update"):
 			_container.call_deferred(&"force_update")
-
+	get_tree().call_group(&"UPDATE_ON_SAVE", &"update")
 
 func get_id(pop : PopupMenu, index : int, msg : String) -> int:
 	if msg != pop.get_item_text(index):

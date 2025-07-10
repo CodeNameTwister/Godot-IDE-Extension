@@ -24,6 +24,8 @@ How it works is also described in each link.
   *Integrated with this plugin, not repository released.*
 * Fancy Search Files:
   *Integrated with this plugin, not repository released.*
+* Fancy Search Class:
+  *Integrated with this plugin, not repository released.*
 
 # Objetive
 The goal of this project is to provide godot with some additional features without worrying about adding extra load to the CPU if it means improving the development experience.
@@ -58,6 +60,9 @@ In Issue tab, you can write you request/changes for the future of this plugin.
 
 * Fancy Search Files
 	* [Ctrl + Atl + Space] Invoke Easy Searcher Window
+
+* Fancy Search Files
+	* [Atl + Delete] Invoke Easy Searcher Window
 
 * Fancy Filters Script
 	* In File tab on editor, you can Show/Hide/Toggle The neighbor panel of the editor.

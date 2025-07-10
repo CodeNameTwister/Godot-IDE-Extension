@@ -1,9 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cddiai7iiut3l"]
+[gd_scene load_steps=6 format=3 uid="uid://cfwi81ii6ww5b"]
 
-[ext_resource type="Script" uid="uid://dvsbvurbdecex" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/main.gd" id="1_0f0lw"]
-[ext_resource type="Texture2D" uid="uid://816fejewtbfj" path="res://addons/_Godot-IDE_/shared_resources/search.svg" id="2_fowvl"]
-[ext_resource type="Script" uid="uid://cpdqmdfvgpxmv" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/button.gd" id="2_ydlx0"]
-[ext_resource type="Script" uid="uid://bx6ivdaldbcf8" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/line_edit.gd" id="3_5ntm4"]
+[ext_resource type="Script" uid="uid://dalllwmyh2v5m" path="res://addons/_Godot-IDE_/plugins/fancy_search_class/gui/main.gd" id="1_v5iyo"]
+[ext_resource type="Script" uid="uid://c6pfvkgkabvt6" path="res://addons/_Godot-IDE_/plugins/fancy_search_class/gui/button.gd" id="2_bnpnb"]
+[ext_resource type="Texture2D" uid="uid://816fejewtbfj" path="res://addons/_Godot-IDE_/shared_resources/search.svg" id="2_nf02n"]
+[ext_resource type="Script" uid="uid://blmveofp20cm1" path="res://addons/_Godot-IDE_/plugins/fancy_search_class/gui/line_edit.gd" id="3_m1yal"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nf02n"]
 content_margin_left = 3.0
@@ -15,11 +15,11 @@ corner_detail = 1
 anti_aliasing = false
 
 [node name="Window" type="Popup" node_paths=PackedStringArray("_container", "_tree", "_tree_recents")]
-title = "Fancy Search Files"
+title = "Fancy Search Class"
 initial_position = 4
 size = Vector2i(500, 500)
 visible = true
-script = ExtResource("1_0f0lw")
+script = ExtResource("1_v5iyo")
 _container = NodePath("Main/MainContainer/HBoxContainer/BoxContainer/Container")
 _tree = NodePath("Main/MainContainer/HBoxContainer/BoxContainer/Resource/Tree")
 _tree_recents = NodePath("Main/MainContainer/HBoxContainer/RecentsContainer/SCroll/Recents")
@@ -49,7 +49,7 @@ size_flags_horizontal = 3
 
 [node name="Tittle" type="Label" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
 layout_mode = 2
-text = "Search Files By Type"
+text = "Search Files By Class"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -69,8 +69,8 @@ layout_mode = 2
 placeholder_text = "File Search"
 alignment = 1
 clear_button_enabled = true
-right_icon = ExtResource("2_fowvl")
-script = ExtResource("3_5ntm4")
+right_icon = ExtResource("2_nf02n")
+script = ExtResource("3_m1yal")
 tree = NodePath("../Resource/Tree")
 
 [node name="Resource" type="ScrollContainer" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
@@ -88,7 +88,7 @@ layout_mode = 2
 [node name="close" type="Button" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
 layout_mode = 2
 text = "Close"
-script = ExtResource("2_ydlx0")
+script = ExtResource("2_bnpnb")
 
 [node name="RecentsContainer" type="VBoxContainer" parent="Main/MainContainer/HBoxContainer"]
 custom_minimum_size = Vector2(120, 0)
@@ -107,8 +107,8 @@ layout_mode = 2
 placeholder_text = "Recent Search"
 alignment = 1
 clear_button_enabled = true
-right_icon = ExtResource("2_fowvl")
-script = ExtResource("3_5ntm4")
+right_icon = ExtResource("2_nf02n")
+script = ExtResource("3_m1yal")
 tree = NodePath("../SCroll/Recents")
 
 [node name="SCroll" type="ScrollContainer" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
@@ -123,4 +123,4 @@ size_flags_vertical = 3
 [node name="clear" type="Button" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
 layout_mode = 2
 text = "Clear"
-script = ExtResource("2_ydlx0")
+script = ExtResource("2_bnpnb")

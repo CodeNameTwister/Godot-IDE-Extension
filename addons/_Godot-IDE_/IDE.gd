@@ -421,7 +421,7 @@ static func get_file_config_value(section : String, key : String) -> Variant:
 	var err : int = cfg.load(cfg_path)
 	if OK != err:
 		return null
-	return cfg.get_value(section, key, null)
+	return cfg.get_value(section, key, "")
 	
 #endregion
 # =============================================================================	

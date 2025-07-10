@@ -25,14 +25,14 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.455"
-     inkscape:cx="149.14089"
-     inkscape:cy="73.883161"
-     inkscape:window-width="1286"
+     inkscape:cx="53.608247"
+     inkscape:cy="45.017182"
+     inkscape:window-width="1284"
      inkscape:window-height="745"
-     inkscape:window-x="66"
+     inkscape:window-x="68"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g1-2"
+     inkscape:current-layer="g2"
      showguides="false" /><defs
      id="defs1"><inkscape:path-effect
    effect="simplify"
@@ -106,7 +106,11 @@
    cx="263.8074"
    cy="249.91537"
    rx="2.714432"
-   ry="1.9685373" /></g></g></g><style
+   ry="1.9685373" /><path
+   style="fill:#ffffff;stroke:none;stroke-width:3.83779;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
+   d="m 261.68979,265.58824 1.91245,-3.10423 2.0257,3.10423 z"
+   id="path3"
+   sodipodi:nodetypes="cccc" /></g></g></g><style
      type="text/css"
      id="style1">
 	.st0{fill:#000000;}

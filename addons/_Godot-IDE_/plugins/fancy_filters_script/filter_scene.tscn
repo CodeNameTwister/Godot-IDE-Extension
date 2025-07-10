@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dhlxe0qj82e8y"]
+[gd_scene load_steps=12 format=3 uid="uid://dhlxe0qj82e8y"]
 
 [ext_resource type="Script" uid="uid://bwtq1pkujrb1d" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/script_info.gd" id="1_5gq01"]
 [ext_resource type="Script" uid="uid://gct2x12uf8jj" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/button_filter.gd" id="2_djmkv"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://cec6jsyssk4ys" path="res://addons/_Godot-IDE_/shared_resources/MemberProperty.svg" id="5_nynvq"]
 [ext_resource type="Texture2D" uid="uid://cgdceyfng83st" path="res://addons/_Godot-IDE_/shared_resources/MemberMethod.svg" id="6_ndpn6"]
 [ext_resource type="Texture2D" uid="uid://bjmtfc58y1sbs" path="res://addons/_Godot-IDE_/shared_resources/InterfaceScript.svg" id="8_goajo"]
+[ext_resource type="Texture2D" uid="uid://816fejewtbfj" path="res://addons/_Godot-IDE_/shared_resources/search.svg" id="10_2xgjc"]
+[ext_resource type="Script" uid="uid://bbbdyhh8lhw4a" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/line_edit.gd" id="11_1yamo"]
 
 [node name="Container" type="TabContainer" node_paths=PackedStringArray("button_container", "tree_container")]
 custom_minimum_size = Vector2(64, 64)
@@ -119,11 +121,19 @@ script = ExtResource("2_djmkv")
 modulate = Color(0.960784, 0.960784, 0.960784, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
-tooltip_text = "Show parent classes"
+tooltip_text = "Show native classes"
 toggle_mode = true
 icon = ExtResource("8_goajo")
 icon_alignment = 1
 script = ExtResource("2_djmkv")
+
+[node name="LineEdit" type="LineEdit" parent="Script Info/VContainer" node_paths=PackedStringArray("tree")]
+layout_mode = 2
+placeholder_text = "Search Bar"
+clear_button_enabled = true
+right_icon = ExtResource("10_2xgjc")
+script = ExtResource("11_1yamo")
+tree = NodePath("../../SContainer/Tree")
 
 [node name="SContainer" type="ScrollContainer" parent="Script Info"]
 layout_mode = 2
