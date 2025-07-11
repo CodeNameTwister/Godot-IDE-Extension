@@ -253,6 +253,7 @@ func _on_change_script(script : Script) -> void:
 		tree_item.set_selectable(0, false)
 		
 		var sc_data : Dictionary = {}
+		var src : String = script.source_code
 		if show_functions:
 			sc_data = sc["functions"]
 			if sc_data.size() > 0:
@@ -274,8 +275,9 @@ func _on_change_script(script : Script) -> void:
 							if !show_inheritance:
 								continue
 						else:
-							if !show_inheritance and !script.has_method(fnc):
-								continue
+							if !show_inheritance:
+								if null == RegEx.create_from_string("func[\\s\\t\\n]*\\b{0}[\\s\\t\\n]*\\(".format([fnc])).search(src):
+									continue
 						override = show_inheritance
 						
 					var _item : TreeItem = mthds.create_child()
