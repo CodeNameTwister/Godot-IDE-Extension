@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://cpdqmdfvgpxmv" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/button.gd" id="2_ydlx0"]
 [ext_resource type="Script" uid="uid://bx6ivdaldbcf8" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/line_edit.gd" id="3_5ntm4"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nf02n"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fowvl"]
 content_margin_left = 3.0
 content_margin_top = 3.0
 content_margin_right = 3.0
@@ -31,7 +31,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_nf02n")
+theme_override_styles/panel = SubResource("StyleBoxFlat_fowvl")
 
 [node name="MainContainer" type="MarginContainer" parent="Main"]
 layout_mode = 2

@@ -26,6 +26,16 @@ var _collapsed : bool = false
 
 func _enter_tree() -> void:
 	_first_time = true
+	
+	var screen : Vector2 = DisplayServer.screen_get_size()
+	var value : Variant = IDE.get_config("fancy_search_class", "size")
+	if value is Vector2 or value is Vector2i:
+		screen = value
+	else:
+		screen = screen * 0.6
+	screen.x = maxf(500, screen.x)
+	screen.y = maxf(500, screen.y)
+	size = screen
 
 func _ready() -> void:
 	update()
@@ -95,6 +105,7 @@ func _on_change(_tab_changed : int) -> void:
 func _exit_tree() -> void:
 	if is_instance_valid(_tree):
 		_tree.clear()
+	IDE.set_config("fancy_search_class", "size", size)
 		
 func close() -> void:
 	hide()

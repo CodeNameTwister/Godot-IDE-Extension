@@ -18,8 +18,20 @@ var _first_time : bool = false
 
 var _recents : PackedStringArray = []
 
+var _default_tx : Texture2D = null
+
 func _enter_tree() -> void:
 	_first_time = true
+	
+	var screen : Vector2 = DisplayServer.screen_get_size()
+	var value : Variant = IDE.get_config("fancy_search_files", "size")
+	if value is Vector2 or value is Vector2i:
+		screen = value
+	else:
+		screen = screen * 0.6
+	screen.x = maxf(500, screen.x)
+	screen.y = maxf(500, screen.y)
+	size = screen
 
 func _ready() -> void:
 	update()
@@ -89,6 +101,7 @@ func _on_change(_tab_changed : int) -> void:
 func _exit_tree() -> void:
 	if is_instance_valid(_tree):
 		_tree.clear()
+	IDE.set_config("fancy_search_files", "size", size)
 		
 func close() -> void:
 	hide()
@@ -97,12 +110,17 @@ func get_icon(type : String) -> Texture2D:
 	var control : Control = EditorInterface.get_base_control()
 	if !control:
 		return null
-	return control.get_theme_icon(type, "EditorIcons")
+	var icon : Texture2D = control.get_theme_icon(type, "EditorIcons")
+	
+	if icon == _default_tx:
+		icon = control.get_theme_icon("File", "EditorIcons")
+	return icon
 			
 func _update_tree(filter : StringName) -> void:
 	_tree.clear()
 	if files.size() == 0:
 		return
+	
 	if filter == &"All":
 		var root : TreeItem = _tree.create_item()
 		root.set_selectable(0, false)
@@ -173,6 +191,10 @@ func _update() -> void:
 				node.queue_free()
 			files.clear()
 			search(fd)
+		
+			if _default_tx == null:
+				_default_tx = get_icon("DEFAULT_NOT_FOUND")
+				
 			for x : StringName in files.keys():
 				var control : Control = Control.new()
 				var index : int = -1
