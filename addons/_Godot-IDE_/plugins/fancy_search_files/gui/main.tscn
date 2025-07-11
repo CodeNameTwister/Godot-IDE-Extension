@@ -17,7 +17,7 @@ anti_aliasing = false
 [node name="Window" type="Popup" node_paths=PackedStringArray("_container", "_tree", "_tree_recents")]
 title = "Fancy Search Files"
 initial_position = 4
-size = Vector2i(500, 500)
+size = Vector2i(816, 500)
 visible = true
 script = ExtResource("1_0f0lw")
 _container = NodePath("Main/MainContainer/HBoxContainer/BoxContainer/Container")

@@ -267,8 +267,18 @@ func _on_change_script(script : Script) -> void:
 				if _buffer.has(meta):
 					mthds.collapsed = _buffer[meta]
 				for fnc : String in sc_data.keys():
-					var _item : TreeItem = mthds.create_child()
 					var packed : PackedStringArray = sc_data[fnc].split("||")
+					var override : bool = false
+					if "overrided" in packed:
+						if index > 0:
+							if !show_inheritance:
+								continue
+						else:
+							if !show_inheritance and !script.has_method(fnc):
+								continue
+						override = show_inheritance
+						
+					var _item : TreeItem = mthds.create_child()
 					var text : String = "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]])
 					if "static" in packed:
 						_item.set_icon(0, STATIC_ICON)
@@ -282,7 +292,7 @@ func _on_change_script(script : Script) -> void:
 						_item.set_icon(0, PROTECTED_ICON)
 					else:
 						_item.set_icon(0, PUBLIC_ICON)
-					if show_inheritance and "overrided" in packed:
+					if override:
 						_item.set_icon_overlay(0, OVERRIDED_ICON)
 					_item.set_custom_color(0, SECONDARY_COLOR)
 					_item.set_text(0, text)
