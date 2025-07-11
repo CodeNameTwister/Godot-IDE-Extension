@@ -73,7 +73,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_properties" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(1, 0.647059, 0, 1)
+modulate = Color(0.807137, 0.2603, 0.11, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show Properties"
@@ -84,7 +84,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_signals" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(0, 1, 0, 1)
+modulate = Color(0.00765471, 0.952086, 0.879498, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show Signals"
@@ -106,7 +106,6 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_parent_class" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(0.960784, 0.960784, 0.960784, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show parent classes"
@@ -117,7 +116,6 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_native_class" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(0.960784, 0.960784, 0.960784, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show native classes"

@@ -33,8 +33,9 @@ func _enter_tree() -> void:
 		screen = value
 	else:
 		screen = screen * 0.6
-	screen.x = maxf(500, screen.x)
-	screen.y = maxf(500, screen.y)
+	
+	IDE.clamp_screen_size(screen, 0.3, 1.0)	
+	
 	size = screen
 
 func _ready() -> void:

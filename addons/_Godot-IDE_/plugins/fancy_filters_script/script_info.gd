@@ -14,6 +14,7 @@ const STATIC_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resourc
 const CONST_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/static.svg")
 const EXPORT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberAnnotation.svg")
 const OVERRIDED_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MethodOverride.svg")
+var DOTS_ICON : Texture2D = null
 
 const SCRIPT_TOOL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/Tools.svg")
 const SCRIPT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/Script.svg")
@@ -34,6 +35,9 @@ const MEMBER_OVERRIDE_ICON : Texture2D = preload("res://addons/_Godot-IDE_/share
 @export var tree_container : Tree = null
 
 #region CONFIG
+var use_colors_in_tittles : bool = false
+var use_dots_as_item_icons : bool = false
+
 var show_properties : bool = true
 var show_signals : bool = true
 var show_constants : bool = true
@@ -79,6 +83,8 @@ func _setup(changes : PackedStringArray = []) -> void:
 			,"show_native_class"
 			,"show_functions"
 			,"show_inheritance"
+			,"use_colors_in_tittles"
+			,"use_dots_as_item_icons"
 			]:
 		if changes.size() == 0 or _is_in_change(PLUGIN, x, changes):
 			var value : Variant = get(x)
@@ -118,6 +124,12 @@ func _setup(changes : PackedStringArray = []) -> void:
 					IDE.set_config(PLUGIN, x, value)
 			else:
 				push_warning("Its broke! > ", x)
+
+	if use_dots_as_item_icons:
+		if DOTS_ICON == null:
+			DOTS_ICON = ResourceLoader.load("res://addons/_Godot-IDE_/shared_resources/dot.svg")
+	else:
+		DOTS_ICON = null
 
 	if changes.size() > 0 and dirty:
 		propagate_call(&"update_settings")
@@ -307,7 +319,22 @@ func _on_change_script(script : Script) -> void:
 		BASE_COLOR = Color.WHITE
 	
 	var PRIMARY_COLOR : Color = BASE_COLOR.darkened(0.2)
-	var SECONDARY_COLOR : Color = PRIMARY_COLOR.darkened(0.2)
+	var SECONDARY_COLOR : Color = BASE_COLOR.darkened(0.4)
+	
+	var public_icon : Texture2D = PUBLIC_ICON
+	var private_icon : Texture2D = PRIVATE_ICON
+	var virtual_icon : Texture2D = PROTECTED_ICON
+	var public_icon_modulate: Color = Color.WHITE
+	var private_icon_modulate: Color = Color.WHITE
+	var virtual_icon_modulate: Color = Color.WHITE
+	
+	if use_dots_as_item_icons and null != DOTS_ICON:
+		public_icon = DOTS_ICON
+		private_icon = DOTS_ICON
+		virtual_icon = DOTS_ICON
+		public_icon_modulate = Color.GREEN
+		private_icon_modulate = Color.YELLOW
+		virtual_icon_modulate = Color.REBECCA_PURPLE
 	
 	var index : int = -1
 	for sc : Dictionary in data.values():
@@ -360,7 +387,10 @@ func _on_change_script(script : Script) -> void:
 				mthds.set_text(0, "Methods")
 				mthds.set_selectable(0, false)
 				mthds.set_icon(0, MEMBER_METHOD_ICON)
-				mthds.set_custom_color(0, PRIMARY_COLOR)
+				if use_colors_in_tittles:
+					mthds.set_custom_color(0, show_function_color)
+				else:
+					mthds.set_custom_color(0, PRIMARY_COLOR)
 				meta = str("F", index)
 				mthds.set_metadata(0, meta)
 				mthds.set_icon_modulate(0, show_function_color)
@@ -388,11 +418,14 @@ func _on_change_script(script : Script) -> void:
 						_item.set_icon(0, CONST_ICON)
 						_item.set_tooltip_text(0, str("const ", text))
 					elif fnc.begins_with(private_methods):
-						_item.set_icon(0, PRIVATE_ICON)
+						_item.set_icon(0, private_icon)
+						_item.set_icon_modulate(0, private_icon_modulate)
 					elif fnc.begins_with(protected_methods):
-						_item.set_icon(0, PROTECTED_ICON)
+						_item.set_icon(0, virtual_icon)
+						_item.set_icon_modulate(0, virtual_icon_modulate)
 					else:
-						_item.set_icon(0, PUBLIC_ICON)
+						_item.set_icon(0, public_icon)
+						_item.set_icon_modulate(0, public_icon_modulate)
 					if override:
 						_item.set_icon_overlay(0, OVERRIDED_ICON)
 						_item.set_custom_color(0, override_item_color)
@@ -412,7 +445,10 @@ func _on_change_script(script : Script) -> void:
 				mthds.set_text(0, "Properties")
 				mthds.set_selectable(0, false)
 				mthds.set_icon(0, MEMBER_PROPERTY_ICON)
-				mthds.set_custom_color(0, PRIMARY_COLOR)
+				if use_colors_in_tittles:
+					mthds.set_custom_color(0, show_properties_color)
+				else:
+					mthds.set_custom_color(0, PRIMARY_COLOR)
 				meta = str("P", index)
 				mthds.set_metadata(0, meta)
 				mthds.set_icon_modulate(0, show_properties_color)
@@ -438,11 +474,14 @@ func _on_change_script(script : Script) -> void:
 						_item.set_icon(0, CONST_ICON)
 						_item.set_tooltip_text(0, str("const ", text))
 					elif fnc.begins_with(private_methods):
-						_item.set_icon(0, PRIVATE_ICON)
+						_item.set_icon(0, private_icon)
+						_item.set_icon_modulate(0, private_icon_modulate)
 					elif fnc.begins_with(protected_methods):
-						_item.set_icon(0, PROTECTED_ICON)
+						_item.set_icon(0, virtual_icon)
+						_item.set_icon_modulate(0, virtual_icon_modulate)
 					else:
-						_item.set_icon(0, PUBLIC_ICON)
+						_item.set_icon(0, public_icon)
+						_item.set_icon_modulate(0, public_icon_modulate)
 					if override:
 						_item.set_icon_overlay(0, OVERRIDED_ICON)
 						_item.set_custom_color(0, override_item_color)
@@ -461,7 +500,10 @@ func _on_change_script(script : Script) -> void:
 				mthds.set_text(0, "Signals")
 				mthds.set_selectable(0, false)
 				mthds.set_icon(0, MEMBER_SIGNAL_ICON)
-				mthds.set_custom_color(0, PRIMARY_COLOR)
+				if use_colors_in_tittles:
+					mthds.set_custom_color(0, show_signals_color)
+				else:
+					mthds.set_custom_color(0, PRIMARY_COLOR)
 				meta = str("S", index)
 				mthds.set_metadata(0, meta)
 				mthds.set_icon_modulate(0, show_signals_color)
@@ -497,7 +539,10 @@ func _on_change_script(script : Script) -> void:
 				mthds.set_text(0, "Constant")
 				mthds.set_selectable(0, false)
 				mthds.set_icon(0, MEMBER_CONSTANT_ICON)
-				mthds.set_custom_color(0, PRIMARY_COLOR)
+				if use_colors_in_tittles:
+					mthds.set_custom_color(0, show_constants_color)
+				else:
+					mthds.set_custom_color(0, PRIMARY_COLOR)
 				meta = str("I", index)
 				mthds.set_metadata(0, meta)
 				mthds.set_icon_modulate(0, show_constants_color)

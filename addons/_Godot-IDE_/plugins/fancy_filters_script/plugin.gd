@@ -97,11 +97,11 @@ func _exit_tree() -> void:
 	
 	var menu : MenuButton = IDE.get_file_menu_button()
 	var pop : PopupMenu = menu.get_popup()
-	
-	if _id_show_hide_tool > -1 and pop.item_count >= _id_toggle_position_tool:
-		pop.remove_item(_id_toggle_position_tool) 
-	if _id_show_hide_tool > -1 and pop.item_count >= _id_show_hide_tool:
-		pop.remove_item(_id_show_hide_tool) 
+	if pop:
+		if _id_show_hide_tool > -1 and pop.item_count >= _id_toggle_position_tool:
+			pop.remove_item(_id_toggle_position_tool) 
+		if _id_show_hide_tool > -1 and pop.item_count >= _id_show_hide_tool:
+			pop.remove_item(_id_show_hide_tool) 
 	
 	if is_instance_valid(_container) and _container.is_inside_tree():
 		IDE.set_config("fancy_filter_script", "script_list_and_filter_to_right", _container.get_index() > 0)
