@@ -7,7 +7,7 @@ extends Button
 # Addon for Godot
 # =============================================================================	
 
-func _ready() -> void:
+func update_settings() -> void:
 	var variant : Variant = owner.get(name)
 	if variant is bool:
 		button_pressed = variant
@@ -15,6 +15,10 @@ func _ready() -> void:
 	var value : Variant = owner.get(str(name, "_color"))
 	if value is Color:
 		modulate = value
+	
+
+func _ready() -> void:
+	update_settings()
 
 func _pressed() -> void:
 	if owner.has_method(&"enable_filter"):

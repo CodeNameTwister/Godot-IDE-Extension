@@ -113,6 +113,17 @@ static func get_editor_container() -> HSplitContainer:
 		return out
 	return null
 	
+## Raito must be 0.1 - 1.0
+static func get_screen_size(ratio : float = 1.0) -> Vector2:
+	var screen : Vector2 = DisplayServer.screen_get_size()
+	return screen * ratio
+	
+static func clamp_screen_size(current_size : Vector2, min_ratio : float = 0.0, max_ratio : float = 1.0) -> Vector2:
+	var screen : Vector2 = DisplayServer.screen_get_size()
+	var max_screen : Vector2 = screen * max_ratio
+	var min_screen : Vector2 = screen * min_ratio
+	return Vector2(max(min(current_size.x, max_screen.x), min_screen.x), max(min(current_size.y, max_screen.y), min_screen.y))
+	
 static func get_script_properties_list(script : Script, full : bool = true) -> Dictionary:
 	if script == null:
 		return {}

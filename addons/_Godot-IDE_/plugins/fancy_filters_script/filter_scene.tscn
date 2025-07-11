@@ -58,7 +58,6 @@ custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show inheritance"
 toggle_mode = true
-button_pressed = true
 icon = ExtResource("3_7xcf1")
 icon_alignment = 1
 script = ExtResource("2_djmkv")

@@ -40,30 +40,119 @@ var show_constants : bool = true
 var show_parent_class : bool = true
 var show_native_class : bool = false
 var show_functions : bool = true
-var show_inheritance : bool = true
+var show_inheritance : bool = false
 
 var show_properties_color : Color = Color.ORANGE
 var show_signals_color : Color = Color.GREEN
 var show_constants_color : Color = Color.CYAN
-var show_parent_class_color : Color = Color.WHITE_SMOKE
-var show_native_class_color : Color = Color.WHITE_SMOKE
+var show_parent_class_color : Color = Color.WHITE
+var show_native_class_color : Color = Color.WHITE
 var show_function_color : Color = Color.YELLOW
+
+var properties_color_item : Color = Color.WHITE
+var signals_color_item : Color = Color.WHITE
+var constants_color_item : Color = Color.WHITE
+#var parent_class_color_item : Color = Color.WHITE
+#var native_class_color_item : Color = Color.WHITE
+var function_color_item : Color = Color.WHITE
+var inheritance_color_item : Color = Color.CYAN
+
 #endregion
 
 var _buffer : Dictionary = {}
 var _last : Variant = null
 
+func _is_in_change(plugin : String, item : String, array : PackedStringArray) -> bool:
+	item = plugin.path_join(item)
+	for x : String in array:
+		if x.ends_with(item):
+			return true
+	return false
+
+func _setup(changes : PackedStringArray = []) -> void:
+	var PLUGIN : String = "fancy_filters_script"
+	var dirty : bool = false
+	for x : String in ["show_properties"
+			,"show_signals"
+			,"show_constants"
+			,"show_parent_class"
+			,"show_native_class"
+			,"show_functions"
+			,"show_inheritance"
+			]:
+		if changes.size() == 0 or _is_in_change(PLUGIN, x, changes):
+			var value : Variant = get(x)
+			if value is bool:
+				var current : Variant = IDE.get_config(PLUGIN, x)
+				if current is bool:
+					set(x, current)
+					dirty = true
+				else:
+					IDE.set_config(PLUGIN, x, value)
+			else:
+				push_warning("Its broke! > ", x)
+		
+	for x : String in [
+			"show_properties_color"
+			,"show_signals_color"
+			,"show_constants_color"
+			#,"show_parent_class_color"
+			#,"show_native_class_color"
+			,"show_function_color"
+			,"properties_color_item"
+			,"signals_color_item"
+			,"constants_color_item"
+			#,"parent_class_color_item"
+			#,"native_class_color_item"
+			,"function_color_item"
+			,"inheritance_color_item"
+			]:
+		if changes.size() == 0 or _is_in_change(PLUGIN, x, changes):
+			var value : Variant = get(x)
+			if value is Color:
+				var current : Variant = IDE.get_config(PLUGIN, x)
+				if current is Color:
+					set(x, current)
+					dirty = true
+				else:
+					IDE.set_config(PLUGIN, x, value)
+			else:
+				push_warning("Its broke! > ", x)
+
+	if changes.size() > 0 and dirty:
+		propagate_call(&"update_settings")
+		force_update()
+
+func _on_settings_changed() -> void:
+	var settings : EditorSettings = EditorInterface.get_editor_settings()
+	if settings:
+		var changes : PackedStringArray = settings.get_changed_settings()
+		_setup(changes)
+		
 func _enter_tree() -> void:
+	_setup()
+	
 	var editor : ScriptEditor = EditorInterface.get_script_editor()
 	if editor:
 		if !editor.editor_script_changed.is_connected(_on_change_script):
 			editor.editor_script_changed.connect(_on_change_script)
+	
+	var settings : EditorSettings = EditorInterface.get_editor_settings()
+	if settings:
+		if !settings.settings_changed.is_connected(_on_settings_changed):
+			settings.settings_changed.connect(_on_settings_changed)
+	
 		
 func _exit_tree() -> void:
 	var editor : ScriptEditor = EditorInterface.get_script_editor()
 	if editor:
 		if editor.editor_script_changed.is_connected(_on_change_script):
 			editor.editor_script_changed.disconnect(_on_change_script)
+	
+	var settings : EditorSettings = EditorInterface.get_editor_settings()
+	if settings:
+		if settings.settings_changed.is_connected(_on_settings_changed):
+			settings.settings_changed.disconnect(_on_settings_changed)
 
 func enable_filter(filter_name : StringName, value : bool) -> void:
 	if filter_name == &"show_all":
@@ -93,7 +182,9 @@ func _on_collapsed(item : TreeItem) -> void:
 	if meta is String:
 		_buffer[meta] = item.collapsed
 	
-func force_update() -> void:
+func _process(_delta: float) -> void:
+	set_process(false)
+	
 	var editor : ScriptEditor = EditorInterface.get_script_editor()
 	var sc : Script = _last	
 	_last = null
@@ -102,6 +193,9 @@ func force_update() -> void:
 		if nsc:
 			sc = nsc
 	_on_change_script(sc)
+	
+func force_update() -> void:
+	set_process(true)
 		
 func _on_activate() -> void:
 	if tree_container:
@@ -255,6 +349,11 @@ func _on_change_script(script : Script) -> void:
 		var sc_data : Dictionary = {}
 		var src : String = script.source_code
 		if show_functions:
+			var item_color : Color = SECONDARY_COLOR
+			var override_item_color : Color = inheritance_color_item
+			if function_color_item != Color.WHITE:
+				item_color = function_color_item
+			
 			sc_data = sc["functions"]
 			if sc_data.size() > 0:
 				var mthds : TreeItem = tree_item.create_child()
@@ -264,7 +363,7 @@ func _on_change_script(script : Script) -> void:
 				mthds.set_custom_color(0, PRIMARY_COLOR)
 				meta = str("F", index)
 				mthds.set_metadata(0, meta)
-				mthds.set_icon_modulate(0, Color.YELLOW)
+				mthds.set_icon_modulate(0, show_function_color)
 				if _buffer.has(meta):
 					mthds.collapsed = _buffer[meta]
 				for fnc : String in sc_data.keys():
@@ -296,12 +395,19 @@ func _on_change_script(script : Script) -> void:
 						_item.set_icon(0, PUBLIC_ICON)
 					if override:
 						_item.set_icon_overlay(0, OVERRIDED_ICON)
-					_item.set_custom_color(0, SECONDARY_COLOR)
+						_item.set_custom_color(0, override_item_color)
+					else:
+						_item.set_custom_color(0, item_color)
 					_item.set_text(0, text)
 						
 		if show_properties:
 			sc_data = sc["properties"]
 			if sc_data.size() > 0:
+				var item_color : Color = SECONDARY_COLOR
+				var override_item_color : Color = inheritance_color_item
+				if properties_color_item != Color.WHITE:
+					item_color = properties_color_item
+					
 				var mthds : TreeItem = tree_item.create_child()
 				mthds.set_text(0, "Properties")
 				mthds.set_selectable(0, false)
@@ -309,7 +415,7 @@ func _on_change_script(script : Script) -> void:
 				mthds.set_custom_color(0, PRIMARY_COLOR)
 				meta = str("P", index)
 				mthds.set_metadata(0, meta)
-				mthds.set_icon_modulate(0, Color.ORANGE)
+				mthds.set_icon_modulate(0, show_properties_color)
 				if _buffer.has(meta):
 					mthds.collapsed = _buffer[meta]
 				for fnc : String in sc_data.keys():
@@ -322,7 +428,6 @@ func _on_change_script(script : Script) -> void:
 					var _item : TreeItem = mthds.create_child()
 					var text : String = "{0} : {1}".format([packed[0], packed[1]])
 					_item.set_text(0, text)
-					_item.set_custom_color(0, SECONDARY_COLOR)
 					if "export" in packed:
 						_item.set_icon(0, EXPORT_ICON)
 						_item.set_tooltip_text(0, str("@export var ", text))
@@ -340,10 +445,18 @@ func _on_change_script(script : Script) -> void:
 						_item.set_icon(0, PUBLIC_ICON)
 					if override:
 						_item.set_icon_overlay(0, OVERRIDED_ICON)
+						_item.set_custom_color(0, override_item_color)
+					else:
+						_item.set_custom_color(0, item_color)
 						
 		if show_signals:
 			sc_data = sc["signals"]
 			if sc_data.size() > 0:
+				var item_color : Color = SECONDARY_COLOR
+				var override_item_color : Color = inheritance_color_item
+				if signals_color_item != Color.WHITE:
+					item_color = signals_color_item
+					
 				var mthds : TreeItem = tree_item.create_child()
 				mthds.set_text(0, "Signals")
 				mthds.set_selectable(0, false)
@@ -351,7 +464,7 @@ func _on_change_script(script : Script) -> void:
 				mthds.set_custom_color(0, PRIMARY_COLOR)
 				meta = str("S", index)
 				mthds.set_metadata(0, meta)
-				mthds.set_icon_modulate(0, Color.GREEN)
+				mthds.set_icon_modulate(0, show_signals_color)
 				if _buffer.has(meta):
 					mthds.collapsed = _buffer[meta]
 				for fnc : String in sc_data.keys():
@@ -365,15 +478,21 @@ func _on_change_script(script : Script) -> void:
 					_item.set_text(0, "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]]))
 					
 					_item.set_icon(0, MEMBER_SIGNAL_ICON)
-					_item.set_custom_color(0, SECONDARY_COLOR)
-					if show_inheritance and "overrided" in packed:
-						_item.set_icon_overlay(0, OVERRIDED_ICON)
 					if override:
 						_item.set_icon_overlay(0, OVERRIDED_ICON)
+						_item.set_custom_color(0, override_item_color)
+					else:
+						_item.set_custom_color(0, item_color)
+						
 					
 		if show_constants:
 			sc_data = sc["constants"]
 			if sc_data.size() > 0:
+				var item_color : Color = SECONDARY_COLOR
+				var override_item_color : Color = inheritance_color_item
+				if constants_color_item != Color.WHITE:
+					item_color = constants_color_item
+					
 				var mthds : TreeItem = tree_item.create_child()
 				mthds.set_text(0, "Constant")
 				mthds.set_selectable(0, false)
@@ -381,7 +500,7 @@ func _on_change_script(script : Script) -> void:
 				mthds.set_custom_color(0, PRIMARY_COLOR)
 				meta = str("I", index)
 				mthds.set_metadata(0, meta)
-				mthds.set_icon_modulate(0, Color.CYAN)
+				mthds.set_icon_modulate(0, show_constants_color)
 				if _buffer.has(meta):
 					mthds.collapsed = _buffer[meta]
 				for fnc : String in sc_data.keys():
@@ -394,14 +513,19 @@ func _on_change_script(script : Script) -> void:
 					var _item : TreeItem = mthds.create_child()
 					_item.set_text(0, "{0} : {1}".format([packed[0], packed[1]]))
 					_item.set_icon(0, MEMBER_CONSTANT_ICON)
-					_item.set_custom_color(0, SECONDARY_COLOR)
 					if override:
 						_item.set_icon_overlay(0, OVERRIDED_ICON)
+						_item.set_custom_color(0, override_item_color)
+					else:
+						_item.set_custom_color(0, item_color)
+						
 					
 func _ready() -> void:
 	var editor : ScriptEditor  = EditorInterface.get_script_editor()
 	if editor:
 		var sc : Script = editor.get_current_script()
 		if sc:
+			set_process(false)
 			_on_change_script(sc)
-	
+			return
+	set_process(true)
