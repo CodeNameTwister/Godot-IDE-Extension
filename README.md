@@ -61,7 +61,7 @@ In Issue tab, you can write you request/changes for the future of this plugin.
 * Fancy Search Files
 	* [Ctrl + Atl + Space] Invoke Easy Searcher Window
 
-* Fancy Search Files
+* Fancy Search Class Files
 	* [Atl + Delete] Invoke Easy Searcher Window
 
 * Fancy Filters Script
