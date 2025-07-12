@@ -226,9 +226,9 @@ func _on_activate() -> void:
 				var lines : PackedStringArray = script_content.split("\n", true)
 				var line_number : int = -1
 
-				var pattern : RegEx = RegEx.create_from_string("[\\n\\t\\s]*var[\\n\\t\\s]+\\b" + symbol_name + "\\b.*|\\s*const[\\n\\t\\s]+\\b" + symbol_name + "\\b.*|\\s*func[\\n\\t\\s]+\\b" + symbol_name + "|\\s*signal[\\n\\t\\s]+\\b" + symbol_name)
+				var pattern : RegEx = RegEx.create_from_string("[\\s]*var[\\n\\t\\s]+\\b" + symbol_name + "\\b.*|\\s*const[\\n\\t\\s]+\\b" + symbol_name + "\\b.*|\\s*func[\\n\\t\\s]+\\b" + symbol_name + "|\\s*signal[\\n\\t\\s]+\\b" + symbol_name)
 				for x : int in range(lines.size()):
-					var line = lines[x]
+					var line : String = lines[x]
 					if pattern.search(line):
 						line_number = x
 						break
@@ -245,6 +245,7 @@ func _on_activate() -> void:
 				var base : Script = current.get_base_script()	
 				if base != null:
 					current = base
+					continue
 				break
 			var type : StringName = current.get_instance_base_type()
 			while !type.is_empty():
