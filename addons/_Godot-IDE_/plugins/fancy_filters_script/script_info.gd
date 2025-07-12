@@ -238,9 +238,8 @@ func _on_activate() -> void:
 					if !sce:
 						return
 					if sce.get_current_script() != current:
-						EditorInterface.edit_script(current, line_number, 0)
-					else:
-						sce.goto_line(line_number)
+						EditorInterface.edit_script(current, line_number, 0, true)
+					sce.goto_line(line_number)
 					return
 				var base : Script = current.get_base_script()	
 				if base != null:
