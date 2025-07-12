@@ -7,9 +7,18 @@ Godot IDE Extension
 
 This addon extend Godot Features
 
-![Preview](images/preview0.png)
+## Table of contents
 
-### This repository contain work from:
+- [Preview](#preview)
+- [Features](#this-repository-contain-work-from)
+- [How-Work-Usign-Tips](#quick-tips-)
+- [Special Thanks](#special-thanks-)
+
+# Preview
+![Preview0](images/preview0.png)
+![Preview1](images/preview1.png)
+
+## This repository contain work from
 How it works is also described in each link.
 
 * Multi Split Container:
@@ -30,22 +39,8 @@ How it works is also described in each link.
 # Objetive
 The goal of this project is to provide godot with some additional features without worrying about adding extra load to the CPU if it means improving the development experience.
 
-# How contribute
 
-### Make new plugin
-To add a plugin that works alongside Godot-IDE, simply create a plugin as you normally would and add it to the \_Godot-IDE\_/plugins folder.
-
->[!TIP]
-> The Godot-IDE search by plugin.cfg file what file should enable.
-
-### Make a Request
-In Issue tab, you can write you request/changes for the future of this plugin.
-
-### FAQ
-* Why called \_Godot-IDE\_ folder?
-	* This is due to the way addons are loaded in Godot, currently in alphabetical order giving priority to this addon avoiding any incompatibility for the plugins.
-
-# Quick Tips
+# Quick Tips [↑](#table-of-contents)
 
 * Script Spliter:
 	* Can use [Ctrl + 1, Ctrl + 2, Ctrl + 3, Ctrl + 4] for change of type split (Required more than 1 script opened)
@@ -68,7 +63,22 @@ In Issue tab, you can write you request/changes for the future of this plugin.
 	* In File tab on editor, you can Show/Hide/Toggle The neighbor panel of the editor.
 
 
-# TODO
+# How contribute [↑](#table-of-contents)
+
+### Make new plugin [↑](#table-of-contents)
+To add a plugin that works alongside Godot-IDE, simply create a plugin as you normally would and add it to the \_Godot-IDE\_/plugins folder.
+
+>[!TIP]
+> The Godot-IDE search by plugin.cfg file what file should enable.
+
+### Make a Request
+In Issue tab, you can write you request/changes for the future of this plugin.
+
+# FAQ [↑](#table-of-contents)
+* Why called \_Godot-IDE\_ folder?
+	* This is due to the way addons are loaded in Godot, currently in alphabetical order giving priority to this addon avoiding any incompatibility for the plugins.
+
+# TODO 
 * Documentation.
 
 
@@ -79,6 +89,12 @@ In Issue tab, you can write you request/changes for the future of this plugin.
 >
 > Now use it, break it, modify it, fix it, and improve it to your liking.
 
+# Special Thanks 📜 
+This section lists users who have contributed to improving the quality of this project.
+
+[@kyrosle](https://github.com/kyrosle)
+
+# 
 Copyrights (c) CodeNameTwister. See [LICENSE](LICENSE) for details.
 
 [godot engine]: https://godotengine.org/
