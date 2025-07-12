@@ -14,6 +14,8 @@ const STATIC_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resourc
 const CONST_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/static.svg")
 const EXPORT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberAnnotation.svg")
 const OVERRIDED_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MethodOverride.svg")
+const CHECKED_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/check.svg")
+
 var DOTS_ICON : Texture2D = null
 
 const SCRIPT_TOOL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/Tools.svg")
@@ -24,9 +26,9 @@ const SCRIPT_NATIVE_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_
 
 const MEMBER_ANNOTATION_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberAnnotation.svg")
 const MEMBER_CONSTANT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberConstant.svg")
-const MEMBER_CONSTRUCTOR_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberConstructor.svg")
+#const MEMBER_CONSTRUCTOR_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberConstructor.svg")
 const MEMBER_METHOD_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberMethod.svg")
-const MEMBER_OPERATOR_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberOperator.svg")
+#const MEMBER_OPERATOR_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberOperator.svg")
 const MEMBER_PROPERTY_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberProperty.svg")
 const MEMBER_SIGNAL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberSignal.svg")
 const MEMBER_OVERRIDE_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MethodOverride.svg")
@@ -63,6 +65,8 @@ var inheritance_color_item : Color = Color.CYAN
 
 #endregion
 
+var _pop : Popup = null
+
 var _buffer : Dictionary = {}
 var _last : Variant = null
 
@@ -77,15 +81,15 @@ func _setup(changes : PackedStringArray = []) -> void:
 	var PLUGIN : String = "fancy_filters_script"
 	var dirty : bool = false
 	for x : String in ["show_properties"
-			,"show_signals"
-			,"show_constants"
-			,"show_parent_class"
-			,"show_native_class"
-			,"show_functions"
-			,"show_inheritance"
-			,"use_colors_in_tittles"
-			,"use_dots_as_item_icons"
-			]:
+		,"show_signals"
+		,"show_constants"
+		,"show_parent_class"
+		,"show_native_class"
+		,"show_functions"
+		,"show_inheritance"
+		,"use_colors_in_tittles"
+		,"use_dots_as_item_icons"
+		]:
 		if changes.size() == 0 or _is_in_change(PLUGIN, x, changes):
 			var value : Variant = get(x)
 			if value is bool:
@@ -99,20 +103,20 @@ func _setup(changes : PackedStringArray = []) -> void:
 				push_warning("Its broke! > ", x)
 		
 	for x : String in [
-			"show_properties_color"
-			,"show_signals_color"
-			,"show_constants_color"
+		"show_properties_color"
+		,"show_signals_color"
+		,"show_constants_color"
 			#,"show_parent_class_color"
 			#,"show_native_class_color"
-			,"show_function_color"
-			,"properties_color_item"
-			,"signals_color_item"
-			,"constants_color_item"
+		,"show_function_color"
+		,"properties_color_item"
+		,"signals_color_item"
+		,"constants_color_item"
 			#,"parent_class_color_item"
 			#,"native_class_color_item"
-			,"function_color_item"
-			,"inheritance_color_item"
-			]:
+		,"function_color_item"
+		,"inheritance_color_item"
+		]:
 		if changes.size() == 0 or _is_in_change(PLUGIN, x, changes):
 			var value : Variant = get(x)
 			if value is Color:
@@ -198,7 +202,7 @@ func _process(_delta: float) -> void:
 	set_process(false)
 	
 	var editor : ScriptEditor = EditorInterface.get_script_editor()
-	var sc : Script = _last	
+	var sc : Script = _last
 	_last = null
 	if editor:
 		var nsc : Script = editor.get_current_script()
@@ -241,7 +245,7 @@ func _on_activate() -> void:
 						EditorInterface.edit_script(current, line_number, 0, true)
 					sce.goto_line(line_number)
 					return
-				var base : Script = current.get_base_script()	
+				var base : Script = current.get_base_script()
 				if base != null:
 					current = base
 					continue
@@ -280,7 +284,133 @@ func _on_activate() -> void:
 					type = ClassDB.get_parent_class(type)
 					continue
 				break
+	
+func _copy(fnc : String,data : String, type : int) -> void:
+	if type == 1:
+		data = data.trim_prefix("func ").split(")", false, 1)[0] + ")"
+	elif type == 2:
+		var packed : PackedStringArray = data.trim_prefix("func ").split("(", false, 1)
+		data = packed[0] + ".emit("
+		data += packed[1].split(")", true, 1)[0] + ")"
+	elif type == 3:
+		data = fnc
+	else:
+		var packed : PackedStringArray = data.split("\n", false, 0)
+		if packed.size() > 1:
+			data = str(packed[0], " ", packed[packed.size() - 1].strip_edges())
+	DisplayServer.clipboard_set(data)
+	print("Copied in clipboard: [", fnc, "] use ctrl + v for paste!")
+				
+func _on_pop_selection(option : StringName, item : TreeItem) -> void:
+	if is_instance_valid(item):
+		var parent : TreeItem = item.get_parent()
+		if parent:
+			if option == &"goto":
+				tree_container.item_activated.emit()
+			elif option == &"copy" or option == &"override_copy":
+				var icon : Texture2D = parent.get_icon(0)
+				if icon == null:
+					return
+				var itype : int = 3
+				if icon == MEMBER_METHOD_ICON:
+					if option == &"override_copy":
+						itype = 0
+					else:
+						itype = 1
+				elif icon == MEMBER_SIGNAL_ICON:
+					itype = 2
+				var editor : ScriptEditor = EditorInterface.get_script_editor()
+				if editor:
+					var sc : Script = editor.get_current_script()
+					if sc:
+						var func_ : StringName = item.get_text(0).get_slice(" ", 0)
+						if itype == 3:
+							_copy(func_, func_, itype)
+							return
+						if itype != 2:
+							var base : Script = sc
+							while base != null:
+								for d : Dictionary in base.get_script_method_list():
+									if d.name == func_:
+										_copy(func_, IDE.get_header_function(d),itype)
+										return
+								for d : Dictionary in base.get_method_list():
+									if d.name == func_:
+										_copy(func_, IDE.get_header_function(d),itype)
+										return
+								var nbase : Script = base.get_base_script()
+								if nbase != null:
+									base = nbase
+								break
+							if base != null:
+								var type : StringName = base.get_instance_base_type()
+								if ClassDB.class_exists(type):
+									for d : Dictionary in ClassDB.class_get_method_list(type, false):
+										if d.name == func_:
+											_copy(func_, IDE.get_header_function(d),itype)
+											return
+						else:
+							var base : Script = sc
+							while base != null:
+								for d : Dictionary in base.get_script_signal_list():
+									if d.name == func_:
+										_copy(func_, IDE.get_header_function(d),itype)
+										return
+								for d : Dictionary in base.get_signal_list():
+									if d.name == func_:
+										_copy(func_, IDE.get_header_function(d),itype)
+										return
+								var nbase : Script = base.get_base_script()
+								if nbase != null:
+									base = nbase
+								break
+							if base != null:
+								var type : StringName = base.get_instance_base_type()
+								if ClassDB.class_exists(type):
+									for d : Dictionary in ClassDB.class_get_signal_list(type, false):
+										if d.name == func_:
+											_copy(func_, IDE.get_header_function(d),itype)
+											return
+				
 
+func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
+	if mouse_button_index == MOUSE_BUTTON_RIGHT:
+		var editor : ScriptEditor = EditorInterface.get_script_editor()
+		if editor:
+			var sc : Script = editor.get_current_script()
+			if !is_instance_valid(sc):
+				print("[INFO] The current editor does not have script focus!")
+				return
+		
+		var item : TreeItem = tree_container.get_selected()
+		if item:
+			var parent : TreeItem = item.get_parent()
+			if parent:
+				var icon : Texture2D = parent.get_icon(0)
+				if icon == null:
+					return
+				for x : Texture2D in [
+					MEMBER_CONSTANT_ICON,
+					MEMBER_METHOD_ICON,
+					MEMBER_SIGNAL_ICON,
+					MEMBER_PROPERTY_ICON
+					]:
+						if icon == x:
+							var is_first : bool = true
+							parent = parent.get_parent()
+							if parent and parent.get_index() > 0:
+								is_first = false
+							if !is_instance_valid(_pop):
+								var res : PackedScene = ResourceLoader.load("res://addons/_Godot-IDE_/plugins/fancy_filters_script/pop_tree.tscn")
+								_pop = res.instantiate()
+								add_child(_pop)
+							_pop.callback = _on_pop_selection.bind(item)
+							_pop.enable_copy_override(!is_first and MEMBER_METHOD_ICON == icon)
+							
+							_pop.position = get_global_mouse_position() # IDE.clamp
+							_pop.popup()
+							return
+			
 func _on_change_script(script : Script) -> void:
 	if _last == script:
 		return
@@ -305,6 +435,11 @@ func _on_change_script(script : Script) -> void:
 	
 	if !tree_container.item_activated.is_connected(_on_activate):
 		tree_container.item_activated.connect(_on_activate)
+		
+	if !tree_container.item_mouse_selected.is_connected(_on_mouse):
+		tree_container.allow_rmb_select = true
+		tree_container.item_mouse_selected.connect(_on_mouse)
+		
 	
 	var private_methods : String = IDE.PRIVATE_METHODS
 	var protected_methods : String = IDE.VIRTUAL_METHODS
@@ -337,6 +472,8 @@ func _on_change_script(script : Script) -> void:
 		virtual_icon_modulate = Color.REBECCA_PURPLE
 	
 	var index : int = -1
+	var src : String = script.source_code
+	var track_override : Dictionary[StringName, bool] = {}
 	for sc : Dictionary in data.values():
 		index += 1
 		if index > 0:
@@ -374,7 +511,6 @@ func _on_change_script(script : Script) -> void:
 		tree_item.set_selectable(0, false)
 		
 		var sc_data : Dictionary = {}
-		var src : String = script.source_code
 		if show_functions:
 			var item_color : Color = SECONDARY_COLOR
 			var override_item_color : Color = inheritance_color_item
@@ -407,6 +543,7 @@ func _on_change_script(script : Script) -> void:
 							if !show_inheritance:
 								if null == RegEx.create_from_string("func[\\s\\t\\n]*\\b{0}[\\s\\t\\n]*\\(".format([fnc])).search(src):
 									continue
+							track_override[fnc] = true
 						override = show_inheritance
 						
 					var _item : TreeItem = mthds.create_child()
@@ -431,6 +568,9 @@ func _on_change_script(script : Script) -> void:
 						_item.set_custom_color(0, override_item_color)
 					else:
 						_item.set_custom_color(0, item_color)
+					if index > 0:
+						if track_override.has(fnc):
+							_item.set_icon_overlay(0, CHECKED_ICON)
 					_item.set_text(0, text)
 						
 		if show_properties:

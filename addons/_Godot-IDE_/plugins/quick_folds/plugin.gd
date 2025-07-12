@@ -21,26 +21,57 @@ const KEYS : PackedInt32Array = [
 	KEY_0
 	]
 	
+var _inputs : Array[InputEvent] = []
+var _inverted_inputs : Array[InputEvent] = []
+	
+func _init() -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		var key1 : String = "plugin/quick_folds/input/fold_type_"
+		var key2 : String = "plugin/quick_folds/input/inverted_fold_type_"
+		for z : Array in [[key1, _inputs, false], [key2, _inverted_inputs, true]]:
+			for x : int in range(0, KEYS.size(), 1):
+				var key_token : String = str(z[0], x + 1)
+				var _input : InputEvent = null
+				if editor.has_setting(key_token):
+					var variant : Variant = editor.get_setting(key_token)
+					if variant is InputEvent:
+						_input = variant
+						z[1].append(_input)
+						continue
+				_input = InputEventKey.new()
+				_input.pressed = true
+				_input.alt_pressed = true
+				_input.shift_pressed = z[2]
+				_input.keycode = KEYS[x]
+				editor.set_setting(key_token, _input)
+				z[1].append(_input)
+				
+	set_process_unhandled_input(_inputs.size() > 0 or _inverted_inputs.size() > 0)
+	
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		if event.pressed and event.alt_pressed:
-			var index : int = KEYS.find(event.keycode)
-			if index > -1:
-				folding(index, event.shift_pressed)
+	if event.is_pressed():
+		for x : InputEvent in _inputs:
+			if event.is_match(x):
+				var index : int = _inputs.find(x)
+				if index > -1:
+					folding(index, false)
+				return
+		for x : InputEvent in _inverted_inputs:
+			if event.is_match(x):
+				var index : int = _inverted_inputs.find(x)
+				if index > -1:
+					folding(index, true)
+				return
 
 func _show_error(msg : String = 'Error, on try fold editor!') -> void:
 	push_warning(msg)
 
 func folding(level: int, from_back : bool) -> void:
-	var interface : EditorInterface = get_editor_interface()
 	var script_editor : ScriptEditor = null
 	var editor : ScriptEditorBase = null
 	
-	if !is_instance_valid(interface):
-		_show_error()
-		return
-		
-	script_editor = interface.get_script_editor()
+	script_editor = EditorInterface.get_script_editor()
 	
 	if !is_instance_valid(script_editor):
 		_show_error()

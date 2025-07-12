@@ -20,6 +20,22 @@ const ICON_ADD_ROW : Texture = preload("res://addons/_Godot-IDE_/plugins/script_
 const ICON_REMOVE_ROW : Texture = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/split_rminus.svg")
 const ICON_FLOATING : Texture = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/atop.png")
 const ICON_TAB : Texture = preload("res://addons/_Godot-IDE_/plugins/script_spliter/assets/tab_icon.svg")
+	
+const SPLIT_TYPES : Array[Array] = [
+	[0, 0], 
+	[2, 1], 
+	[1, 2], 
+	[3, 1], 
+	[1, 3], 
+	[2, 2], 
+	[3, 3], 
+	[4, 4], 
+	[5, 5], 
+	[6, 6], 
+	[7, 7]
+	]
+	
+var _inputs : Array[InputEvent] = []
 
 var _rmb_editor_add_split : EditorContextMenuPlugin = null
 var _rmb_editor_remove_split: EditorContextMenuPlugin = null
@@ -110,8 +126,34 @@ func _on_change_settings() -> void:
 		
 		if &"plugin/script_spliter/behaviour/refresh_warnings_on_save" in changes:
 			_refresh_warnings_on_save = settings.get_setting(&"plugin/script_spliter/behaviour/refresh_warnings_on_save")
+	
 			
 func _init() -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		var KEYS : PackedInt64Array = [
+			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0
+		]
+		var key : String = "plugin/script_spliter/input/spliy_type_"
+		
+		for x : int in range(0, mini(SPLIT_TYPES.size(), KEYS.size()), 1):
+			var key_token : String = str(key, x + 1)
+			var __input : InputEvent = null
+			if editor.has_setting(key_token):
+				var variant : Variant = editor.get_setting(key_token)
+				if variant is InputEvent:
+					__input = variant
+					_inputs.append(__input)
+					continue
+			__input = InputEventKey.new()
+			__input.pressed = true
+			__input.ctrl_pressed = true
+			__input.keycode = KEYS[x]
+			editor.set_setting(key_token, __input)
+			__input.append(__input)
+			
+	set_process_input(_inputs.size() > 0)
+	
 	var o : Object = _tab_container
 	if o == null:
 		#push_warning("[Script-Spliter] 0x000A")
@@ -284,13 +326,13 @@ func _setup(input : int) -> void:
 				settings.set_setting(&"plugin/script_spliter/rows", _rows)
 				settings.set_setting(&"plugin/script_spliter/columns", _columns)
 
-func _can_close_tab_in_split(path : PackedStringArray) -> bool:
+func _can_close_tab_in_split(_path : PackedStringArray) -> bool:
 	return _builder.has_other_tabs()
 	
-func _can_close_right_tab_in_split(path : PackedStringArray) -> bool:
+func _can_close_right_tab_in_split(_path : PackedStringArray) -> bool:
 	return _builder.has_right_tabs()
 	
-func _can_close_left_tab_in_split(path : PackedStringArray) -> bool:
+func _can_close_left_tab_in_split(_path : PackedStringArray) -> bool:
 	return _builder.has_left_tabs()
 
 func _close_all_tabs_in_split(__ : Variant) -> void:
@@ -436,17 +478,10 @@ func _notification(what: int) -> void:
 			_builder.free()
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		if event.pressed and event.ctrl_pressed:
-			if event.keycode == 49:
-				set_type_split(0, 0)
-			elif event.keycode == 50:
-				set_type_split(2, 1)
-			elif event.keycode == 51:
-				set_type_split(1, 2)
-			elif event.keycode == 52:
-				set_type_split(3, 1)
-			elif event.keycode == 53:
-				set_type_split(1, 3)
-			elif event.keycode == 54:
-				set_type_split(2, 2)
+	if event.is_pressed():
+		for x : InputEvent in _inputs:
+			if event.is_match(x, true):
+				var z : int = _inputs.find(x)
+				if z > -1:
+					var matched : Array = SPLIT_TYPES[z]
+					set_type_split(matched[0], matched[1])

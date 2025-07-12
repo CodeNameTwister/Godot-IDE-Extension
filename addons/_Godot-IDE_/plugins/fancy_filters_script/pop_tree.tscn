@@ -1,0 +1,75 @@
+[gd_scene load_steps=4 format=3 uid="uid://d1v4xxafti6nw"]
+
+[ext_resource type="Script" uid="uid://cmcd05m1t5hwr" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/pop_tree.gd" id="1_x40uf"]
+[ext_resource type="Script" uid="uid://b1v225muollg5" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/button.gd" id="2_l7727"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l7727"]
+content_margin_left = 3.0
+content_margin_top = 3.0
+content_margin_right = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0.1155, 0.132, 0.1595, 1)
+corner_detail = 1
+anti_aliasing = false
+
+[node name="PopTree" type="Popup" node_paths=PackedStringArray("override_copy_button")]
+title = "Member Selected"
+initial_position = 4
+size = Vector2i(156, 184)
+visible = true
+content_scale_aspect = 4
+script = ExtResource("1_x40uf")
+override_copy_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/override_copy")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l7727")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Select Option"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="copy" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Copy"
+script = ExtResource("2_l7727")
+
+[node name="override_copy" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Copy for override"
+script = ExtResource("2_l7727")
+
+[node name="goto" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Go To Member"
+script = ExtResource("2_l7727")
+
+[node name="close" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Close"
+script = ExtResource("2_l7727")
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="popup_hide" from="." to="." method="_on_popup_hide"]

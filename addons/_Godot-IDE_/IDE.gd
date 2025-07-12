@@ -436,6 +436,92 @@ static func get_file_config_value(section : String, key : String) -> Variant:
 	
 #endregion
 # =============================================================================	
+static func clamp_rect_to_screen(to_clamp_rect: Rect2, max_aviable_rect : Rect2) -> Rect2:
+	
+	if to_clamp_rect.position.x < max_aviable_rect.position.x:
+		to_clamp_rect.position.x = max_aviable_rect.position.x
+	elif to_clamp_rect.position.x + to_clamp_rect.size.x > max_aviable_rect.position.x + max_aviable_rect.size.x:
+		to_clamp_rect.position.x = max_aviable_rect.position.x + max_aviable_rect.size.x - to_clamp_rect.size.x
+
+	if to_clamp_rect.position.y < max_aviable_rect.position.y:
+		to_clamp_rect.position.y = max_aviable_rect.position.y
+	elif to_clamp_rect.position.y + to_clamp_rect.size.y > max_aviable_rect.position.y + max_aviable_rect.size.y:
+		to_clamp_rect.position.y = max_aviable_rect.position.y + max_aviable_rect.size.y - to_clamp_rect.size.y
+		
+	if to_clamp_rect.size.x > max_aviable_rect.size.x:
+		to_clamp_rect.position.x = max_aviable_rect.position.x + (max_aviable_rect.size.x - to_clamp_rect.size.x) / 2
+	if to_clamp_rect.size.y > max_aviable_rect.size.y:
+		to_clamp_rect.position.y = max_aviable_rect.position.y + (max_aviable_rect.size.y - to_clamp_rect.size.y) / 2
+
+	return to_clamp_rect
+
+
+static func get_header_function(dict : Dictionary) -> String:
+	var params : String = ""
+	var args : Array = dict["args"]
+	var separator : String = ""
+	var default_args : Array = dict["default_args"]
+	var _default_index : int = default_args.size()
+
+	for y : int in range(args.size() - 1, -1, -1):
+		var arg : Dictionary = args[y]
+		var txt : String = arg["name"]
+		if !(arg["class_name"]).is_empty():
+			txt += str(" : ", arg["class_name"] as String)
+		else:
+			var _typeof : int = arg["type"]
+			txt += str(" : ", IDE.get_type(_typeof))
+		if _default_index > 0:
+			_default_index -= 1
+			var def : Variant = default_args[_default_index]
+			var _type : int = typeof(def)
+			if def == null or _type < 1:
+				txt += str(' = null')
+			elif _type < 5:
+				if def is String:
+					txt += str(' = "', def, '"')
+				elif def is StringName:
+					txt += str(' = &"', def, '"')
+				else:
+					txt += str(" = ", def)
+			else:
+				txt += str(" = ", IDE.get_type(typeof(def)), def)
+		params = str(txt, separator, params)
+		separator = ", "
+
+	var return_dic : Dictionary = dict["return"]
+	var return_type : String = "void"
+	var return_value : String = "pass"
+	if !return_dic["class_name"].is_empty():
+		return_type = (return_dic["class_name"] as String)
+		return_value = "return null"
+	else:
+		var _type : int = return_dic["type"]
+		if _type < 1:
+			var func_name : String = str(dict["name"]).to_lower()
+			if func_name == "get" or __is_variant(func_name):
+				return_type = "Variant"
+				return_value = "return null"
+			else:
+				return_type = "void"
+		else:
+			return_type = IDE.get_type(return_dic["type"])
+			if _type == TYPE_INT:
+				return_value = "return 0"
+			elif _type == TYPE_BOOL:
+				return_value = "return false"
+			elif _type == TYPE_FLOAT:
+				return_value = "return 0.0"
+			elif _type == TYPE_STRING:
+				return_value = 'return ""'
+			elif _type == TYPE_ARRAY:
+				return_value = "return []"
+			else:
+				return_value = str("return ", return_type,"()")
+	return "func {0}({1}) -> {2}:\n\t#TODO: code here :)\n\t{3}".format([dict["name"], params, return_type, return_value])
+
+
+
 static func _get_header_virtual(dict : Dictionary, include_paremeters : bool = true) -> String:
 	var params : String = ""
 	var separator : String = ""

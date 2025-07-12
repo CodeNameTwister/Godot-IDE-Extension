@@ -73,7 +73,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_properties" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(0.807137, 0.2603, 0.11, 1)
+modulate = Color(2.69532e-06, 0.718619, 0.968396, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show Properties"
@@ -84,7 +84,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_signals" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(0.00765471, 0.952086, 0.879498, 1)
+modulate = Color(0.948314, 0.457252, 0.513914, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show Signals"
@@ -95,7 +95,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_constants" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(0, 1, 1, 1)
+modulate = Color(0.493226, 0.822195, 0, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show Constants"

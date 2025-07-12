@@ -195,7 +195,6 @@ func update() -> void:
 func _update() -> void:
 	var fs : EditorFileSystem = EditorInterface.get_resource_filesystem()
 	if fs:
-		var texture : Texture2D = _default_tx
 		var fd : EditorFileSystemDirectory = fs.get_filesystem()
 		if fd:
 			for x : int in range(1, _container.get_child_count(), 1):
