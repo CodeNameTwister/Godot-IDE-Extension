@@ -11,7 +11,7 @@ This addon extend Godot Features
 
 - [Preview](#preview)
 - [Features](#this-repository-contain-work-from)
-- [How-Work-Usign-Tips](#quick-tips-)
+- [How Work Usign Tips](#quick-tips-)
 - [Special Thanks](#special-thanks-)
 
 # Preview
