@@ -33,6 +33,14 @@ const MEMBER_PROPERTY_ICON : Texture2D = preload("res://addons/_Godot-IDE_/share
 const MEMBER_SIGNAL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MemberSignal.svg")
 const MEMBER_OVERRIDE_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MethodOverride.svg")
 
+enum SORT_NAME_TYPE{
+	NONE = 0,
+	ORDER_NAME_NORMAL = 1,
+	ORDER_NAME_INVERT = 2#,
+	#ORDER_ACCESSIBILITY_NORMAL,
+	#ORDER_ACCESSIBILITY_INVERT
+}
+
 @export var button_container : Control = null
 @export var tree_container : Tree = null
 
@@ -63,6 +71,9 @@ var constants_color_item : Color = Color.WHITE
 var function_color_item : Color = Color.WHITE
 var inheritance_color_item : Color = Color.CYAN
 
+	
+var members_order_by : Array[int] = [0,1,2,3]
+var name_order_by : SORT_NAME_TYPE = SORT_NAME_TYPE.NONE
 #endregion
 
 var _pop : Popup = null
@@ -76,11 +87,25 @@ func _is_in_change(plugin : String, item : String, array : PackedStringArray) ->
 		if x.ends_with(item):
 			return true
 	return false
-
+	
+#func update_members_order(sort : Array[int]) -> void:
+	#members_order_by = sort
+	#if is_node_ready():
+		#force_update()
+#
+#func update_name_order(type : SORT_NAME_TYPE) -> void:
+	#if type < 0 or type > 2:
+		#return
+	#name_order_by = type
+	#if is_node_ready():
+		#force_update()
+		
 func _setup(changes : PackedStringArray = []) -> void:
 	var PLUGIN : String = "fancy_filters_script"
 	var dirty : bool = false
-	for x : String in ["show_properties"
+
+	for x : String in [
+		"show_properties"
 		,"show_signals"
 		,"show_constants"
 		,"show_parent_class"
@@ -89,21 +114,7 @@ func _setup(changes : PackedStringArray = []) -> void:
 		,"show_inheritance"
 		,"use_colors_in_tittles"
 		,"use_dots_as_item_icons"
-		]:
-		if changes.size() == 0 or _is_in_change(PLUGIN, x, changes):
-			var value : Variant = get(x)
-			if value is bool:
-				var current : Variant = IDE.get_config(PLUGIN, x)
-				if current is bool:
-					set(x, current)
-					dirty = true
-				else:
-					IDE.set_config(PLUGIN, x, value)
-			else:
-				push_warning("Its broke! > ", x)
-		
-	for x : String in [
-		"show_properties_color"
+		,"show_properties_color"
 		,"show_signals_color"
 		,"show_constants_color"
 			#,"show_parent_class_color"
@@ -116,12 +127,14 @@ func _setup(changes : PackedStringArray = []) -> void:
 			#,"native_class_color_item"
 		,"function_color_item"
 		,"inheritance_color_item"
+		,"members_order_by"
+		,"name_order_by"
 		]:
 		if changes.size() == 0 or _is_in_change(PLUGIN, x, changes):
 			var value : Variant = get(x)
-			if value is Color:
+			if value != null:
 				var current : Variant = IDE.get_config(PLUGIN, x)
-				if current is Color:
+				if typeof(current) == typeof(value):
 					set(x, current)
 					dirty = true
 				else:
@@ -407,10 +420,21 @@ func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
 							_pop.callback = _on_pop_selection.bind(item)
 							_pop.enable_copy_override(!is_first and MEMBER_METHOD_ICON == icon)
 							
-							_pop.position = get_global_mouse_position() # IDE.clamp
-							_pop.popup()
+							_pop.position = get_global_mouse_position() # Delete? #5
+							_pop.popup() # Delete? #5
+							## MACOS: Uncomment #5
+							#var os_name : String = OS.get_name()
+							#match  os_name:
+								#"macOS":
+									#_pop.popup_centered()
+								#"iOS":
+									#_pop.popup_centered()
+								#_:
+									#_pop.position = get_global_mouse_position() # IDE.clamp
+									#_pop.popup()
 							return
 			
+	
 func _on_change_script(script : Script) -> void:
 	if _last == script:
 		return
@@ -474,6 +498,7 @@ func _on_change_script(script : Script) -> void:
 	var index : int = -1
 	var src : String = script.source_code
 	var track_override : Dictionary[StringName, bool] = {}
+	
 	for sc : Dictionary in data.values():
 		index += 1
 		if index > 0:
@@ -511,199 +536,221 @@ func _on_change_script(script : Script) -> void:
 		tree_item.set_selectable(0, false)
 		
 		var sc_data : Dictionary = {}
-		if show_functions:
-			var item_color : Color = SECONDARY_COLOR
-			var override_item_color : Color = inheritance_color_item
-			if function_color_item != Color.WHITE:
-				item_color = function_color_item
-			
-			sc_data = sc["functions"]
-			if sc_data.size() > 0:
-				var mthds : TreeItem = tree_item.create_child()
-				mthds.set_text(0, "Methods")
-				mthds.set_selectable(0, false)
-				mthds.set_icon(0, MEMBER_METHOD_ICON)
-				if use_colors_in_tittles:
-					mthds.set_custom_color(0, show_function_color)
-				else:
-					mthds.set_custom_color(0, PRIMARY_COLOR)
-				meta = str("F", index)
-				mthds.set_metadata(0, meta)
-				mthds.set_icon_modulate(0, show_function_color)
-				if _buffer.has(meta):
-					mthds.collapsed = _buffer[meta]
-				for fnc : String in sc_data.keys():
-					var packed : PackedStringArray = sc_data[fnc].split("||")
-					var override : bool = false
-					if "overrided" in packed:
-						if index > 0:
+		for order : int in members_order_by:
+			if order == 0 and show_properties:
+				sc_data = sc["properties"]
+				if sc_data.size() > 0:
+					var mthds : TreeItem = tree_item.create_child()
+					var item_color : Color = SECONDARY_COLOR
+					var override_item_color : Color = inheritance_color_item
+					if properties_color_item != Color.WHITE:
+						item_color = properties_color_item
+					mthds.set_text(0, "Properties")
+					mthds.set_selectable(0, false)
+					mthds.set_icon(0, MEMBER_PROPERTY_ICON)
+					if use_colors_in_tittles:
+						mthds.set_custom_color(0, show_properties_color)
+					else:
+						mthds.set_custom_color(0, PRIMARY_COLOR)
+					meta = str("P", index)
+					mthds.set_metadata(0, meta)
+					mthds.set_icon_modulate(0, show_properties_color)
+					if _buffer.has(meta):
+						mthds.collapsed = _buffer[meta]
+					else:
+						mthds.collapsed = true	
+					for fnc : String in sc_data.keys():
+						var packed : PackedStringArray = sc_data[fnc].split("||")
+						var override : bool = false
+						if "overrided" in packed:
 							if !show_inheritance:
 								continue
+							override = true
+						var _item : TreeItem = mthds.create_child()
+						var text : String = "{0} : {1}".format([packed[0], packed[1]])
+						_item.set_text(0, text)
+						if "export" in packed:
+							_item.set_icon(0, EXPORT_ICON)
+							_item.set_tooltip_text(0, str("@export var ", text))
+						elif "static" in packed:
+							_item.set_icon(0, STATIC_ICON)
+							_item.set_tooltip_text(0, str("static var ", text))
+						elif "const" in packed:
+							_item.set_icon(0, CONST_ICON)
+							_item.set_tooltip_text(0, str("const ", text))
+						elif fnc.begins_with(private_methods):
+							_item.set_icon(0, private_icon)
+							_item.set_icon_modulate(0, private_icon_modulate)
+						elif fnc.begins_with(protected_methods):
+							_item.set_icon(0, virtual_icon)
+							_item.set_icon_modulate(0, virtual_icon_modulate)
 						else:
-							if !show_inheritance:
-								if null == RegEx.create_from_string("func[\\s\\t\\n]*\\b{0}[\\s\\t\\n]*\\(".format([fnc])).search(src):
+							_item.set_icon(0, public_icon)
+							_item.set_icon_modulate(0, public_icon_modulate)
+						if override:
+							_item.set_icon_overlay(0, OVERRIDED_ICON)
+							_item.set_custom_color(0, override_item_color)
+						else:
+							_item.set_custom_color(0, item_color)
+			
+			elif order == 1 and show_functions:
+				sc_data = sc["functions"]
+				if sc_data.size() > 0:
+					var mthds : TreeItem = tree_item.create_child()
+					var item_color : Color = SECONDARY_COLOR
+					var override_item_color : Color = inheritance_color_item
+					if function_color_item != Color.WHITE:
+						item_color = function_color_item
+					mthds.set_text(0, "Methods")
+					mthds.set_selectable(0, false)
+					mthds.set_icon(0, MEMBER_METHOD_ICON)
+					if use_colors_in_tittles:
+						mthds.set_custom_color(0, show_function_color)
+					else:
+						mthds.set_custom_color(0, PRIMARY_COLOR)
+					meta = str("F", index)
+					mthds.set_metadata(0, meta)
+					mthds.set_icon_modulate(0, show_function_color)
+					if _buffer.has(meta):
+						mthds.collapsed = _buffer[meta]
+					else:
+						mthds.collapsed = true	
+					var keys : Array = sc_data.keys()
+					if name_order_by != SORT_NAME_TYPE.NONE:
+						if name_order_by == SORT_NAME_TYPE.ORDER_NAME_NORMAL:
+							var packed : Array[StringName] = []
+							packed.resize(keys.size())
+							for x : int in keys.size():
+								packed[x] = keys[x]
+							packed.sort()
+							keys = Array(packed)
+						elif name_order_by == SORT_NAME_TYPE.ORDER_NAME_INVERT:
+							var packed : Array[StringName] = []
+							packed.resize(keys.size())
+							for x : int in keys.size():
+								packed[x] = keys[x]
+							packed.sort()
+							packed.reverse()
+							keys = Array(packed)
+					
+					for fnc : String in keys:
+						var packed : PackedStringArray = sc_data[fnc].split("||")
+						var override : bool = false
+						if "overrided" in packed:
+							if index > 0:
+								if !show_inheritance:
 									continue
-							track_override[fnc] = true
-						override = show_inheritance
+							else:
+								if !show_inheritance:
+									if null == RegEx.create_from_string("func[\\s\\t\\n]*\\b{0}[\\s\\t\\n]*\\(".format([fnc])).search(src):
+										continue
+								track_override[fnc] = true
+							override = show_inheritance
+							
+						var _item : TreeItem = mthds.create_child()
+						var text : String = "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]])
+						if "static" in packed:
+							_item.set_icon(0, STATIC_ICON)
+							_item.set_tooltip_text(0, str("static var ", text))
+						elif "const" in packed:
+							_item.set_icon(0, CONST_ICON)
+							_item.set_tooltip_text(0, str("const ", text))
+						elif fnc.begins_with(private_methods):
+							_item.set_icon(0, private_icon)
+							_item.set_icon_modulate(0, private_icon_modulate)
+						elif fnc.begins_with(protected_methods):
+							_item.set_icon(0, virtual_icon)
+							_item.set_icon_modulate(0, virtual_icon_modulate)
+						else:
+							_item.set_icon(0, public_icon)
+							_item.set_icon_modulate(0, public_icon_modulate)
+						if override:
+							_item.set_icon_overlay(0, OVERRIDED_ICON)
+							_item.set_custom_color(0, override_item_color)
+						else:
+							_item.set_custom_color(0, item_color)
+						if index > 0:
+							if track_override.has(fnc):
+								_item.set_icon_overlay(0, CHECKED_ICON)
+						_item.set_text(0, text)
+											
+			elif order == 2 and show_signals:
+				sc_data = sc["signals"]
+				if sc_data.size() > 0:
+					var mthds : TreeItem = tree_item.create_child()
+					var item_color : Color = SECONDARY_COLOR
+					var override_item_color : Color = inheritance_color_item
+					if signals_color_item != Color.WHITE:
+						item_color = signals_color_item
+					mthds.set_text(0, "Signals")
+					mthds.set_selectable(0, false)
+					mthds.set_icon(0, MEMBER_SIGNAL_ICON)
+					if use_colors_in_tittles:
+						mthds.set_custom_color(0, show_signals_color)
+					else:
+						mthds.set_custom_color(0, PRIMARY_COLOR)
+					meta = str("S", index)
+					mthds.set_metadata(0, meta)
+					mthds.set_icon_modulate(0, show_signals_color)
+					if _buffer.has(meta):
+						mthds.collapsed = _buffer[meta]
+					else:
+						mthds.collapsed = true	
+					for fnc : String in sc_data.keys():
+						var packed : PackedStringArray = sc_data[fnc].split("||")
+						var override : bool = false
+						if "overrided" in packed:
+							if !show_inheritance:
+								continue
+							override = true
+						var _item : TreeItem = mthds.create_child()
+						_item.set_text(0, "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]]))
 						
-					var _item : TreeItem = mthds.create_child()
-					var text : String = "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]])
-					if "static" in packed:
-						_item.set_icon(0, STATIC_ICON)
-						_item.set_tooltip_text(0, str("static var ", text))
-					elif "const" in packed:
-						_item.set_icon(0, CONST_ICON)
-						_item.set_tooltip_text(0, str("const ", text))
-					elif fnc.begins_with(private_methods):
-						_item.set_icon(0, private_icon)
-						_item.set_icon_modulate(0, private_icon_modulate)
-					elif fnc.begins_with(protected_methods):
-						_item.set_icon(0, virtual_icon)
-						_item.set_icon_modulate(0, virtual_icon_modulate)
+						_item.set_icon(0, MEMBER_SIGNAL_ICON)
+						if override:
+							_item.set_icon_overlay(0, OVERRIDED_ICON)
+							_item.set_custom_color(0, override_item_color)
+						else:
+							_item.set_custom_color(0, item_color)
+							
+			elif order == 3 and show_constants:
+				sc_data = sc["constants"]
+				if sc_data.size() > 0:
+					var mthds : TreeItem = tree_item.create_child()
+					var item_color : Color = SECONDARY_COLOR
+					var override_item_color : Color = inheritance_color_item
+					if constants_color_item != Color.WHITE:
+						item_color = constants_color_item
+					mthds.set_text(0, "Constant")
+					mthds.set_selectable(0, false)
+					mthds.set_icon(0, MEMBER_CONSTANT_ICON)
+					if use_colors_in_tittles:
+						mthds.set_custom_color(0, show_constants_color)
 					else:
-						_item.set_icon(0, public_icon)
-						_item.set_icon_modulate(0, public_icon_modulate)
-					if override:
-						_item.set_icon_overlay(0, OVERRIDED_ICON)
-						_item.set_custom_color(0, override_item_color)
+						mthds.set_custom_color(0, PRIMARY_COLOR)
+					meta = str("I", index)
+					mthds.set_metadata(0, meta)
+					mthds.set_icon_modulate(0, show_constants_color)
+					if _buffer.has(meta):
+						mthds.collapsed = _buffer[meta]
 					else:
-						_item.set_custom_color(0, item_color)
-					if index > 0:
-						if track_override.has(fnc):
-							_item.set_icon_overlay(0, CHECKED_ICON)
-					_item.set_text(0, text)
-						
-		if show_properties:
-			sc_data = sc["properties"]
-			if sc_data.size() > 0:
-				var item_color : Color = SECONDARY_COLOR
-				var override_item_color : Color = inheritance_color_item
-				if properties_color_item != Color.WHITE:
-					item_color = properties_color_item
-					
-				var mthds : TreeItem = tree_item.create_child()
-				mthds.set_text(0, "Properties")
-				mthds.set_selectable(0, false)
-				mthds.set_icon(0, MEMBER_PROPERTY_ICON)
-				if use_colors_in_tittles:
-					mthds.set_custom_color(0, show_properties_color)
-				else:
-					mthds.set_custom_color(0, PRIMARY_COLOR)
-				meta = str("P", index)
-				mthds.set_metadata(0, meta)
-				mthds.set_icon_modulate(0, show_properties_color)
-				if _buffer.has(meta):
-					mthds.collapsed = _buffer[meta]
-				for fnc : String in sc_data.keys():
-					var packed : PackedStringArray = sc_data[fnc].split("||")
-					var override : bool = false
-					if "overrided" in packed:
-						if !show_inheritance:
-							continue
-						override = true
-					var _item : TreeItem = mthds.create_child()
-					var text : String = "{0} : {1}".format([packed[0], packed[1]])
-					_item.set_text(0, text)
-					if "export" in packed:
-						_item.set_icon(0, EXPORT_ICON)
-						_item.set_tooltip_text(0, str("@export var ", text))
-					elif "static" in packed:
-						_item.set_icon(0, STATIC_ICON)
-						_item.set_tooltip_text(0, str("static var ", text))
-					elif "const" in packed:
-						_item.set_icon(0, CONST_ICON)
-						_item.set_tooltip_text(0, str("const ", text))
-					elif fnc.begins_with(private_methods):
-						_item.set_icon(0, private_icon)
-						_item.set_icon_modulate(0, private_icon_modulate)
-					elif fnc.begins_with(protected_methods):
-						_item.set_icon(0, virtual_icon)
-						_item.set_icon_modulate(0, virtual_icon_modulate)
-					else:
-						_item.set_icon(0, public_icon)
-						_item.set_icon_modulate(0, public_icon_modulate)
-					if override:
-						_item.set_icon_overlay(0, OVERRIDED_ICON)
-						_item.set_custom_color(0, override_item_color)
-					else:
-						_item.set_custom_color(0, item_color)
-						
-		if show_signals:
-			sc_data = sc["signals"]
-			if sc_data.size() > 0:
-				var item_color : Color = SECONDARY_COLOR
-				var override_item_color : Color = inheritance_color_item
-				if signals_color_item != Color.WHITE:
-					item_color = signals_color_item
-					
-				var mthds : TreeItem = tree_item.create_child()
-				mthds.set_text(0, "Signals")
-				mthds.set_selectable(0, false)
-				mthds.set_icon(0, MEMBER_SIGNAL_ICON)
-				if use_colors_in_tittles:
-					mthds.set_custom_color(0, show_signals_color)
-				else:
-					mthds.set_custom_color(0, PRIMARY_COLOR)
-				meta = str("S", index)
-				mthds.set_metadata(0, meta)
-				mthds.set_icon_modulate(0, show_signals_color)
-				if _buffer.has(meta):
-					mthds.collapsed = _buffer[meta]
-				for fnc : String in sc_data.keys():
-					var packed : PackedStringArray = sc_data[fnc].split("||")
-					var override : bool = false
-					if "overrided" in packed:
-						if !show_inheritance:
-							continue
-						override = true
-					var _item : TreeItem = mthds.create_child()
-					_item.set_text(0, "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]]))
-					
-					_item.set_icon(0, MEMBER_SIGNAL_ICON)
-					if override:
-						_item.set_icon_overlay(0, OVERRIDED_ICON)
-						_item.set_custom_color(0, override_item_color)
-					else:
-						_item.set_custom_color(0, item_color)
-						
-					
-		if show_constants:
-			sc_data = sc["constants"]
-			if sc_data.size() > 0:
-				var item_color : Color = SECONDARY_COLOR
-				var override_item_color : Color = inheritance_color_item
-				if constants_color_item != Color.WHITE:
-					item_color = constants_color_item
-					
-				var mthds : TreeItem = tree_item.create_child()
-				mthds.set_text(0, "Constant")
-				mthds.set_selectable(0, false)
-				mthds.set_icon(0, MEMBER_CONSTANT_ICON)
-				if use_colors_in_tittles:
-					mthds.set_custom_color(0, show_constants_color)
-				else:
-					mthds.set_custom_color(0, PRIMARY_COLOR)
-				meta = str("I", index)
-				mthds.set_metadata(0, meta)
-				mthds.set_icon_modulate(0, show_constants_color)
-				if _buffer.has(meta):
-					mthds.collapsed = _buffer[meta]
-				for fnc : String in sc_data.keys():
-					var packed : PackedStringArray = sc_data[fnc].split("||")
-					var override : bool = false
-					if "overrided" in packed:
-						if !show_inheritance:
-							continue
-						override = true
-					var _item : TreeItem = mthds.create_child()
-					_item.set_text(0, "{0} : {1}".format([packed[0], packed[1]]))
-					_item.set_icon(0, MEMBER_CONSTANT_ICON)
-					if override:
-						_item.set_icon_overlay(0, OVERRIDED_ICON)
-						_item.set_custom_color(0, override_item_color)
-					else:
-						_item.set_custom_color(0, item_color)
-						
+						mthds.collapsed = true	
+					for fnc : String in sc_data.keys():
+						var packed : PackedStringArray = sc_data[fnc].split("||")
+						var override : bool = false
+						if "overrided" in packed:
+							if !show_inheritance:
+								continue
+							override = true
+						var _item : TreeItem = mthds.create_child()
+						_item.set_text(0, "{0} : {1}".format([packed[0], packed[1]]))
+						_item.set_icon(0, MEMBER_CONSTANT_ICON)
+						if override:
+							_item.set_icon_overlay(0, OVERRIDED_ICON)
+							_item.set_custom_color(0, override_item_color)
+						else:
+							_item.set_custom_color(0, item_color)
+							
 					
 func _ready() -> void:
 	var editor : ScriptEditor  = EditorInterface.get_script_editor()

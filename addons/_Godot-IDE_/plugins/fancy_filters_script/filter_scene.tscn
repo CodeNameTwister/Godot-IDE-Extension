@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dhlxe0qj82e8y"]
+[gd_scene load_steps=13 format=3 uid="uid://dhlxe0qj82e8y"]
 
 [ext_resource type="Script" uid="uid://bwtq1pkujrb1d" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/script_info.gd" id="1_5gq01"]
 [ext_resource type="Script" uid="uid://gct2x12uf8jj" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/button_filter.gd" id="2_djmkv"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://bjmtfc58y1sbs" path="res://addons/_Godot-IDE_/shared_resources/InterfaceScript.svg" id="8_goajo"]
 [ext_resource type="Texture2D" uid="uid://816fejewtbfj" path="res://addons/_Godot-IDE_/shared_resources/search.svg" id="10_2xgjc"]
 [ext_resource type="Script" uid="uid://bbbdyhh8lhw4a" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/line_edit.gd" id="11_1yamo"]
+[ext_resource type="Script" uid="uid://cbvs583dwh5o" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/components/order_settings.gd" id="12_u1yuj"]
 
 [node name="Container" type="TabContainer" node_paths=PackedStringArray("button_container", "tree_container")]
 custom_minimum_size = Vector2(64, 64)
@@ -140,4 +141,28 @@ size_flags_vertical = 3
 [node name="Tree" type="Tree" parent="Script Info/SContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+allow_rmb_select = true
+
+[node name="Settings" type="VBoxContainer" parent="." node_paths=PackedStringArray("container")]
+visible = false
+layout_mode = 2
+script = ExtResource("12_u1yuj")
+container = NodePath("VBoxContainer/MarginContainer")
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Settings"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Settings/VBoxContainer"]
+layout_mode = 2
+text = "Filter Settings"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Settings/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="ScrollContainer" parent="Settings/VBoxContainer"]
+layout_mode = 2
 size_flags_vertical = 3

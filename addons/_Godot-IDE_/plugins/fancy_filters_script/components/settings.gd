@@ -1,0 +1,106 @@
+@tool
+extends GridContainer
+# =============================================================================	
+# Author: Twister
+# Fancy Filter Script
+#
+# Addon for Godot
+# =============================================================================	
+@export var _type_members : TabContainer
+@export var _accessibility : TabContainer
+
+@export var sorty_name_enabled : CheckBox
+
+@export var order_name_check : CheckBox
+@export var order_name_button : Button
+
+const NORMAL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/up.svg")
+const INVERT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/down.svg")
+
+signal on_update_order(data : Dictionary)
+
+enum TYPE_ORDER{
+	NONE = 0,
+	NORMAL = 1,
+	INVERT = 2
+}
+
+var name_order : TYPE_ORDER = TYPE_ORDER.NORMAL
+	
+func update_settings() -> void:
+	var order : Variant = IDE.get_config("fancy_filters_script", "members_order_by")
+	var name_type : Variant = IDE.get_config("fancy_filters_script", "name_order_by")
+	if !(order is Array):
+		order = []
+	if !(name_type is int):
+		name_order = 0
+	name_order = name_type
+	
+	order_name_check.button_pressed = name_order != 0
+	
+	if name_order == TYPE_ORDER.NORMAL:
+		order_name_button.icon = INVERT_ICON
+	else:
+		order_name_button.icon = NORMAL_ICON
+	
+	for x : Node in _type_members.get_children():
+		match x.name:
+			&"Properties":
+				for z : int in range(order.size()):
+					if order[z] == 0:
+						_type_members.move_child(x, z)
+			&"Methods":
+				for z : int in range(order.size()):
+					if order[z] == 1:
+						_type_members.move_child(x, z)
+			&"Signals":
+				for z : int in range(order.size()):
+					if order[z] == 2:
+						_type_members.move_child(x, z)
+			&"Constant":
+				for z : int in range(order.size()):
+					if order[z] == 3:
+						_type_members.move_child(x, z)
+	order_name_button.disabled = !order_name_check.button_pressed
+
+func _ready() -> void:
+	update_settings()
+
+func order_name_check_button() -> void:
+	order_name_button.disabled = !order_name_check.button_pressed
+	if order_name_check.button_pressed == false:
+		IDE.set_config("fancy_filters_script", "name_order_by", 0)
+	else:
+		if order_name_button.icon == INVERT_ICON:
+			name_order = TYPE_ORDER.INVERT
+		else:
+			name_order = TYPE_ORDER.NORMAL
+		IDE.set_config("fancy_filters_script", "name_order_by", name_order)
+
+func order_name() -> void:
+	if name_order == TYPE_ORDER.NORMAL:
+		name_order = TYPE_ORDER.INVERT
+		order_name_button.icon = INVERT_ICON
+	else:
+		name_order = TYPE_ORDER.NORMAL
+		order_name_button.icon = NORMAL_ICON
+	if order_name_check.button_pressed == false:
+		IDE.set_config("fancy_filters_script", "name_order_by", 0)
+	else:
+		IDE.set_config("fancy_filters_script", "name_order_by", name_order)
+
+func set_settings() -> void:
+	var new_order : Array[int] = []
+	
+	for x : Node in _type_members.get_children():
+		match x.name:
+			&"Properties":
+				new_order.append(0)
+			&"Methods":
+				new_order.append(1)
+			&"Signals":
+				new_order.append(2)
+			&"Constant":
+				new_order.append(3)
+		
+	IDE.set_config("fancy_filters_script", "members_order_by", new_order)

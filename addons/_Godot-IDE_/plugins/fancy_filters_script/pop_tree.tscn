@@ -14,8 +14,8 @@ anti_aliasing = false
 
 [node name="PopTree" type="Popup" node_paths=PackedStringArray("override_copy_button")]
 title = "Member Selected"
-initial_position = 4
-size = Vector2i(156, 184)
+position = Vector2i(496, 231)
+size = Vector2i(160, 185)
 visible = true
 content_scale_aspect = 4
 script = ExtResource("1_x40uf")
@@ -62,7 +62,7 @@ script = ExtResource("2_l7727")
 [node name="goto" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 8
-text = "Go To Member"
+text = "Go to member"
 script = ExtResource("2_l7727")
 
 [node name="close" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]

@@ -108,7 +108,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	var out : bool = false
 	for plugin : EditorPlugin in _plugins:
 		if plugin.has_method(&"_forward_canvas_gui_input"):
-			out = out or plugin.call(&"_forward_canvas_gui_input", event)	
+			out = plugin.call(&"_forward_canvas_gui_input", event) or out	
 	return out
 #endregion
 	
