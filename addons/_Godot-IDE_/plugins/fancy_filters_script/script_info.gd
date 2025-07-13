@@ -88,18 +88,6 @@ func _is_in_change(plugin : String, item : String, array : PackedStringArray) ->
 			return true
 	return false
 	
-#func update_members_order(sort : Array[int]) -> void:
-	#members_order_by = sort
-	#if is_node_ready():
-		#force_update()
-#
-#func update_name_order(type : SORT_NAME_TYPE) -> void:
-	#if type < 0 or type > 2:
-		#return
-	#name_order_by = type
-	#if is_node_ready():
-		#force_update()
-		
 func _setup(changes : PackedStringArray = []) -> void:
 	var PLUGIN : String = "fancy_filters_script"
 	var dirty : bool = false

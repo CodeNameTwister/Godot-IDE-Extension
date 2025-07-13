@@ -33,7 +33,7 @@ func update_settings() -> void:
 	if !(order is Array):
 		order = []
 	if !(name_type is int):
-		name_order = 0
+		name_type = 0
 	name_order = name_type
 	
 	order_name_check.button_pressed = name_order != 0
