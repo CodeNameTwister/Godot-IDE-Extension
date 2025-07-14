@@ -72,6 +72,7 @@ var function_color_item : Color = Color.WHITE
 var inheritance_color_item : Color = Color.CYAN
 
 	
+#var accessibility_order_by : Array[int] = [0,1,2,3,4,5]
 var members_order_by : Array[int] = [0,1,2,3]
 var name_order_by : SORT_NAME_TYPE = SORT_NAME_TYPE.NONE
 #endregion
@@ -80,6 +81,11 @@ var _pop : Popup = null
 
 var _buffer : Dictionary = {}
 var _last : Variant = null
+
+#var accessibility : AccesibilityOrder = null
+
+#func _init() -> void:
+	#accessibility = AccesibilityOrder.new(accessibility_order_by.size())
 
 func _is_in_change(plugin : String, item : String, array : PackedStringArray) -> bool:
 	item = plugin.path_join(item)
@@ -115,6 +121,7 @@ func _setup(changes : PackedStringArray = []) -> void:
 			#,"native_class_color_item"
 		,"function_color_item"
 		,"inheritance_color_item"
+		,"accessibility_order_by"
 		,"members_order_by"
 		,"name_order_by"
 		]:
@@ -423,6 +430,25 @@ func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
 							return
 			
 	
+func _order_name(keys : Array) -> Array:
+	if name_order_by != SORT_NAME_TYPE.NONE:
+		if name_order_by == SORT_NAME_TYPE.ORDER_NAME_NORMAL:
+			var packed : Array[StringName] = []
+			packed.resize(keys.size())
+			for x : int in keys.size():
+				packed[x] = keys[x]
+			packed.sort()
+			keys = Array(packed)
+		elif name_order_by == SORT_NAME_TYPE.ORDER_NAME_INVERT:
+			var packed : Array[StringName] = []
+			packed.resize(keys.size())
+			for x : int in keys.size():
+				packed[x] = keys[x]
+			packed.sort()
+			packed.reverse()
+			keys = Array(packed)
+	return keys
+	
 func _on_change_script(script : Script) -> void:
 	if _last == script:
 		return
@@ -528,6 +554,7 @@ func _on_change_script(script : Script) -> void:
 			if order == 0 and show_properties:
 				sc_data = sc["properties"]
 				if sc_data.size() > 0:
+					#accessibility.reset()
 					var mthds : TreeItem = tree_item.create_child()
 					var item_color : Color = SECONDARY_COLOR
 					var override_item_color : Color = inheritance_color_item
@@ -547,7 +574,7 @@ func _on_change_script(script : Script) -> void:
 						mthds.collapsed = _buffer[meta]
 					else:
 						mthds.collapsed = true	
-					for fnc : String in sc_data.keys():
+					for fnc : String in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
 						var override : bool = false
 						if "overrided" in packed:
@@ -560,22 +587,29 @@ func _on_change_script(script : Script) -> void:
 						if "export" in packed:
 							_item.set_icon(0, EXPORT_ICON)
 							_item.set_tooltip_text(0, str("@export var ", text))
+							#accessibility.add(0, fnc)
 						elif "static" in packed:
 							_item.set_icon(0, STATIC_ICON)
 							_item.set_tooltip_text(0, str("static var ", text))
+							#accessibility.add(1, fnc)
 						elif "const" in packed:
 							_item.set_icon(0, CONST_ICON)
 							_item.set_tooltip_text(0, str("const ", text))
+							#accessibility.add(2, fnc)
 						elif fnc.begins_with(private_methods):
 							_item.set_icon(0, private_icon)
 							_item.set_icon_modulate(0, private_icon_modulate)
+							#accessibility.add(3, fnc)
 						elif fnc.begins_with(protected_methods):
 							_item.set_icon(0, virtual_icon)
 							_item.set_icon_modulate(0, virtual_icon_modulate)
+							#accessibility.add(4, fnc)
 						else:
 							_item.set_icon(0, public_icon)
 							_item.set_icon_modulate(0, public_icon_modulate)
+							#accessibility.add(5, fnc)
 						if override:
+							#accessibility.add_overrided(fnc)
 							_item.set_icon_overlay(0, OVERRIDED_ICON)
 							_item.set_custom_color(0, override_item_color)
 						else:
@@ -603,25 +637,8 @@ func _on_change_script(script : Script) -> void:
 						mthds.collapsed = _buffer[meta]
 					else:
 						mthds.collapsed = true	
-					var keys : Array = sc_data.keys()
-					if name_order_by != SORT_NAME_TYPE.NONE:
-						if name_order_by == SORT_NAME_TYPE.ORDER_NAME_NORMAL:
-							var packed : Array[StringName] = []
-							packed.resize(keys.size())
-							for x : int in keys.size():
-								packed[x] = keys[x]
-							packed.sort()
-							keys = Array(packed)
-						elif name_order_by == SORT_NAME_TYPE.ORDER_NAME_INVERT:
-							var packed : Array[StringName] = []
-							packed.resize(keys.size())
-							for x : int in keys.size():
-								packed[x] = keys[x]
-							packed.sort()
-							packed.reverse()
-							keys = Array(packed)
 					
-					for fnc : String in keys:
+					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
 						var override : bool = false
 						if "overrided" in packed:
@@ -684,7 +701,8 @@ func _on_change_script(script : Script) -> void:
 						mthds.collapsed = _buffer[meta]
 					else:
 						mthds.collapsed = true	
-					for fnc : String in sc_data.keys():
+					
+					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
 						var override : bool = false
 						if "overrided" in packed:
@@ -723,7 +741,7 @@ func _on_change_script(script : Script) -> void:
 						mthds.collapsed = _buffer[meta]
 					else:
 						mthds.collapsed = true	
-					for fnc : String in sc_data.keys():
+					for fnc : String in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
 						var override : bool = false
 						if "overrided" in packed:

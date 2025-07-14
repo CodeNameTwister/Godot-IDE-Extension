@@ -1,5 +1,5 @@
 @tool
-extends GridContainer
+extends Control
 # =============================================================================	
 # Author: Twister
 # Fancy Filter Script
@@ -38,7 +38,7 @@ func update_settings() -> void:
 	
 	order_name_check.button_pressed = name_order != 0
 	
-	if name_order == TYPE_ORDER.NORMAL:
+	if name_order == TYPE_ORDER.INVERT:
 		order_name_button.icon = INVERT_ICON
 	else:
 		order_name_button.icon = NORMAL_ICON
