@@ -121,7 +121,7 @@ func _setup(changes : PackedStringArray = []) -> void:
 			#,"native_class_color_item"
 		,"function_color_item"
 		,"inheritance_color_item"
-		,"accessibility_order_by"
+		#,"accessibility_order_by"
 		,"members_order_by"
 		,"name_order_by"
 		]:
@@ -430,23 +430,28 @@ func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
 							return
 			
 	
+func _custom_order(s1 : String, s2 : String) -> bool:
+	return s1[0].to_lower() < s2[0].to_lower()
+	
 func _order_name(keys : Array) -> Array:
 	if name_order_by != SORT_NAME_TYPE.NONE:
 		if name_order_by == SORT_NAME_TYPE.ORDER_NAME_NORMAL:
-			var packed : Array[StringName] = []
-			packed.resize(keys.size())
-			for x : int in keys.size():
-				packed[x] = keys[x]
-			packed.sort()
-			keys = Array(packed)
+			#var packed : Array[StringName] = []
+			#packed.resize(keys.size())
+			#for x : int in keys.size():
+				#packed[x] = keys[x]
+			#packed.sort()
+			#keys = Array(packed)
+			keys.sort_custom(_custom_order)
 		elif name_order_by == SORT_NAME_TYPE.ORDER_NAME_INVERT:
-			var packed : Array[StringName] = []
-			packed.resize(keys.size())
-			for x : int in keys.size():
-				packed[x] = keys[x]
-			packed.sort()
-			packed.reverse()
-			keys = Array(packed)
+			#var packed : Array[StringName] = []
+			#packed.resize(keys.size())
+			#for x : int in keys.size():
+				#packed[x] = keys[x]
+			#packed.sort()
+			#keys = Array(packed)
+			keys.sort_custom(_custom_order)
+			keys.reverse()
 	return keys
 	
 func _on_change_script(script : Script) -> void:
@@ -574,7 +579,7 @@ func _on_change_script(script : Script) -> void:
 						mthds.collapsed = _buffer[meta]
 					else:
 						mthds.collapsed = true	
-					for fnc : String in _order_name(sc_data.keys()):
+					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
 						var override : bool = false
 						if "overrided" in packed:
@@ -741,7 +746,7 @@ func _on_change_script(script : Script) -> void:
 						mthds.collapsed = _buffer[meta]
 					else:
 						mthds.collapsed = true	
-					for fnc : String in _order_name(sc_data.keys()):
+					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
 						var override : bool = false
 						if "overrided" in packed:
