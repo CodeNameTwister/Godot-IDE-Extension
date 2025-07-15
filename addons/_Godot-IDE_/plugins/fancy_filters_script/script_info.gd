@@ -431,25 +431,19 @@ func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
 			
 	
 func _custom_order(s1 : String, s2 : String) -> bool:
-	return s1[0].to_lower() < s2[0].to_lower()
+	for x : int in mini(s1.length(), s2.length()):
+		var c1 : String = s1[x].to_lower()
+		var c2 : String = s2[x].to_lower()
+		if c1 == c2:
+			continue
+		return c1 < c2
+	return false
 	
 func _order_name(keys : Array) -> Array:
 	if name_order_by != SORT_NAME_TYPE.NONE:
 		if name_order_by == SORT_NAME_TYPE.ORDER_NAME_NORMAL:
-			#var packed : Array[StringName] = []
-			#packed.resize(keys.size())
-			#for x : int in keys.size():
-				#packed[x] = keys[x]
-			#packed.sort()
-			#keys = Array(packed)
 			keys.sort_custom(_custom_order)
 		elif name_order_by == SORT_NAME_TYPE.ORDER_NAME_INVERT:
-			#var packed : Array[StringName] = []
-			#packed.resize(keys.size())
-			#for x : int in keys.size():
-				#packed[x] = keys[x]
-			#packed.sort()
-			#keys = Array(packed)
 			keys.sort_custom(_custom_order)
 			keys.reverse()
 	return keys

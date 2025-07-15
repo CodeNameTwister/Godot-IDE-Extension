@@ -124,11 +124,11 @@ static func clamp_screen_size(current_size : Vector2, min_ratio : float = 0.0, m
 	var min_screen : Vector2 = screen * min_ratio
 	return Vector2(max(min(current_size.x, max_screen.x), min_screen.x), max(min(current_size.y, max_screen.y), min_screen.y))
 	
-static func get_script_properties_list(script : Script, full : bool = true) -> Dictionary:
+static func get_script_properties_list(script : Script, full : bool = true, check_is_native : bool = true) -> Dictionary:
 	if script == null:
 		return {}
 	var nname : String = get_name_script(script)
-	if ClassDB.class_exists(nname):
+	if check_is_native and ClassDB.class_exists(nname):
 		return _generate_native(nname)
 	if full:
 		var data : Dictionary = _generate(script)
@@ -218,32 +218,36 @@ static func _generate(script : Script, data : Dictionary = {}, index : int = -1)
 			var pro_name: StringName = dict.name
 			constants[pro_name] =_get_header_virtual(dict)
 
-	for x : int in range(0, index, 1):
-		var clazz : Dictionary = data[x]["functions"]
-		for k : Variant in funcs.keys():
-			if clazz.has(k):
-				if !"||overrided" in clazz[k]:
-					clazz[k] += "||overrided"
-	for x : int in range(0, index, 1):
-		var clazz : Dictionary = data[x]["properties"]
-		for k : Variant in props.keys():
-			if clazz.has(k):
-				if !"||overrided" in clazz[k]:
-					clazz[k] += "||overrided"
-	for x : int in range(0, index, 1):
-		var clazz : Dictionary = data[x]["signals"]
-		for k : Variant in signals.keys():
-			if clazz.has(k):
-				if !"||overrided" in clazz[k]:
-					clazz[k] += "||overrided"
-	for x : int in range(0, index, 1):
-		var clazz : Dictionary = data[x]["constants"]
-		for k : Variant in constants.keys():
-			if clazz.has(k):
-				if !"||overrided" in clazz[k]:
-					clazz[k] += "||overrided"
-			else:
-				clazz[k] = constants[k] + "||overrided"
+	if data.size() > 0:
+		var start : int = 0
+		while !data.has(start) and start < index:
+			start += 1
+		for x : int in range(start, index, 1):
+			var clazz : Dictionary = data[x]["functions"]
+			for k : Variant in funcs.keys():
+				if clazz.has(k):
+					if !"||overrided" in clazz[k]:
+						clazz[k] += "||overrided"
+		for x : int in range(start, index, 1):
+			var clazz : Dictionary = data[x]["properties"]
+			for k : Variant in props.keys():
+				if clazz.has(k):
+					if !"||overrided" in clazz[k]:
+						clazz[k] += "||overrided"
+		for x : int in range(start, index, 1):
+			var clazz : Dictionary = data[x]["signals"]
+			for k : Variant in signals.keys():
+				if clazz.has(k):
+					if !"||overrided" in clazz[k]:
+						clazz[k] += "||overrided"
+		for x : int in range(start, index, 1):
+			var clazz : Dictionary = data[x]["constants"]
+			for k : Variant in constants.keys():
+				if clazz.has(k):
+					if !"||overrided" in clazz[k]:
+						clazz[k] += "||overrided"
+				else:
+					clazz[k] = constants[k] + "||overrided"
 	return _generate(script.get_base_script(), data, index)
 	
 
@@ -295,30 +299,34 @@ static func _generate_native(native :  StringName, data : Dictionary = {}, index
 		var pro_name: StringName = dict
 		constants[pro_name] = "{0}||int||void".format([dict])
 		
-	for x : int in range(0, index, 1):
-		var clazz : Dictionary = data[x]["functions"]
-		for k : Variant in funcs.keys():
-			if clazz.has(k):
-				if !"||overrided" in clazz[k]:
-					clazz[k] += "||overrided"
-	for x : int in range(0, index, 1):
-		var clazz : Dictionary = data[x]["properties"]
-		for k : Variant in props.keys():
-			if clazz.has(k):
-				if !"||overrided" in clazz[k]:
-					clazz[k] += "||overrided"
-	for x : int in range(0, index, 1):
-		var clazz : Dictionary = data[x]["signals"]
-		for k : Variant in signals.keys():
-			if clazz.has(k):
-				if !"||overrided" in clazz[k]:
-					clazz[k] += "||overrided"
-	for x : int in range(0, index, 1):
-		var clazz : Dictionary = data[x]["constants"]
-		for k : Variant in constants.keys():
-			if clazz.has(k):
-				if !"||overrided" in clazz[k]:
-					clazz[k] += "||overrided"
+	if data.size() > 0:
+		var start : int = 0
+		while !data.has(start) and start < index:
+			start += 1
+		for x : int in range(start, index, 1):
+			var clazz : Dictionary = data[x]["functions"]
+			for k : Variant in funcs.keys():
+				if clazz.has(k):
+					if !"||overrided" in clazz[k]:
+						clazz[k] += "||overrided"
+		for x : int in range(start, index, 1):
+			var clazz : Dictionary = data[x]["properties"]
+			for k : Variant in props.keys():
+				if clazz.has(k):
+					if !"||overrided" in clazz[k]:
+						clazz[k] += "||overrided"
+		for x : int in range(start, index, 1):
+			var clazz : Dictionary = data[x]["signals"]
+			for k : Variant in signals.keys():
+				if clazz.has(k):
+					if !"||overrided" in clazz[k]:
+						clazz[k] += "||overrided"
+		for x : int in range(start, index, 1):
+			var clazz : Dictionary = data[x]["constants"]
+			for k : Variant in constants.keys():
+				if clazz.has(k):
+					if !"||overrided" in clazz[k]:
+						clazz[k] += "||overrided"
 
 	return _generate_native(ClassDB.get_parent_class(native), data, index)
 

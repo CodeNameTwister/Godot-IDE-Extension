@@ -15,6 +15,19 @@ var _container : Control = null
 var _id_show_hide_tool : int = -1
 var _id_toggle_position_tool : int = -1
 
+var _c_input : InputEventKey = null
+
+func _init() -> void:
+	var input : Variant = IDE.get_config("fancy_filters_script", "show_hide")
+	if input is InputEventKey:
+		_c_input = input
+	else:
+		_c_input = InputEventKey.new()
+		_c_input.pressed = true
+		_c_input.ctrl_pressed = true
+		_c_input.keycode = KEY_T
+		IDE.set_config("fancy_filters_script", "show_hide", _c_input)
+
 func _get_traduce(msg : String) -> String:
 	return msg
 
@@ -67,14 +80,24 @@ func _enter_tree() -> void:
 		
 		pop.index_pressed.connect(_on_pop_pressed)
 		
-		pop.add_item(msg, -1) #, KEY_MASK_CTRL | KEY_NOT_DEFINED_YET
+		if null != _c_input:
+			if _c_input.ctrl_pressed and _c_input.alt_pressed:
+				pop.add_item(msg, -1, KEY_MASK_CTRL | KEY_MASK_ALT | _c_input.keycode)				
+			elif _c_input.ctrl_pressed:
+				pop.add_item(msg, -1, KEY_MASK_CTRL | _c_input.keycode)
+			elif _c_input.alt_pressed:
+				pop.add_item(msg, -1, KEY_MASK_ALT | _c_input.keycode)
+			else:
+				pop.add_item(msg, -1, _c_input.keycode) 
+		else:
+			pop.add_item(msg, -1, _c_input.keycode) #, KEY_MASK_CTRL | KEY_NOT_DEFINED_YET) #, KEY_MASK_CTRL | KEY_NOT_DEFINED_YET
 		_id_show_hide_tool = get_id(pop, total, msg)
-		
+			
 		msg = _get_traduce("Toggle Position Script and Filters Panel")
 		total = pop.item_count
 		pop.add_item(msg, -1) #, KEY_MASK_CTRL | KEY_NOT_DEFINED_YET
 		_id_toggle_position_tool = get_id(pop, total, msg)
-	
+		
 func toggle_position() -> void:
 	var container : Control = _container
 	if container:
