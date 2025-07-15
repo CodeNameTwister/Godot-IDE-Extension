@@ -47,6 +47,7 @@ enum SORT_NAME_TYPE{
 #region CONFIG
 var use_colors_in_tittles : bool = false
 var use_dots_as_item_icons : bool = false
+var use_background_color_in_script_info : bool = false
 
 var show_properties : bool = true
 var show_signals : bool = true
@@ -108,6 +109,7 @@ func _setup(changes : PackedStringArray = []) -> void:
 		,"show_inheritance"
 		,"use_colors_in_tittles"
 		,"use_dots_as_item_icons"
+		, "use_background_color_in_script_info"
 		,"show_properties_color"
 		,"show_signals_color"
 		,"show_constants_color"
@@ -562,6 +564,10 @@ func _on_change_script(script : Script) -> void:
 					mthds.set_text(0, "Properties")
 					mthds.set_selectable(0, false)
 					mthds.set_icon(0, MEMBER_PROPERTY_ICON)
+					if use_background_color_in_script_info:
+						var c : Color = show_properties_color
+						c.a = 0.15
+						mthds.set_custom_bg_color(0, c)
 					if use_colors_in_tittles:
 						mthds.set_custom_color(0, show_properties_color)
 					else:
@@ -613,6 +619,10 @@ func _on_change_script(script : Script) -> void:
 							_item.set_custom_color(0, override_item_color)
 						else:
 							_item.set_custom_color(0, item_color)
+						if use_background_color_in_script_info:
+							var c : Color = show_properties_color
+							c.a = 0.05
+							_item.set_custom_bg_color(0, c)
 			
 			elif order == 1 and show_functions:
 				sc_data = sc["functions"]
@@ -625,6 +635,10 @@ func _on_change_script(script : Script) -> void:
 					mthds.set_text(0, "Methods")
 					mthds.set_selectable(0, false)
 					mthds.set_icon(0, MEMBER_METHOD_ICON)
+					if use_background_color_in_script_info:
+						var c : Color = show_function_color
+						c.a = 0.15
+						mthds.set_custom_bg_color(0, c)
 					if use_colors_in_tittles:
 						mthds.set_custom_color(0, show_function_color)
 					else:
@@ -677,6 +691,10 @@ func _on_change_script(script : Script) -> void:
 							if track_override.has(fnc):
 								_item.set_icon_overlay(0, CHECKED_ICON)
 						_item.set_text(0, text)
+						if use_background_color_in_script_info:
+							var c : Color = show_function_color
+							c.a = 0.05
+							_item.set_custom_bg_color(0, c)
 											
 			elif order == 2 and show_signals:
 				sc_data = sc["signals"]
@@ -689,6 +707,10 @@ func _on_change_script(script : Script) -> void:
 					mthds.set_text(0, "Signals")
 					mthds.set_selectable(0, false)
 					mthds.set_icon(0, MEMBER_SIGNAL_ICON)
+					if use_background_color_in_script_info:
+						var c : Color = show_signals_color
+						c.a = 0.15
+						mthds.set_custom_bg_color(0, c)
 					if use_colors_in_tittles:
 						mthds.set_custom_color(0, show_signals_color)
 					else:
@@ -717,6 +739,10 @@ func _on_change_script(script : Script) -> void:
 							_item.set_custom_color(0, override_item_color)
 						else:
 							_item.set_custom_color(0, item_color)
+						if use_background_color_in_script_info:
+							var c : Color = show_signals_color
+							c.a = 0.05
+							_item.set_custom_bg_color(0, c)
 							
 			elif order == 3 and show_constants:
 				sc_data = sc["constants"]
@@ -729,6 +755,10 @@ func _on_change_script(script : Script) -> void:
 					mthds.set_text(0, "Constant")
 					mthds.set_selectable(0, false)
 					mthds.set_icon(0, MEMBER_CONSTANT_ICON)
+					if use_background_color_in_script_info:
+						var c : Color = show_constants_color
+						c.a = 0.15
+						mthds.set_custom_bg_color(0, c)
 					if use_colors_in_tittles:
 						mthds.set_custom_color(0, show_constants_color)
 					else:
@@ -755,6 +785,10 @@ func _on_change_script(script : Script) -> void:
 							_item.set_custom_color(0, override_item_color)
 						else:
 							_item.set_custom_color(0, item_color)
+						if use_background_color_in_script_info:
+							var c : Color = show_constants_color
+							c.a = 0.05
+							_item.set_custom_bg_color(0, c)
 							
 					
 func _ready() -> void:

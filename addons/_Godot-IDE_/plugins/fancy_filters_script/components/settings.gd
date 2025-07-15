@@ -14,6 +14,9 @@ extends Control
 @export var order_name_check : CheckBox
 @export var order_name_button : Button
 
+@export var background_color : Button
+@export var use_dots : Button
+
 const NORMAL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/up.svg")
 const INVERT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/down.svg")
 
@@ -27,13 +30,28 @@ enum TYPE_ORDER{
 
 var name_order : TYPE_ORDER = TYPE_ORDER.NORMAL
 	
+func use_background_color_in_script_info() -> void:
+	IDE.set_config("fancy_filters_script", "use_background_color_in_script_info", background_color.button_pressed)
+	
+func use_dots_as_item_icons() -> void:
+	IDE.set_config("fancy_filters_script", "use_dots_as_item_icons", use_dots.button_pressed)
+	
 func update_settings() -> void:
 	var order : Variant = IDE.get_config("fancy_filters_script", "members_order_by")
 	var name_type : Variant = IDE.get_config("fancy_filters_script", "name_order_by")
+	var background_pressed : Variant = IDE.get_config("fancy_filters_script", "use_background_color_in_script_info")
+	var use_dots_pressed: Variant = IDE.get_config("fancy_filters_script", "use_dots_as_item_icons")
 	if !(order is Array):
 		order = []
 	if !(name_type is int):
 		name_type = 0
+	if !(background_pressed is bool):
+		background_pressed = false
+	if !(use_dots_pressed is bool):
+		use_dots_pressed = false
+	use_dots.button_pressed = use_dots_pressed
+	background_color.button_pressed = background_pressed
+	
 	name_order = name_type
 	
 	order_name_check.button_pressed = name_order != 0

@@ -10,12 +10,17 @@ extends Control
 @export var container : Control = null
 
 func _ready() -> void:
-	get_parent().child_entered_tree.connect(_on_child)
+	var p : Node = get_parent()
+	if !p.child_entered_tree.is_connected(_on_child):
+		p.child_entered_tree.connect(_on_child)
 
 	visibility_changed.connect(_on_visible)
 	
 func _on_child(n : Node) -> void:
-	get_parent().move_child.call_deferred(self, n.get_index() + 1)
+	var p : Node = get_parent()
+	if is_instance_valid(p) and !p.is_queued_for_deletion():
+		if p.get_child_count() > 0:
+			p.move_child.call_deferred(self, p.get_child_count() - 1)
 
 func _on_visible() -> void:
 	if visible:

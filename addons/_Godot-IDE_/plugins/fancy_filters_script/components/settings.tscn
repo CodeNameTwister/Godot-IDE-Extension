@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://blc70goak5ixm" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/components/settings.gd" id="1_8gu0h"]
 [ext_resource type="StyleBox" uid="uid://dwpkbhgi7dk8" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/assets/flatbox.tres" id="1_e4fgx"]
-[ext_resource type="Texture2D" uid="uid://bgjo43cuidob1" path="res://addons/_Godot-IDE_/shared_resources/up.svg" id="2_8gu0h"]
+[ext_resource type="Texture2D" uid="uid://c2oodbi52ec3m" path="res://addons/_Godot-IDE_/shared_resources/down.svg" id="3_f6f5j"]
 [ext_resource type="Script" uid="uid://drngb2pss3dtj" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/components/tab_container.gd" id="3_g0drt"]
 [ext_resource type="Script" uid="uid://b1v225muollg5" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/button.gd" id="4_f6f5j"]
 
-[node name="Settings" type="VBoxContainer" node_paths=PackedStringArray("_type_members", "_accessibility", "sorty_name_enabled", "order_name_check", "order_name_button")]
+[node name="Settings" type="VBoxContainer" node_paths=PackedStringArray("_type_members", "_accessibility", "sorty_name_enabled", "order_name_check", "order_name_button", "background_color", "use_dots")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -18,10 +18,13 @@ _accessibility = NodePath("Accessibility")
 sorty_name_enabled = NodePath("order_name_check_button")
 order_name_check = NodePath("order_name_check_button")
 order_name_button = NodePath("order_name")
+background_color = NodePath("use_background_color_in_script_info")
+use_dots = NodePath("use_dots_as_item_icons")
 
 [node name="order_name_check_button" type="CheckBox" parent="."]
 layout_mode = 2
 size_flags_horizontal = 0
+button_pressed = true
 text = "Enable Order By Name"
 script = ExtResource("4_f6f5j")
 
@@ -30,9 +33,8 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Make sorty by using the name member."
-disabled = true
 text = "Sort Name"
-icon = ExtResource("2_8gu0h")
+icon = ExtResource("3_f6f5j")
 icon_alignment = 2
 script = ExtResource("4_f6f5j")
 
@@ -125,3 +127,20 @@ metadata/_tab_index = 3
 visible = false
 layout_mode = 2
 metadata/_tab_index = 4
+
+[node name="Sep2" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="use_dots_as_item_icons" type="CheckBox" parent="."]
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Use Dots As Script Info Items Icons"
+script = ExtResource("4_f6f5j")
+
+[node name="use_background_color_in_script_info" type="CheckBox" parent="."]
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Use Background Colors in Script Info Items"
+script = ExtResource("4_f6f5j")
