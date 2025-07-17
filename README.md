@@ -5,97 +5,102 @@ Godot IDE Extension
 
 [![Godot Engine 4.3](https://img.shields.io/badge/Godot_Engine-4.x-blue)](https://godotengine.org/) ![Copyrights License](https://img.shields.io/badge/License-MIT-blue)
 
-This addon extend Godot Features
+This addon extends Godot's native code editor with additioinal functionality and usability.
 
 ## Table of contents
 
 - [Preview](#preview)
-- [Features](#this-repository-contain-work-from)
-- [Objective](#objetive)
-- [How Work Usign Tips](#quick-tips-)
+- [Features](#features)
+- [Objectives](#objetives)
+- [How to Use](#how-to-use)
+- [How to Contribute](#how-to-contribute)
+- [FAQ](#faq)
 - [Special Thanks](#special-thanks-)
 
-# Preview
+## Objetives
+The goal of this project is to provide Godot with some additional features to improve the development experience without adding any extra overhead.
+
+## Preview
 ![Preview0](images/preview0.png)
 ![Preview1](images/preview1.png)
 
-## This repository contain work from
-How it works is also described in each link.
+## Features
+Each feature is described more fully in it's own repository, as well as down below.
 
 * Multi Split Container:
-  https://github.com/CodeNameTwister/Multi-Split-Container
+	https://github.com/CodeNameTwister/Multi-Split-Container
 * Script Spliter:
-  https://github.com/CodeNameTwister/Script-Spliter
+	https://github.com/CodeNameTwister/Script-Spliter
 * Quick Folds:
-  https://github.com/CodeNameTwister/Quick-Folds
+	https://github.com/CodeNameTwister/Quick-Folds
 * GD Override Functions:
-  https://github.com/CodeNameTwister/GD-Override-Functions
+	https://github.com/CodeNameTwister/GD-Override-Functions
 * Fancy Filters Script:
-  *Integrated with this plugin, not repository released.*
+	*Integrated with this plugin, not released as a seperate plugin.*
 * Fancy Search Files:
-  *Integrated with this plugin, not repository released.*
+	*Integrated with this plugin, not released as a seperate plugin.*
 * Fancy Search Class:
-  *Integrated with this plugin, not repository released.*
+	*Integrated with this plugin, not released as a seperate plugin.*
 
-# Objetive
-The goal of this project is to provide godot with some additional features without worrying about adding extra load to the CPU if it means improving the development experience.
-
-
-# Quick Tips [↑](#table-of-contents)
+## How to use
 
 * Script Spliter:
-	* Can use [Ctrl + 1, Ctrl + 2, Ctrl + 3, Ctrl + 4] for change of type split (Required more than 1 script opened)
-  	* You can create/remove split with Right mouse Button Context Menu. (Depend of script opened or split current count)
+	* Use `Ctrl + num` to change the type of split. (Requires more than 1 script open)
+  	* You can create/remove a split with the right mouse button context menu. (Depends on the number of opened scripts)
+  	* You can also add popout windows from the same context menu
 
 * Quick Folds:
-	* Can use [Atl + 1, Atl + 2, ... Atl + 9, Atl + 0] for fold lines.
-	* Can use [Shift + Atl + 1, Shift + Atl + 2, ... Shift + Atl + 9, Shift + Atl + 0] as inverted for show lines.
+	* Use `Alt + num` to fold all lines of the specified indent. e.g. `Alt + 1` folds everything, `Alt + 2` folds only second-level indented blocks.
+	* Hold `Shift` at the same time to show folded lines. e.g. `Shift + Alt + 1` unfolds all code.
 
 * GD Override Functions
-	* RMB (Right Mouse Button) On editing Script for show Override Functions: Can generate functions inherited.
+	* From the right mouse button context menu the Override Virtual Functions can be opened.
+	* This allows you to automatically generate override methods for virtual funcions in parent classes.
 
 * Fancy Search Files
-	* [Ctrl + Atl + Space] Invoke Easy Searcher Window
+	* Use `Ctrl + Alt + Space` to open the file search window where you can easily search all files in your project by type, name, etc.
 
 * Fancy Search Class Files
-	* [Atl + Delete] Invoke Easy Searcher Window
+	* Use `Alt + Delete` to open the class & script search window where you can easily view where individual classes and scripts are being used in your project.
 
 * Fancy Filters Script
-	* In File tab on editor, you can Show/Hide/Toggle The neighbor panel of the editor.
+	* In the script editor two new tabs have been added to the left panel: Settings and Script Info. The Script Info tab gives you an overview of the current script and also allows you to view the properties of all classes which the current script inherits from. The Settings tab lets you configure the Script Info tab to your liking.
 
+## How to contribute
 
-# How contribute [↑](#table-of-contents)
+### Submit issues
+Report any bugs you find in the [Issues](https://github.com/CodeNameTwister/Godot-IDE/issues) tab, as well as any feature requests you may have. Influence the future of this plugin!
 
-### Make new plugin [↑](#table-of-contents)
-To add a plugin that works alongside Godot-IDE, simply create a plugin as you normally would and add it to the \_Godot-IDE\_/plugins folder.
+### Submit pull reqests
+If you'd like to help out with development don't hesitate to submit a pull request!
+
+### Integrate with this plugin
+To add a plugin that works alongside Godot-IDE, simply create a plugin as you normally would and add it to the `_Godot-IDE_/plugins` folder.
 
 >[!TIP]
-> The Godot-IDE search by plugin.cfg file what file should enable.
+> Additional scripts must also be enabled in the `plugin.cfg` file.
 
-### Make a Request
-In Issue tab, you can write you request/changes for the future of this plugin.
+## FAQ
+* Why is the folder called `_Godot-IDE_`?
+	* This is due to the way addons are loaded in Godot, which is alphabetical. This naming gives priority to this addon, avoiding any incompatibility for other plugins.
 
-# FAQ [↑](#table-of-contents)
-* Why called \_Godot-IDE\_ folder?
-	* This is due to the way addons are loaded in Godot, currently in alphabetical order giving priority to this addon avoiding any incompatibility for the plugins.
+## TODO 
+* Add documentation.
 
-# TODO 
-* Documentation.
-
-
-#
-> Twister
->
-> I hope this is helpful. Personally, I've decided to do everything in gdscript for compatibility reasons, but I might create a C++ extension if a future feature requires it, as in cases I've had for generations or using recursive functions that still offer poor performance.
->
-> Now use it, break it, modify it, fix it, and improve it to your liking.
-
-# Special Thanks 📜 
+## Special Thanks 📜
 This section lists users who have contributed to improving the quality of this project.
 
-[@kyrosle](https://github.com/kyrosle)
+- [@kyrosle](https://github.com/kyrosle)
+- [@nathan-coleman](https://github.com/nathan-coleman)
 
-# 
+##
+> I hope this is helpful. Personally, I've decided to do everything in gdscript for compatibility reasons, but I might create a C++ extension if a future feature requires it, as in cases I've had for generations or using recursive functions that still offer poor performance.
+>
+> Now use it, modify it, break it, fix it, and improve it to your liking.
+
+Twister
+
+##
 Copyrights (c) CodeNameTwister. See [LICENSE](LICENSE) for details.
 
 [godot engine]: https://godotengine.org/
