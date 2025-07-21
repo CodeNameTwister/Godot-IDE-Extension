@@ -125,6 +125,11 @@ func _exit_tree() -> void:
 	_plugins.clear()
 	_init_config(0)
 	
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		if editor.settings_changed.is_connected(_on_changes):
+			editor.settings_changed.disconnect(_on_changes)
+	
 func _load_plugins(path : String) -> void:
 	if !DirAccess.dir_exists_absolute(path):
 		path = path.get_base_dir().get_file()
@@ -195,7 +200,7 @@ func _load_plugins(path : String) -> void:
 	
 	print("[Godot-IDE Extension]")
 	if authors.size() > 0:
-		print("> Contributors: {0}".format([", ".join(authors)]))
+		print("> Plugins Contributors: {0}".format([", ".join(authors)]))
 	
 		
 func _sugar_godot(dir : String, col : String = "blue") -> void:
@@ -215,6 +220,15 @@ func _sugar_godot(dir : String, col : String = "blue") -> void:
 	if editor:
 		editor.scan.call_deferred()
 		
+func _on_changes() -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		var changes : PackedStringArray = editor.get_changed_settings()
+		if "plugin/gd_override_functions/inheritance/virtual_functions_begins_with" in changes:
+			IDE.VIRTUAL_METHODS = editor.get_setting("plugin/gd_override_functions/inheritance/virtual_functions_begins_with")
+		if "plugin/gd_override_functions/inheritance/private_functions_begins_with" in changes:
+			IDE.PRIVATE_METHODS = editor.get_setting("plugin/gd_override_functions/inheritance/private_functions_begins_with")
+		
 func _initialize() -> void:
 	var dirt : Dictionary = {}
 	var dat : Array[Dictionary] = (get_script() as Script).get_script_method_list()
@@ -228,3 +242,10 @@ func _initialize() -> void:
 				if !dct.has("args") or dct["args"].size() == 0:
 					call(key)
 	
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		if editor.has_setting("plugin/gd_override_functions/inheritance/virtual_functions_begins_with"):
+			IDE.VIRTUAL_METHODS = editor.get_setting("plugin/gd_override_functions/inheritance/virtual_functions_begins_with")
+		if editor.has_setting("plugin/gd_override_functions/inheritance/private_functions_begins_with"):
+			IDE.PRIVATE_METHODS = editor.get_setting("plugin/gd_override_functions/inheritance/private_functions_begins_with")
+		editor.settings_changed.connect(_on_changes)

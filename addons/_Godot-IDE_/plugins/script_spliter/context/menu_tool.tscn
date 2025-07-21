@@ -1,16 +1,16 @@
-[gd_scene load_steps=15 format=3 uid="uid://bwu1734u3ty42"]
+[gd_scene load_steps=15 format=3 uid="uid://csu7djr8m1mgb"]
 
-[ext_resource type="Script" uid="uid://c5ccmrfhnavjr" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/menu_tool.gd" id="1_eyluc"]
-[ext_resource type="Texture2D" uid="uid://dun0kkreog4xj" path="res://addons/_Godot-IDE_/plugins/script_spliter/assets/github_CodeNameTwister.png" id="2_5gosm"]
-[ext_resource type="Texture2D" uid="uid://cc4rglfx6oawr" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_disable.png" id="3_4ewwr"]
-[ext_resource type="Script" uid="uid://csrh26peqqkyy" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/split_type_button.gd" id="4_bbkwv"]
-[ext_resource type="Texture2D" uid="uid://5o8huqgt5mt4" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_2H.png" id="5_dw26u"]
-[ext_resource type="Texture2D" uid="uid://dpndvpt3ag0lx" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_2V.png" id="6_xnjrm"]
-[ext_resource type="Texture2D" uid="uid://ck5nff60m4k0x" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_3H.png" id="7_3y7iy"]
-[ext_resource type="Texture2D" uid="uid://dedsmby3k50vm" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_3V.png" id="8_u6531"]
-[ext_resource type="Texture2D" uid="uid://bp3ijs3jkph7n" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_4S.png" id="9_in11t"]
-[ext_resource type="Texture2D" uid="uid://b3ukn8g5iik64" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/sp_custom.png" id="10_rhsmg"]
-[ext_resource type="Script" uid="uid://dpyycb77a8euk" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/custom_options.gd" id="11_yamp6"]
+[ext_resource type="Script" uid="uid://4wllvh127dwh" path="res://addons/script_spliter/context/menu_tool.gd" id="1_00j1l"]
+[ext_resource type="Texture2D" uid="uid://tgaoyybc2iji" path="res://addons/script_spliter/assets/github_CodeNameTwister.png" id="2_bi1if"]
+[ext_resource type="Texture2D" uid="uid://dmvcijsjhb5pc" path="res://addons/script_spliter/context/icons/sp_disable.png" id="2_le2a0"]
+[ext_resource type="Script" uid="uid://bobw4q6hrbbox" path="res://addons/script_spliter/context/split_type_button.gd" id="3_h7rbp"]
+[ext_resource type="Texture2D" uid="uid://c1kjfqirfexvp" path="res://addons/script_spliter/context/icons/sp_2H.png" id="3_o7fne"]
+[ext_resource type="Texture2D" uid="uid://d1r72ixdgbwl6" path="res://addons/script_spliter/context/icons/sp_2V.png" id="4_js2dr"]
+[ext_resource type="Texture2D" uid="uid://32xnl4cu46pj" path="res://addons/script_spliter/context/icons/sp_3H.png" id="5_h32ac"]
+[ext_resource type="Texture2D" uid="uid://b4cmfno0ixqnm" path="res://addons/script_spliter/context/icons/sp_3V.png" id="6_h7rbp"]
+[ext_resource type="Texture2D" uid="uid://bf2bjkoock7re" path="res://addons/script_spliter/context/icons/sp_4S.png" id="7_bi1if"]
+[ext_resource type="Texture2D" uid="uid://bdxvp5dyj8y0r" path="res://addons/script_spliter/context/icons/sp_custom.png" id="10_0n25h"]
+[ext_resource type="Script" uid="uid://y3jbguu2nw5c" path="res://addons/script_spliter/context/custom_options.gd" id="11_2o3ku"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_00j1l"]
 font_size = 28
@@ -29,7 +29,7 @@ title = "Script Splitter Menu"
 position = Vector2i(0, 36)
 size = Vector2i(602, 382)
 visible = true
-script = ExtResource("1_eyluc")
+script = ExtResource("1_00j1l")
 _container = NodePath("MarginContainer/MenContainer/Body")
 _custom_options = NodePath("MarginContainer/MenContainer/COptions")
 
@@ -56,7 +56,7 @@ offset_right = -4.0
 offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_5gosm")
+texture = ExtResource("2_bi1if")
 stretch_mode = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -110,15 +110,15 @@ layout_mode = 2
 tooltip_text = "Disabled Splited"
 button_pressed = true
 text = "Disabled"
-icon = ExtResource("3_4ewwr")
-script = ExtResource("4_bbkwv")
+icon = ExtResource("2_le2a0")
+script = ExtResource("3_h7rbp")
 
 [node name="splited_two_horizontal" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
 layout_mode = 2
 tooltip_text = "Two Horizontal Splited"
 text = "Two Horizontal"
-icon = ExtResource("5_dw26u")
-script = ExtResource("4_bbkwv")
+icon = ExtResource("3_o7fne")
+script = ExtResource("3_h7rbp")
 columns = 2
 rows = 1
 
@@ -126,8 +126,8 @@ rows = 1
 layout_mode = 2
 tooltip_text = "Two Vertical Splited"
 text = "Two Vertical"
-icon = ExtResource("6_xnjrm")
-script = ExtResource("4_bbkwv")
+icon = ExtResource("4_js2dr")
+script = ExtResource("3_h7rbp")
 columns = 1
 rows = 2
 
@@ -135,8 +135,8 @@ rows = 2
 layout_mode = 2
 tooltip_text = "Three Horizontal Splited"
 text = "Three Horizontal"
-icon = ExtResource("7_3y7iy")
-script = ExtResource("4_bbkwv")
+icon = ExtResource("5_h32ac")
+script = ExtResource("3_h7rbp")
 columns = 3
 rows = 1
 
@@ -144,8 +144,8 @@ rows = 1
 layout_mode = 2
 tooltip_text = "Three Vertical Splited"
 text = "Three Vertical"
-icon = ExtResource("8_u6531")
-script = ExtResource("4_bbkwv")
+icon = ExtResource("6_h7rbp")
+script = ExtResource("3_h7rbp")
 columns = 1
 rows = 3
 
@@ -153,22 +153,22 @@ rows = 3
 layout_mode = 2
 tooltip_text = "Square Splited"
 text = "Four Squared"
-icon = ExtResource("9_in11t")
-script = ExtResource("4_bbkwv")
+icon = ExtResource("7_bi1if")
+script = ExtResource("3_h7rbp")
 columns = 2
 rows = 2
 
 [node name="CheckBox" type="CheckBox" parent="MarginContainer/MenContainer/Body"]
 layout_mode = 2
 text = "Custom Split"
-icon = ExtResource("10_rhsmg")
-script = ExtResource("4_bbkwv")
+icon = ExtResource("10_0n25h")
+script = ExtResource("3_h7rbp")
 is_custom = true
 
 [node name="COptions" type="VBoxContainer" parent="MarginContainer/MenContainer" node_paths=PackedStringArray("columns", "rows")]
 visible = false
 layout_mode = 2
-script = ExtResource("11_yamp6")
+script = ExtResource("11_2o3ku")
 columns = NodePath("ValueOptions/ColumnsValue")
 rows = NodePath("ValueOptions/RowsValue")
 
@@ -180,7 +180,7 @@ horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="MarginContainer/MenContainer/COptions"]
 layout_mode = 2
-texture = ExtResource("10_rhsmg")
+texture = ExtResource("10_0n25h")
 expand_mode = 1
 stretch_mode = 5
 

@@ -56,6 +56,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 * GD Override Functions
 	* From the right mouse button context menu the Override Virtual Functions can be opened.
 	* This allows you to automatically generate override methods for virtual funcions in parent classes.
+	* Use `Alt + insert` to open the override functions window.
 
 * Fancy Search Files
 	* Use `Ctrl + Alt + Space` to open the file search window where you can easily search all files in your project by type, name, etc.

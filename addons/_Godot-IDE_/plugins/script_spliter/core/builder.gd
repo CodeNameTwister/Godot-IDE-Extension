@@ -12,6 +12,8 @@ const EditorContainer : Script = preload("res://addons/_Godot-IDE_/plugins/scrip
 const DD : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/DDContainer.gd")
 const DDO : PackedScene = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/ui/dd.tscn")
 const DDITEM : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/DDItem.gd")
+const TOOL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_spliter/assets/tab_icon.svg")
+
 
 #region POPSC	
 const FLYING_SCRIPT : PackedScene = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/flying_script.tscn")
@@ -42,7 +44,6 @@ var _last_tool : Mickeytools = null:
 var _tweener : ReTweener = null
 var _item_list : ItemList = null:
 	set(e):
-		
 		if e == null and is_instance_valid(_item_list):
 			if _item_list.has_signal(&"on_start_drag") and  _item_list.is_connected(&"on_start_drag", _on_drag):
 				_item_list.disconnect(&"on_start_drag", _on_drag)
@@ -225,25 +226,12 @@ func init_1() -> void:
 		if !_wm.focus_exited.is_connected(_out_wm_focus):
 			_wm.focus_exited.connect(_out_wm_focus)
 
-	var hbkp : String = _HANDLE_BACKWARD_KEY_PATH
-	var hbmp : String = _HANDLE_BACKWARD_MOUSE_BUTTON_PATH
-	var hfkp : String = _HANDLE_FORWARD_KEY_PATH
-	var hfmp : String = _HANDLE_FORWARD_MOUSE_BUTTON_PATH
 
 	for x : Array in _get_data_cfg():
 		if !settings.has_setting(x[0]):
 			settings.set_setting(x[0], get(x[1]))
 		else:
 			set(x[1], settings.get_setting(x[0]))
-			
-	if !FileAccess.file_exists(_HANDLE_BACKWARD_KEY_PATH):
-		_HANDLE_BACKWARD_KEY_PATH = hbkp
-	if !FileAccess.file_exists(_HANDLE_BACKWARD_MOUSE_BUTTON_PATH):
-		_HANDLE_BACKWARD_MOUSE_BUTTON_PATH = hbmp
-	if !FileAccess.file_exists(_HANDLE_FORWARD_KEY_PATH):
-		_HANDLE_FORWARD_KEY_PATH = hfkp
-	if !FileAccess.file_exists(_HANDLE_FORWARD_MOUSE_BUTTON_PATH):
-		_HANDLE_FORWARD_MOUSE_BUTTON_PATH = hfmp
 
 	settings.add_property_info({
 		"name": &"plugin/script_spliter/window/highlight_selected_color",
@@ -284,6 +272,96 @@ func get_last_script_used() -> String:
 		_lifo_src.remove_at(size)
 	return result
 #region
+
+
+#region REF
+var _script_list : ItemList = null
+var _filesearch : LineEdit = null
+var _origins : Array[Control] = []
+
+func _set_callback() -> void:
+	if is_instance_valid(_script_list):
+		_script_list.item_selected.connect(_on_item_selected)
+		_script_list.item_activated.connect(_on_item_activate)
+		_script_list.item_clicked.connect(_on_item_clicked)
+	if is_instance_valid(_filesearch):
+		_filesearch.text_changed.connect(_on_update_list_search)
+	
+func _on_item_activate(index : int) -> void:
+	var mt : Variant = _script_list.get_item_tooltip(index)
+	if mt is String:
+		for x : int in _item_list.item_count:
+			var _mt : Variant = _item_list.get_item_tooltip(x)
+			if _mt is String and _mt == mt:
+				_item_list.item_activated.emit(x)
+				return
+	
+func _on_item_clicked(index: int, at_position: Vector2, mouse_button_index: int) -> void:
+	var mt : Variant = _script_list.get_item_tooltip(index)
+	if mt is String:
+		for x : int in _item_list.item_count:
+			var _mt : Variant = _item_list.get_item_tooltip(x)
+			if _mt is String and _mt == mt:
+				_item_list.item_clicked.emit(x,at_position , mouse_button_index)
+				return
+
+func _on_item_selected(index : int) -> void:
+	var mt : Variant = _script_list.get_item_tooltip(index)
+	if mt is String:
+		for x : int in _item_list.item_count:
+			var _mt : Variant = _item_list.get_item_tooltip(x)
+			if _mt is String and _mt == mt:
+				_item_list.item_selected.emit(x)
+				return
+
+func get_index_by_src(list : ItemList,src : String) -> int:
+	for x : int in list.item_count:
+		var variant : Variant = list.get_item_metadata(x)
+		if variant is String and variant == src:
+			return x
+	return -1
+
+func _on_update_list_search(txt : String) -> void:
+	if txt.is_empty():
+		_on_update_list()
+		return
+		
+	if !is_instance_valid(_script_list):
+		return
+		
+	_script_list.clear()
+	
+	var rgx : RegEx = RegEx.create_from_string("(?i).*{0}.*".format([txt]))
+	
+	var item_list : ItemList = _item_list
+	for x : int in item_list.item_count:
+		var indx : int = _script_list.item_count
+		var _txt : String = item_list.get_item_text(x)
+		if rgx.search(_txt) != null:
+			_script_list.add_item(item_list.get_item_text(x), item_list.get_item_icon(x), true)
+			_script_list.set_item_metadata(indx, item_list.get_item_metadata(x))
+			_script_list.set_item_tooltip(indx, item_list.get_item_tooltip(x))
+			_script_list.set_item_icon_modulate(indx, item_list.get_item_icon_modulate(x))
+	
+func _on_update_list() -> void:
+	if !is_instance_valid(_script_list):
+		return
+		
+	if is_instance_valid(_filesearch):
+		if !_filesearch.text.is_empty():
+			_on_update_list_search(_filesearch.text)
+			return
+			
+	_script_list.clear()
+	var item_list : ItemList = _item_list
+	for x : int in item_list.item_count:
+		var indx : int = _script_list.item_count
+		_script_list.add_item(item_list.get_item_text(x), item_list.get_item_icon(x), true)
+		_script_list.set_item_metadata(indx, item_list.get_item_metadata(x))
+		_script_list.set_item_tooltip(indx, item_list.get_item_tooltip(x))
+		_script_list.set_item_icon_modulate(indx, item_list.get_item_icon_modulate(x))
+	
+#endregion
 
 func update_config() -> void:
 	var settings : EditorSettings = EditorInterface.get_editor_settings()
@@ -345,10 +423,10 @@ func _update_container() -> void:
 			var text : Variant = ResourceLoader.load(_SEPARATOR_BUTTON_ICON)
 			if text is Texture:
 				_main.drag_button_icon = text
-			else:
-				push_warning("[Script-Spliter] The resource is not a texture imported ", _SEPARATOR_BUTTON_ICON)
-		else:
-			push_warning("[Script-Spliter] Can not find the resource ", _SEPARATOR_BUTTON_ICON)
+			#else:
+				#push_warning("[Script-Spliter] The resource is not a texture imported ", _SEPARATOR_BUTTON_ICON)
+		#else:
+			#push_warning("[Script-Spliter] Can not find the resource ", _SEPARATOR_BUTTON_ICON)
 
 func _init(plugin : Object) -> void:
 	_plugin = plugin
@@ -464,12 +542,33 @@ func _get_editor_root() -> Node:
 
 func get_last_tool() -> Mickeytools:
 	return _last_tool
+
+func update_all_info() -> void:
+	for x : Mickeytools in _code_editors:
+		if is_instance_valid(x):
+			x.update()
 	
 func update_info(root : TabContainer, index : int , src : String) -> void:
 	if !is_instance_valid(root):
 		return
 	var item_list : Control = _item_list
 	if !src.is_empty():
+		if root.get_tab_count() <= index:
+			return
+		var as_tool : bool = false
+		root.set_tab_tooltip(index, src)
+		
+		var editor : ScriptEditor = EditorInterface.get_script_editor()
+		if editor:
+			for sc : Script in editor.get_open_scripts():
+				if sc.resource_path == src:
+					if sc.is_tool():
+						as_tool = true
+						break
+						
+		if as_tool:
+			root.set_tab_icon(index, TOOL_ICON)
+		
 		if is_instance_valid(item_list):
 			var indx : int = -1
 			for x : int in item_list.item_count:
@@ -479,12 +578,40 @@ func update_info(root : TabContainer, index : int , src : String) -> void:
 			if indx > -1:
 				var text : String = _item_list.get_item_text(indx)
 				if text.is_empty() or text.begins_with("@"):
-					text = item_list.get_item_tooltip(index).get_file()
+					text = item_list.get_item_tooltip(indx).get_file()
 				text = text.trim_suffix("(*)")
-				root.set_tab_title(index, text)
-				root.set_tab_icon(index, item_list.get_item_icon(indx))
+				if !text.is_empty():
+					root.set_tab_title(index, text)
+					if !as_tool:
+						root.set_tab_icon(index, item_list.get_item_icon(indx))
+				return
+		var ct : String = root.get_tab_title(index)
+		if ct.is_empty() or ct.begins_with("@") or "/" in ct:
+			var sc : int = src.get_slice_count("/")
+			var txt : String = src.get_file()
+			var dirty = false
 			
-
+			for x : int in root.get_tab_count():
+				var current : String = root.get_tab_tooltip(x)
+				var file : String = current.get_file()
+				if txt == file:
+					if index == x:
+						continue
+					if !current.is_empty():
+						dirty = true
+						var slice : int = current.get_slice_count("/")
+						var _txt : String = file
+						for z : int in range(slice - 2, maxi(slice - 4, -1), -1):
+							_txt = str(current.get_slice("/", z) , "/", _txt)
+						if !_txt.is_empty():
+							root.set_tab_title(x, _txt)
+			
+			if dirty:
+				for x : int in range(sc - 2, maxi(sc - 4, -1), -1):
+					txt = str(src.get_slice("/", x) , "/", txt)
+			if !txt.is_empty():
+				root.set_tab_title(index, txt)
+		
 
 class Root extends MarginContainer:
 	var _helper : Object = null
@@ -930,7 +1057,7 @@ class Mickeytools extends Object:
 			if _helper.add_last_script_used.is_valid():
 				_helper.add_last_script_used(_src)
 
-func control_reparent(_index : int, _control : Object, parent : Object, _parent : Object) -> void:
+func control_reparent(_index : int, _control : Variant, parent : Variant, _parent : Variant) -> void:
 	if !is_instance_valid(_control):
 		return
 		
@@ -1158,7 +1285,41 @@ func _setup(editor : TabContainer, setup : bool) -> void:
 			if editor.is_connected(_0, _1) != setup:
 				editor.call(_2, _0, _1)
 			
-	if setup:
+	if !setup:
+		for o : Control in _origins:
+			o.visible = true
+		_origins.clear()
+		if is_instance_valid(_filesearch):
+			_filesearch.queue_free()
+		if is_instance_valid(_script_list):
+			_script_list.queue_free()
+		var item_list : ItemList = _item_list
+		if item_list and item_list.draw.is_connected(_on_update_list):
+			item_list.draw.disconnect(_on_update_list)
+	else:
+		var parent: Node = _item_list.get_parent()
+		var item_list : ItemList = _item_list
+		item_list.draw.connect(_on_update_list)
+		_origins.append(item_list)
+		_script_list = item_list.duplicate()
+		item_list.visible = false
+		if item_list:
+			var filesearch : Object = parent.get_child(0)
+			if filesearch is LineEdit:
+				var txt : String = filesearch.text
+				if !txt.is_empty():
+					filesearch.set(&"text", "")
+				_origins.append(filesearch)
+				_filesearch = filesearch.duplicate()
+				filesearch.visible = false
+		
+		parent.add_child(_script_list)
+		parent.move_child(_script_list, 0)
+		parent.add_child(_filesearch)
+		parent.move_child(_filesearch, 0)
+		
+		_set_callback()
+				
 		if !FileAccess.file_exists("res://addons/_Godot-IDE_/plugins/script_spliter/io/backward_key_button.tres"):
 			if DirAccess.dir_exists_absolute("res://addons/_Godot-IDE_/plugins/script_spliter/io"):
 				var input : InputEventKey = InputEventKey.new()
@@ -1202,7 +1363,7 @@ func _setup(editor : TabContainer, setup : bool) -> void:
 			else:
 				printerr("Not type InputEvent: ", key_0)
 		#else:
-			#printerr("Not exist file ", _HANDLE_FORWARD_KEY_PATH)
+			#printerr("Not exist file", _HANDLE_FORWARD_KEY_PATH)
 		
 		if FileAccess.file_exists(_HANDLE_FORWARD_MOUSE_BUTTON_PATH):
 			var key_1 : Variant = ResourceLoader.load(_HANDLE_FORWARD_MOUSE_BUTTON_PATH)
@@ -1211,7 +1372,7 @@ func _setup(editor : TabContainer, setup : bool) -> void:
 			else:
 				printerr("Not type InputEvent: ", key_1)
 		#else:
-			#printerr("Not exist file ", _HANDLE_FORWARD_MOUSE_BUTTON_PATH)
+			#printerr("Not exist file", _HANDLE_FORWARD_MOUSE_BUTTON_PATH)
 		
 		if !InputMap.has_action(&"ui_script_spliter_backward"):
 			InputMap.add_action(&"ui_script_spliter_backward")
@@ -1225,7 +1386,7 @@ func _setup(editor : TabContainer, setup : bool) -> void:
 			else:
 				printerr("Not type InputEvent: ", key_0)
 		#else:
-			#printerr("Not exist file ", _HANDLE_BACKWARD_KEY_PATH)
+			#printerr("Not exist file", _HANDLE_BACKWARD_KEY_PATH)
 		
 		if FileAccess.file_exists(_HANDLE_BACKWARD_MOUSE_BUTTON_PATH):
 			var key_1 : InputEventMouseButton = ResourceLoader.load(_HANDLE_BACKWARD_MOUSE_BUTTON_PATH)
@@ -1234,7 +1395,7 @@ func _setup(editor : TabContainer, setup : bool) -> void:
 			else:
 				printerr("Not type InputEvent: ", key_1)
 		#else:
-			#printerr("Not exist file ", _HANDLE_BACKWARD_MOUSE_BUTTON_PATH)
+			#printerr("Not exist file", _HANDLE_BACKWARD_MOUSE_BUTTON_PATH)
 
 func _on_sub_change(__ : int, tab : TabContainer) -> void:
 	if _chaser_enabled:
@@ -1410,7 +1571,6 @@ func _get_container_edit() -> Control:
 
 	rtab.drag_to_rearrange_enabled = true
 
-
 	rtab.child_entered_tree.connect(_on_enter.bind(rtab))
 	rtab.child_exiting_tree.connect(_on_exit.bind(rtab))
 
@@ -1511,6 +1671,7 @@ func update() -> void:
 						_clear_placeholder()
 	else:
 		_clear_placeholder()	
+	_on_update_list.call_deferred()
 	
 func _clear_placeholder() -> void:				
 	if _pop_script_placeholder:
@@ -1623,6 +1784,10 @@ func create_code_editor(root : Node, editor : Node) -> Mickeytools:
 			if x.is_equal(editor):
 				return null
 		tool = Mickeytools.new(self, root, editor)
+		if tool.get_src().is_empty():
+			var item : ItemList = _item_list
+			if item.item_count > editor.get_index():
+				tool.set_src(item.get_item_tooltip(editor.get_index()))
 		tool.focus.connect(_on_focus)
 		add_tool(tool)
 		
@@ -2154,8 +2319,11 @@ func can_expand_same_focus() -> bool:
 	return _BEHAVIOUR_CAN_EXPAND_SAME_ON_FOCUS
 
 #region _8_
-func swap(caller : Object) -> void:
+func swap(caller : Variant) -> void:
 	if !_SWAP_BY_BUTTON:
+		return
+		
+	if !is_instance_valid(caller):
 		return
 		
 	if !is_instance_valid(_main) or _main.get_child_count() == 0:

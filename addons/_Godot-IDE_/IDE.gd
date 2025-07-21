@@ -35,14 +35,16 @@ static func get_script_list() -> ItemList:
 	if out is ItemList:
 		return out
 	return null
-	
+
+## Get search bar native of script list.	
 static func get_script_list_search_bar() -> LineEdit:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("script_list_search_bar", script_editor, "*", "LineEdit", 0)
 	if out is LineEdit:
 		return out
 	return null
-	
+
+## Get label of the script list	
 static func get_script_list_current_label() -> Label:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("script_list_current_label", script_editor, "*", "Label", 2)
@@ -50,6 +52,7 @@ static func get_script_list_current_label() -> Label:
 		return out
 	return null
 	
+## Get the bottom panel of filter side by script list.
 static func get_filter_methods() -> ItemList:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("filter_methods", script_editor, "*", "ItemList", 1)
@@ -57,13 +60,15 @@ static func get_filter_methods() -> ItemList:
 		return out
 	return null
 	
+## Get the search bar of the filters method panel.
 static func get_filter_methods_search_bar() -> LineEdit:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("filter_methods_search_bar", script_editor, "*", "LineEdit", 1)
 	if out is LineEdit:
 		return out
 	return null
-	
+		
+## Get the file on top menu bar.
 static func get_file_menu_button() -> MenuButton:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("file_menu_button", script_editor, "*", "MenuButton", 0)
@@ -71,6 +76,7 @@ static func get_file_menu_button() -> MenuButton:
 		return out
 	return null
 	
+## Get the edit on top menu bar.
 static func get_edit_menu_button() -> MenuButton:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("edit_menu_button", script_editor, "*", "MenuButton", 1)
@@ -78,6 +84,7 @@ static func get_edit_menu_button() -> MenuButton:
 		return out
 	return null
 	
+## Get the search on top menu bar.
 static func get_search_menu_button() -> MenuButton:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("search_menu_button", script_editor, "*", "MenuButton", 2)
@@ -85,6 +92,7 @@ static func get_search_menu_button() -> MenuButton:
 		return out
 	return null
 	
+## Get the got to menu on top menu bar.
 static func get_go_to_menu_button() -> MenuButton:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("get_go_to_menu_button", script_editor, "*", "MenuButton", 3)
@@ -92,6 +100,7 @@ static func get_go_to_menu_button() -> MenuButton:
 		return out
 	return null
 	
+## Get the debug on top menu bar.
 static func get_debug_menu_button() -> MenuButton:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("debug_menu_button", script_editor, "*", "MenuButton", 17)
@@ -99,6 +108,7 @@ static func get_debug_menu_button() -> MenuButton:
 		return out
 	return null
 	
+## Get the container of scripts list.
 static func get_script_list_container() -> VSplitContainer:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("script_list_container", script_editor, "*", "VSplitContainer", 0)
@@ -106,6 +116,7 @@ static func get_script_list_container() -> VSplitContainer:
 		return out
 	return null
 	
+## Get the container of the editor.
 static func get_editor_container() -> HSplitContainer:
 	var script_editor: ScriptEditor = EditorInterface.get_script_editor()
 	var out : Variant = _get_reference("editor_container", script_editor, "*", "HSplitContainer", 0)
@@ -113,17 +124,19 @@ static func get_editor_container() -> HSplitContainer:
 		return out
 	return null
 	
-## Raito must be 0.1 - 1.0
+## Get native screen size. Raito must be 0.1 - 1.0
 static func get_screen_size(ratio : float = 1.0) -> Vector2:
 	var screen : Vector2 = DisplayServer.screen_get_size()
 	return screen * ratio
 	
+## Clamp native screen size.
 static func clamp_screen_size(current_size : Vector2, min_ratio : float = 0.0, max_ratio : float = 1.0) -> Vector2:
 	var screen : Vector2 = DisplayServer.screen_get_size()
 	var max_screen : Vector2 = screen * max_ratio
 	var min_screen : Vector2 = screen * min_ratio
 	return Vector2(max(min(current_size.x, max_screen.x), min_screen.x), max(min(current_size.y, max_screen.y), min_screen.y))
 	
+## Get full properties headers of a script.
 static func get_script_properties_list(script : Script, full : bool = true, check_is_native : bool = true) -> Dictionary:
 	if script == null:
 		return {}
@@ -135,6 +148,122 @@ static func get_script_properties_list(script : Script, full : bool = true, chec
 		return _generate_native(script.get_instance_base_type(), data, data.size()-1)
 	else:
 		return _generate(script)
+#endregion
+
+
+# =============================================================================	
+#region DEV_CONFIG
+static func set_config(plugin_name : String, config_name : String, value : Variant) -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		if config_name.is_empty():
+			printerr("Config name can not be empty!")
+			return
+		if plugin_name.is_empty():
+			printerr("Plugin name can not be empty")
+			return
+		editor.set_setting(EDITOR_CONFIG_PATH.path_join(plugin_name).path_join(config_name), value)
+	
+static func add_property_config_info(plugin_name : String, config_name : String, type : Variant.Type, hint : int, hint_string : String):
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		if config_name.is_empty():
+			printerr("Config name can not be empty!")
+			return
+		if plugin_name.is_empty():
+			printerr("Plugin name can not be empty")
+			return
+		editor.add_property_info({
+			"name": EDITOR_CONFIG_PATH.path_join(plugin_name).path_join(config_name),
+			"type": type,
+			"hint": hint,
+			"hint_string": hint_string
+		})
+	
+static func get_config(addon_name : String, config_name : String) -> Variant:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		var setting : String = EDITOR_CONFIG_PATH.path_join(addon_name).path_join(config_name)
+		if editor.has_setting(setting):
+			return editor.get_setting(setting)
+	return null
+	
+static func set_file_config_value(section : String, key : String, value : Variant) -> int:
+	if !DirAccess.dir_exists_absolute(PATH_CONFIG):
+		if OK != DirAccess.make_dir_recursive_absolute(PATH_CONFIG):
+			push_warning("Can not creates config dir!")
+			return 1
+		if FileAccess.file_exists(PATH_CONFIG.path_join(".gdignore")):
+			var file : FileAccess = FileAccess.open(PATH_CONFIG.path_join(".gdignore"), FileAccess.WRITE)
+			file.store_string("FOLDER Godot-IDE CONFIG")
+			file.close()
+			
+	var cfg_path : String = PATH_CONFIG.path_join("config.ini")
+	var cfg : ConfigFile = ConfigFile.new()
+	if FileAccess.file_exists(cfg_path):
+		cfg.load(cfg_path)
+	cfg.set_value(section, key, value)
+	return cfg.save(cfg_path)
+	
+static func get_file_config_value(section : String, key : String) -> Variant:
+	var cfg_path : String = PATH_CONFIG.path_join("config.ini")
+	if !FileAccess.file_exists(cfg_path):
+		return null
+	var cfg : ConfigFile = ConfigFile.new()
+	var err : int = cfg.load(cfg_path)
+	if OK != err:
+		return null
+	return cfg.get_value(section, key, "")
+	
+#endregion
+
+#region utils
+
+	
+static func get_type(_typeof : int) -> String:
+	var txt : String = ""
+	match _typeof:
+		TYPE_BOOL : txt = "bool"
+		TYPE_INT : txt = "int"
+		TYPE_FLOAT: txt = "float"
+		TYPE_STRING : txt = "String"
+		TYPE_VECTOR2 : txt = "Vector2"
+		TYPE_VECTOR2I : txt = "Vector2i"
+		TYPE_RECT2 : txt = "Rect2"
+		TYPE_RECT2I : txt = "Rect2i"
+		TYPE_VECTOR3 : txt = "Vector3"
+		TYPE_VECTOR3I : txt = "Vector3i"
+		TYPE_TRANSFORM2D : txt = "Tranform2D"
+		TYPE_VECTOR4 : txt = "Vector4"
+		TYPE_VECTOR4I : txt = "Vector4i"
+		TYPE_PLANE : txt = "Plane"
+		TYPE_QUATERNION : txt = "Quaternion"
+		TYPE_AABB : txt = "AABB"
+		TYPE_BASIS : txt = "Basis"
+		TYPE_TRANSFORM3D : txt = "Transform3D"
+		TYPE_PROJECTION : txt = "Projection"
+		TYPE_COLOR : txt = "Color"
+		TYPE_STRING_NAME : txt = "StringName"
+		TYPE_NODE_PATH : txt = "NodePath"
+		TYPE_RID : txt = "RID"
+		TYPE_OBJECT : txt = "Object"
+		TYPE_CALLABLE : txt = "Callable"
+		TYPE_SIGNAL : txt = "Signal"
+		TYPE_DICTIONARY : txt = "Dictionary"
+		TYPE_ARRAY : txt = "Array"
+		TYPE_PACKED_BYTE_ARRAY : txt = "PackedByteArray"
+		TYPE_PACKED_INT32_ARRAY : txt = "PackedInt32Array"
+		TYPE_PACKED_INT64_ARRAY : txt = "PackedInt64Array"
+		TYPE_PACKED_FLOAT32_ARRAY : txt = "PackedFloat32Array"
+		TYPE_PACKED_FLOAT64_ARRAY : txt = "PackedFloat64Array"
+		TYPE_PACKED_STRING_ARRAY : txt = "PackedStringArray"
+		TYPE_PACKED_VECTOR2_ARRAY : txt = "PackedVector2Array"
+		TYPE_PACKED_VECTOR3_ARRAY : txt = "PackedVector3Array"
+		TYPE_PACKED_COLOR_ARRAY : txt = "PackedColorArray"
+		TYPE_PACKED_VECTOR4_ARRAY : txt = "PackedVector4Array"
+		_:
+			txt = "Variant"
+	return txt
 	
 static func _generate(script : Script, data : Dictionary = {}, index : int = -1) -> Dictionary:
 	if script == null:
@@ -330,120 +459,6 @@ static func _generate_native(native :  StringName, data : Dictionary = {}, index
 
 	return _generate_native(ClassDB.get_parent_class(native), data, index)
 
-#endregion
-
-
-# =============================================================================	
-#region DEV_CONFIG
-static func set_config(plugin_name : String, config_name : String, value : Variant) -> void:
-	var editor : EditorSettings = EditorInterface.get_editor_settings()
-	if editor:
-		if config_name.is_empty():
-			printerr("Config name can not be empty!")
-			return
-		if plugin_name.is_empty():
-			printerr("Plugin name can not be empty")
-			return
-		editor.set_setting(EDITOR_CONFIG_PATH.path_join(plugin_name).path_join(config_name), value)
-	
-static func add_property_config_info(plugin_name : String, config_name : String, type : Variant.Type, hint : int, hint_string : String):
-	var editor : EditorSettings = EditorInterface.get_editor_settings()
-	if editor:
-		if config_name.is_empty():
-			printerr("Config name can not be empty!")
-			return
-		if plugin_name.is_empty():
-			printerr("Plugin name can not be empty")
-			return
-		editor.add_property_info({
-			"name": EDITOR_CONFIG_PATH.path_join(plugin_name).path_join(config_name),
-			"type": type,
-			"hint": hint,
-			"hint_string": hint_string
-		})
-	
-static func get_config(addon_name : String, config_name : String) -> Variant:
-	var editor : EditorSettings = EditorInterface.get_editor_settings()
-	if editor:
-		var setting : String = EDITOR_CONFIG_PATH.path_join(addon_name).path_join(config_name)
-		if editor.has_setting(setting):
-			return editor.get_setting(setting)
-	return null
-	
-static func get_type(_typeof : int) -> String:
-	var txt : String = ""
-	match _typeof:
-		TYPE_BOOL : txt = "bool"
-		TYPE_INT : txt = "int"
-		TYPE_FLOAT: txt = "float"
-		TYPE_STRING : txt = "String"
-		TYPE_VECTOR2 : txt = "Vector2"
-		TYPE_VECTOR2I : txt = "Vector2i"
-		TYPE_RECT2 : txt = "Rect2"
-		TYPE_RECT2I : txt = "Rect2i"
-		TYPE_VECTOR3 : txt = "Vector3"
-		TYPE_VECTOR3I : txt = "Vector3i"
-		TYPE_TRANSFORM2D : txt = "Tranform2D"
-		TYPE_VECTOR4 : txt = "Vector4"
-		TYPE_VECTOR4I : txt = "Vector4i"
-		TYPE_PLANE : txt = "Plane"
-		TYPE_QUATERNION : txt = "Quaternion"
-		TYPE_AABB : txt = "AABB"
-		TYPE_BASIS : txt = "Basis"
-		TYPE_TRANSFORM3D : txt = "Transform3D"
-		TYPE_PROJECTION : txt = "Projection"
-		TYPE_COLOR : txt = "Color"
-		TYPE_STRING_NAME : txt = "StringName"
-		TYPE_NODE_PATH : txt = "NodePath"
-		TYPE_RID : txt = "RID"
-		TYPE_OBJECT : txt = "Object"
-		TYPE_CALLABLE : txt = "Callable"
-		TYPE_SIGNAL : txt = "Signal"
-		TYPE_DICTIONARY : txt = "Dictionary"
-		TYPE_ARRAY : txt = "Array"
-		TYPE_PACKED_BYTE_ARRAY : txt = "PackedByteArray"
-		TYPE_PACKED_INT32_ARRAY : txt = "PackedInt32Array"
-		TYPE_PACKED_INT64_ARRAY : txt = "PackedInt64Array"
-		TYPE_PACKED_FLOAT32_ARRAY : txt = "PackedFloat32Array"
-		TYPE_PACKED_FLOAT64_ARRAY : txt = "PackedFloat64Array"
-		TYPE_PACKED_STRING_ARRAY : txt = "PackedStringArray"
-		TYPE_PACKED_VECTOR2_ARRAY : txt = "PackedVector2Array"
-		TYPE_PACKED_VECTOR3_ARRAY : txt = "PackedVector3Array"
-		TYPE_PACKED_COLOR_ARRAY : txt = "PackedColorArray"
-		TYPE_PACKED_VECTOR4_ARRAY : txt = "PackedVector4Array"
-		_:
-			txt = "Variant"
-	return txt
-	
-static func set_file_config_value(section : String, key : String, value : Variant) -> int:
-	if !DirAccess.dir_exists_absolute(PATH_CONFIG):
-		if OK != DirAccess.make_dir_recursive_absolute(PATH_CONFIG):
-			push_warning("Can not creates config dir!")
-			return 1
-		if FileAccess.file_exists(PATH_CONFIG.path_join(".gdignore")):
-			var file : FileAccess = FileAccess.open(PATH_CONFIG.path_join(".gdignore"), FileAccess.WRITE)
-			file.store_string("FOLDER Godot-IDE CONFIG")
-			file.close()
-			
-	var cfg_path : String = PATH_CONFIG.path_join("config.ini")
-	var cfg : ConfigFile = ConfigFile.new()
-	if FileAccess.file_exists(cfg_path):
-		cfg.load(cfg_path)
-	cfg.set_value(section, key, value)
-	return cfg.save(cfg_path)
-	
-static func get_file_config_value(section : String, key : String) -> Variant:
-	var cfg_path : String = PATH_CONFIG.path_join("config.ini")
-	if !FileAccess.file_exists(cfg_path):
-		return null
-	var cfg : ConfigFile = ConfigFile.new()
-	var err : int = cfg.load(cfg_path)
-	if OK != err:
-		return null
-	return cfg.get_value(section, key, "")
-	
-#endregion
-# =============================================================================	
 static func clamp_rect_to_screen(to_clamp_rect: Rect2, max_aviable_rect : Rect2) -> Rect2:
 	
 	if to_clamp_rect.position.x < max_aviable_rect.position.x:
@@ -658,3 +673,5 @@ static func _find(root : Node, pattern : String, type : String, index : int = 0)
 	if e.size() > index:
 		return e[index]
 	return null
+
+#endregion

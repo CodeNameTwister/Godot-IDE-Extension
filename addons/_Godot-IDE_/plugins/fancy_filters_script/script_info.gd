@@ -297,11 +297,11 @@ func _on_activate() -> void:
 	
 func _copy(fnc : String,data : String, type : int) -> void:
 	if type == 1:
-		data = data.trim_prefix("func ").split(")", false, 1)[0] + ")"
+		data = (data.trim_prefix("func ").split(")", false, 1)[0] + ")").replace(" : ", "__")
 	elif type == 2:
 		var packed : PackedStringArray = data.trim_prefix("func ").split("(", false, 1)
 		data = packed[0] + ".emit("
-		data += packed[1].split(")", true, 1)[0] + ")"
+		data += (packed[1].split(")", true, 1)[0] + ")").replace(" : ", "_")
 	elif type == 3:
 		data = fnc
 	else:

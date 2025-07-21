@@ -102,7 +102,7 @@ func backward_editor() -> Object:
 	
 func forward_editor() -> Object:
 	if _buffer_editors.size() > 1:
-		var o : Object = _buffer_editors.pop_front()
+		var o : Variant = _buffer_editors.pop_front()
 		while !is_instance_valid(o) and _buffer_editors.size() > 0:
 			o = _buffer_editors.pop_front()
 		if is_instance_valid(o):
@@ -123,7 +123,6 @@ func _on_child(n : Node) -> void:
 			
 func _out_child(n : Node) -> void:
 	if n is TabBar:
-
 		if n.on_start_drag.is_connected(_on_start_drag):
 			n.on_start_drag.disconnect(_on_start_drag)
 		if n.on_stop_drag.is_connected(_on_stop_drag):

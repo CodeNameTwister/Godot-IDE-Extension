@@ -134,13 +134,11 @@ layout_mode = 2
 [node name="use_dots_as_item_icons" type="CheckBox" parent="."]
 layout_mode = 2
 size_flags_horizontal = 0
-button_pressed = true
 text = "Use Dots As Script Info Items Icons"
 script = ExtResource("4_f6f5j")
 
 [node name="use_background_color_in_script_info" type="CheckBox" parent="."]
 layout_mode = 2
 size_flags_horizontal = 0
-button_pressed = true
 text = "Use Background Colors in Script Info Items"
 script = ExtResource("4_f6f5j")
