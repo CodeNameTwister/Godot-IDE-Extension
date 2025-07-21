@@ -6,10 +6,10 @@
 [ext_resource type="Script" uid="uid://blmveofp20cm1" path="res://addons/_Godot-IDE_/plugins/fancy_search_class/gui/line_edit.gd" id="3_m1yal"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nf02n"]
-content_margin_left = 3.0
-content_margin_top = 3.0
-content_margin_right = 3.0
-content_margin_bottom = 3.0
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
 bg_color = Color(0.1155, 0.132, 0.1595, 1)
 corner_detail = 1
 anti_aliasing = false
@@ -17,7 +17,7 @@ anti_aliasing = false
 [node name="Window" type="Popup" node_paths=PackedStringArray("_container", "_tree", "_tree_recents")]
 title = "Fancy Search Class"
 initial_position = 4
-size = Vector2i(500, 500)
+size = Vector2i(816, 500)
 visible = true
 script = ExtResource("1_v5iyo")
 _container = NodePath("Main/MainContainer/HBoxContainer/BoxContainer/Container")

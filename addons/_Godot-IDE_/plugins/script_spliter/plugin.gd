@@ -36,19 +36,32 @@ var _builder : Object = null
 
 var _daemon_chaser : Node = null
 
+const SPLIT_TYPES : Array[Array] = [
+	[0, 0], 
+	[2, 1], 
+	[1, 2], 
+	[3, 1], 
+	[1, 3], 
+	[2, 2], 
+	[3, 3], 
+	[4, 4], 
+	[5, 5], 
+	[6, 6], 
+	[7, 7]
+	]
+var _inputs : Array[InputEvent] = []
+
 #region _REF_
 var _tab_container : Node = null:
 	get:
 		if !is_instance_valid(_tab_container):
-			var script_editor: ScriptEditor = EditorInterface.get_script_editor()
-			_tab_container = find(script_editor, "*", "TabContainer")
+			_tab_container = IDE.get_script_editor_container()
 		return _tab_container
 		
 var _item_list : Node = null:
 	get:
 		if !is_instance_valid(_item_list):
-			var script_editor: ScriptEditor = EditorInterface.get_script_editor()
-			_item_list = find(script_editor, "*", "ItemList")
+			_item_list = IDE.get_script_list()
 		return _item_list
 #endregion
 
@@ -67,12 +80,6 @@ var _d_chase : bool = false
 
 func get_builder() -> Object:
 	return _builder
-
-func find(root : Node, pattern : String, type : String) -> Node:
-	var e : Array[Node] = root.find_children(pattern, type, true, false)
-	if e.size() > 0:
-		return e[0]
-	return null
 
 func get_split_rows() -> int:
 	return _rows
@@ -119,6 +126,33 @@ func _on_change_settings() -> void:
 			_refresh_warnings_on_save = settings.get_setting(&"plugin/script_spliter/behaviour/refresh_warnings_on_save")
 			
 func _init() -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		var KEYS : PackedInt64Array = [
+			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0
+		]
+		var key : String = "plugin/script_spliter/input/spliy_type_"
+		
+		for x : int in range(0, mini(SPLIT_TYPES.size(), KEYS.size()), 1):
+			var key_token : String = str(key, x + 1)
+			var __input : InputEvent = null
+			if editor.has_setting(key_token):
+				var variant : Variant = editor.get_setting(key_token)
+				if variant is InputEvent:
+					__input = variant
+					_inputs.append(__input)
+					continue
+			__input = InputEventKey.new()
+			__input.pressed = true
+			__input.ctrl_pressed = true
+			__input.keycode = KEYS[x]
+			editor.set_setting(key_token, __input)
+			__input.append(__input)
+			
+	set_process_input(_inputs.size() > 0)
+	
+	
+	
 	var o : Object = _tab_container
 	if o == null:
 		#push_warning("[Script-Spliter] 0x000A")
@@ -451,17 +485,11 @@ func _notification(what: int) -> void:
 			_builder.free()
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		if event.pressed and event.ctrl_pressed:
-			if event.keycode == 49:
-				set_type_split(0, 0)
-			elif event.keycode == 50:
-				set_type_split(2, 1)
-			elif event.keycode == 51:
-				set_type_split(1, 2)
-			elif event.keycode == 52:
-				set_type_split(3, 1)
-			elif event.keycode == 53:
-				set_type_split(1, 3)
-			elif event.keycode == 54:
-				set_type_split(2, 2)
+	
+	if event.is_pressed():
+		for x : InputEvent in _inputs:
+			if event.is_match(x, true):
+				var z : int = _inputs.find(x)
+				if z > -1:
+					var matched : Array = SPLIT_TYPES[z]
+					set_type_split(matched[0], matched[1])
