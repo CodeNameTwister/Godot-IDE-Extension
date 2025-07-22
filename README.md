@@ -72,7 +72,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 ### Submit issues
 Report any bugs you find in the [Issues](https://github.com/CodeNameTwister/Godot-IDE/issues) tab, as well as any feature requests you may have. Influence the future of this plugin!
 
-### Submit pull reqests
+### Submit pull requests
 If you'd like to help out with development don't hesitate to submit a pull request!
 
 ### Integrate with this plugin
