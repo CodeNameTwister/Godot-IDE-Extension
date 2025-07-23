@@ -830,13 +830,11 @@ class Mickeytools extends Object:
 		_root = root
 		
 	func _context_update(window : Window, control : Control) -> void:
-		if is_instance_valid(window) and is_instance_valid(control) and is_instance_valid(_root):
-			var root : Viewport= _root.get_viewport()
-			var gvp : Vector2 = control.get_global_mouse_position()
-			gvp.x += (window.size.x/ 4.0)
-			gvp.y = min(gvp.y, root.size.y-window.size.y + 16.0)
-			gvp.x = min(gvp.x, root.size.x-window.size.x + 16.0)
-			
+		if is_instance_valid(window) and is_instance_valid(control):
+			var screen_rect: Rect2 = DisplayServer.screen_get_usable_rect(window.current_screen)
+			var gvp: Vector2 = control.get_screen_position() + control.get_local_mouse_position()
+			gvp.y = min(gvp.y, screen_rect.position.y + screen_rect.size.y - window.size.y + 16.0)
+			gvp.x = min(gvp.x, screen_rect.position.x + screen_rect.size.x - window.size.x + 16.0)
 			window.set_deferred(&"position", gvp)
 			
 			
