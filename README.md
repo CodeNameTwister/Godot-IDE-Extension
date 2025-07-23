@@ -66,8 +66,8 @@ Each feature is described more fully in it's own repository, as well as down bel
 
 * Fancy Filters Script
 	* In the script editor two new tabs have been added to the left panel: Settings and Script Info. The Script Info tab gives you an overview of the current script and also allows you to view the properties of all classes which the current script inherits from. The Settings tab lets you configure the Script Info tab to your liking.
- 	* Use `Atl + T` for show/hide panel
-  	* Use `Atl + Y` to switch between **script info** and the **script list** panel.
+ 	* Use `Atl + T` for show/hide the panel.
+  	* Use `Atl + Y` to switch between **script info** and the **script list** panels.
 
 ## How to contribute
 
