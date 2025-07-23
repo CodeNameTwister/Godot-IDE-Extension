@@ -69,6 +69,9 @@ Each feature is described more fully in it's own repository, as well as down bel
  	* Use `Ctrl + T` for show/hide the panel.
   	* Use `Ctrl + G` to switch between **script info** and the **script list** panels.
 
+* Editor Settings
+	* In Editor Settings (with Advanced option enabled) you can change any option of this plugin in `plugin/godot_ide` or neighbors plugins of Godot-IDE.
+ 	* All plugins have their configuration parameters defined in that section, even for inputs.
 ## How to contribute
 
 ### Submit issues
