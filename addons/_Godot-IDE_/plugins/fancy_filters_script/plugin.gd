@@ -39,7 +39,7 @@ func _init() -> void:
 		_c_input_switch_panels = InputEventKey.new()
 		_c_input_switch_panels.pressed = true
 		_c_input_switch_panels.ctrl_pressed = true
-		_c_input_switch_panels.keycode = KEY_F
+		_c_input_switch_panels.keycode = KEY_G
 		IDE.set_config("fancy_filters_script", "switch_panels", _c_input_switch_panels)
 
 func _get_traduce(msg : String) -> String:
