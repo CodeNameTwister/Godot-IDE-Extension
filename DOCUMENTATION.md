@@ -54,8 +54,10 @@ In the script editor two new tabs have been added to the left panel: Settings an
 	* Safe use to be called by other scripts.
 * ![Virtual](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/315d6504a11802773da1beef81e54275bd60a524/addons/_Godot-IDE_/shared_resources/func_virtual.svg "Virtual") **Virtual Member**
 	* Safe to be called in script inheritance.
+ 	* By default, the member name starts with `_` example: `var _my_virtual_member`,`func _my_virtual_function()`
 * ![Private](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/315d6504a11802773da1beef81e54275bd60a524/addons/_Godot-IDE_/shared_resources/func_private.svg "Private") **Private Member**
 	* It should only be used by the same class.
+ 	* By default, the member name starts with `__` example: `var __my_private_member`,`func __my_private_function()`
 
 ##### Other Modifiers
 * ![Exported](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/MemberAnnotation.svg "Exported") Export
