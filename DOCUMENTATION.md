@@ -57,6 +57,12 @@ In the script editor two new tabs have been added to the left panel: Settings an
 * ![Private](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/315d6504a11802773da1beef81e54275bd60a524/addons/_Godot-IDE_/shared_resources/func_private.svg "Private") **Private Member**
 	* It should only be used by the same class.
 
+##### Other Modifiers
+* ![Exported](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/MemberAnnotation.svg "Exported") Export
+* ![Signals](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/MemberSignal.svg "Signals") Signal
+* ![Static](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/static.svg "Static") Static
+* ![Constant](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/MemberConstant.svg "Constant") Constant
+* ![Override](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/MethodOverride.svg "Override") Overrided member
 
 ## Fancy Search Files
 This plugin scans and displays all files by cataloging them by type.
