@@ -2,7 +2,7 @@
 
 `(Work in Progress)`
 
-All customizable settings can be found in Editor Settings (with advance option envabled)
+All customizable settings can be found in Editor Settings (with advance option enabled)
 
 Reference in plugin section like `plugin/godot_ide/*`
 
