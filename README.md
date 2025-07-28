@@ -98,6 +98,7 @@ This section lists users who have contributed to improving the quality of this p
 
 - [@kyrosle](https://github.com/kyrosle)
 - [@nathan-coleman](https://github.com/nathan-coleman)
+- [@sam-online](https://github.com/sam-online)
 
 ##
 > I hope this is helpful. Personally, I've decided to do everything in gdscript for compatibility reasons, but I might create a C++ extension if a future feature requires it, as in cases I've had for generations or using recursive functions that still offer poor performance.
