@@ -59,7 +59,7 @@ In the script editor two new tabs have been added to the left panel: Settings an
 	* It should only be used by the same class.
  	* By default, the member name starts with `__` example: `var __my_private_member`,`func __my_private_function()`
 
-##### Other Modifiers
+#### Native modifiers
 * ![Exported](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/MemberAnnotation.svg "Exported") Export
 * ![Signals](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/MemberSignal.svg "Signals") Signal
 * ![Static](https://raw.githubusercontent.com/CodeNameTwister/Godot-IDE/b38e75b73381225e15cb1c3e65e8c3b8e1659bda/addons/_Godot-IDE_/shared_resources/static.svg "Static") Static
@@ -70,7 +70,8 @@ In the script editor two new tabs have been added to the left panel: Settings an
 This plugin scans and displays all files by cataloging them by type.
 
 #### Preview
-![Preview](https://private-user-images.githubusercontent.com/153237709/464450067-750cb78c-bb22-4023-a2bf-832ab506cc91.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTM0MjExNjAsIm5iZiI6MTc1MzQyMDg2MCwicGF0aCI6Ii8xNTMyMzc3MDkvNDY0NDUwMDY3LTc1MGNiNzhjLWJiMjItNDAyMy1hMmJmLTgzMmFiNTA2Y2M5MS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNzI1JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDcyNVQwNTIxMDBaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yNDFhNDAyZWRlMTM2NjU5NzBjOWMyYTkyYmJjZDQwMjdjN2Q5ZDJmMGRkNmNlOTgyOWM4ZmQ0OTBlMzZiNTYzJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.0H_S9fRz2jhTYw5IxQVuo_CnCSYLqcsLZfzNsj1OFfE "Preview")
+<img width="487" height="497" alt="image" src="https://github.com/user-attachments/assets/ed14822f-cc92-4f53-93fb-3db573e2ebb9" />
+
 
 #### Features
 * Search and show all files by type.
@@ -83,7 +84,7 @@ This plugin scans and displays all files by cataloging them by type.
 This plugin scans and displays all files by cataloging them by class type.
 
 #### Preview
-![Classt](https://private-user-images.githubusercontent.com/153237709/464450016-f2ae6616-7063-4906-9f88-d4505543d30f.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTM0MjExNjAsIm5iZiI6MTc1MzQyMDg2MCwicGF0aCI6Ii8xNTMyMzc3MDkvNDY0NDUwMDE2LWYyYWU2NjE2LTcwNjMtNDkwNi05Zjg4LWQ0NTA1NTQzZDMwZi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNzI1JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDcyNVQwNTIxMDBaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00NzZjYjM1Mzg4ZThhNmRmMTYwOTdhZGFjMjQzZDVmOWY4NWZhNjY0OTFmOTJhZjQ2NDE4NzRjYmRkMWYyYmM4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.cyx_5Uvf-kI8j64dhtkfn4wiqOh0CIJ9FU27LmSWtzM "Classt")
+<img width="491" height="493" alt="image" src="https://github.com/user-attachments/assets/df5adf92-e334-40e1-8185-2a6e1a2f25a9" />
 
 #### Features
 * Search and show all files by class.
