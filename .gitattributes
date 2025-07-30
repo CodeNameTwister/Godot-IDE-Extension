@@ -2,3 +2,4 @@
 /**        export-ignore
 /addons    !export-ignore
 /addons/** !export-ignore
+/addons/_Godot-IDE_/plugins/macro-n/save/* export-ignore
