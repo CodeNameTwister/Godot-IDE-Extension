@@ -59,7 +59,7 @@ func _init() -> void:
 		_g_input = InputEventKey.new()
 		_g_input.pressed = true
 		_g_input.alt_pressed = true
-		_g_input.keycode = KEY_INSERT
+		_g_input.keycode = KEY_END
 		IDE.set_config("macro_n", "show_all_macro", _g_input)
 
 func _input(event: InputEvent) -> void:
