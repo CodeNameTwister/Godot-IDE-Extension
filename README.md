@@ -69,6 +69,11 @@ Each feature is described more fully in it's own repository, as well as down bel
 	* In the script editor two new tabs have been added to the left panel: Settings and Script Info. The Script Info tab gives you an overview of the current script and also allows you to view the properties of all classes which the current script inherits from. The Settings tab lets you configure the Script Info tab to your liking.
  	* Use `Ctrl + T` for show/hide the panel.
   	* Use `Ctrl + G` to switch between **script info** and the **script list** panels.
+* Macro-N
+	* Create Macro with `Context Menu (RMB)` (Show only to create Macro-N if you have text selected)
+	* With selected text use `Ctrl+E` for Invoke Macro.
+	* With selected text use `Ctrl+SHIFT+E` for Invoke Macro with bypass.
+ 	* Show all saved Macros with `Alt+INSERT`shortcut.
 
 * Editor Settings
 	* In Editor Settings (with Advanced option enabled) you can change any option of this plugin in `plugin/godot_ide` or neighbors plugins of Godot-IDE.
