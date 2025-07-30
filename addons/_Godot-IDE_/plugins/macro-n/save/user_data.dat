@@ -1,0 +1,55 @@
+[MY_IDssaa]
+
+description="MY_DESCRIPTIONsss"
+content="CODE HERE"
+
+[x12345126]
+
+description="aaa"
+content="func execute({0}, {1}) -> String:
+	var text : String = \"\"
+	var editor : ScriptEditor = EditorInterface.get_script_editor()
+	if editor:
+		var sc : Script = editor.get_current_script()
+		if sc:
+			vrrs"
+
+[hello .* roeea]
+
+description="dwwqd"
+content="func execute(shortcut : String, description : String, content : String) -> int:
+	var rgx : RegEx = RegEx.create_from_string(\"\\\\barg(\\\\d*)\\\\b\")	
+	description = description.strip_edges()
+	shortcut = rgx.sub(shortcut.strip_edges(), \".*\")
+	content = rgx.sub(content, \"{$1}\", true)
+	rrr"
+
+[My Example Shorcut arg0]
+
+description="Example Description"
+content="func my_arg0_function(parameter : Variant) -> void:
+	var arg0 = parameter
+	"
+
+[generate arg0 arg1]
+
+description="My Function For Show Arrays"
+content="func example() -> void:
+	var anyfoo : arg0 = arg1
+	for x in anyfoo:
+		# Show content
+		print(x)
+"
+
+[m cn arg0 ccp arg1 ccf arg2]
+
+description="My quick generator"
+content="const MY_CUSTOM_CLASS := preload(arg1)
+class arg0 extends Object:
+	var _custom : MY_CUSTOM_CLASS = null
+	
+	func _init(custom : MY_CUSTOM_CLASS) -> void:
+		_custom = custom
+		
+	func execute() -> void:
+		_custom.call(arg2)"

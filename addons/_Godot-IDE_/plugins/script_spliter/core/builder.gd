@@ -837,7 +837,6 @@ class Mickeytools extends Object:
 			gvp.x = min(gvp.x, screen_rect.position.x + screen_rect.size.x - window.size.x + 16.0)
 			window.set_deferred(&"position", gvp)
 			
-			
 
 	func _on_input(input : InputEvent) -> void:
 		if input is InputEventMouseMotion:
