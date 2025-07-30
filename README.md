@@ -35,12 +35,13 @@ Each feature is described more fully in it's own repository, as well as down bel
 	https://github.com/CodeNameTwister/Quick-Folds
 * GD Override Functions:
 	https://github.com/CodeNameTwister/GD-Override-Functions
-* Fancy Filters Script:
-	*Integrated with this plugin, not released as a seperate plugin.*
-* Fancy Search Files:
-	*Integrated with this plugin, not released as a seperate plugin.*
-* Fancy Search Class:
-	*Integrated with this plugin, not released as a seperate plugin.*
+* The following plugins are integrated with this addon, they are not published as a separate plugin.
+	* Fancy Filters Script: 
+	* Fancy Search Files
+	* Fancy Search Class
+ 	* Macro-N
+
+* [Documentation](https://github.com/CodeNameTwister/Godot-IDE/blob/main/DOCUMENTATION.md)
 
 ## How to use
 
