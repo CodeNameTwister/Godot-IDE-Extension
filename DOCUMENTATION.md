@@ -20,6 +20,10 @@ Reference in plugin section like `plugin/godot_ide/*`
     + [Preview](#preview-2)
     + [Features](#features-2)
     + [Shortcut](#shortcut-1)
+- [Macro-N](#macro-n)
+    + [Preview](#preview-3)
+    + [Features](#features-3)
+    + [Shortcut](#shortcut-2)
  
 ## Fancy Filters Script
 
@@ -93,9 +97,22 @@ This plugin scans and displays all files by cataloging them by class type.
 #### Shortcut
 * `Alt + Delete` to show window panel.
 
+## Macro-N
+This plugin allows you to simplify any complex and repetitive code in just a few steps.
 
+#### Preview
+[Example Tutorial](https://github.com/CodeNameTwister/Godot-IDE/discussions/10)
 
+#### Features
+* Create/Edit/Remove Macro
+* Generate Code by Macro
+* Save Macro in `macro-n/save` folder
 
+#### Shortcut
+* `CTRL+E` : Invoke Macro.
+* `CTRL+SHIFT+E`: Invoke Macro with by pass (It respects additional text you have selected and can invoke nested macros within the macro content.)
+* `Context Menu`: Show only to create Macro-N if you have text selected.
+* `ATL+INSERT`: Show All Macro-N saved.
 
 
 
