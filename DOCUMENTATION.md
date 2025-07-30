@@ -112,7 +112,7 @@ This plugin allows you to simplify any complex and repetitive code in just a few
 * `CTRL+E` : Invoke Macro.
 * `CTRL+SHIFT+E`: Invoke Macro with by pass (It respects additional text you have selected and can invoke nested macros within the macro content.)
 * `Context Menu`: Show only to create Macro-N if you have text selected.
-* `ATL+INSERT`: Show All Macro-N saved.
+* `ATL+END`: Show All Macro-N saved.
 
 
 
