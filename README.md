@@ -73,7 +73,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 	* Create Macro with `Context Menu (RMB)` (Show only to create Macro-N if you have text selected)
 	* With selected text use `Ctrl + E` for Invoke Macro.
 	* With selected text use `Ctrl + SHIFT + E` for Invoke Macro with bypass.
- 	* Show all saved Macros with `Alt + INSERT`shortcut.
+ 	* Show all saved Macros with `Alt + END`shortcut.
 
 * Editor Settings
 	* In Editor Settings (with Advanced option enabled) you can change any option of this plugin in `plugin/godot_ide` or neighbors plugins of Godot-IDE.
