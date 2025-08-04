@@ -96,9 +96,6 @@ To add a plugin that works alongside Godot-IDE, simply create a plugin as you no
 * Why is the folder called `_Godot-IDE_`?
 	* This is due to the way addons are loaded in Godot, which is alphabetical. This naming gives priority to this addon, avoiding any incompatibility for other plugins.
 
-## TODO 
-* Add documentation.
-
 ## Special Thanks 📜
 This section lists users who have contributed to improving the quality of this project.
 
