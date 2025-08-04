@@ -196,7 +196,9 @@ func show_dd(root : Control) -> void:
 		return
 	_last_dd_root = dd
 		
-	var node : Node = _last_tool.get_root() 
+	var node : Node = null
+	if _last_tool:
+		node = _last_tool.get_root() 
 	
 	if node == root:
 		return
