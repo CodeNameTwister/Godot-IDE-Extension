@@ -147,7 +147,7 @@ func _init() -> void:
 			__input.ctrl_pressed = true
 			__input.keycode = KEYS[x]
 			editor.set_setting(key_token, __input)
-			__input.append(__input)
+			_inputs.append(__input)
 			
 	set_process_input(_inputs.size() > 0)
 	
