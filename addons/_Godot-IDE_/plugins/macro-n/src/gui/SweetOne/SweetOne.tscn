@@ -1,13 +1,13 @@
 [gd_scene load_steps=5 format=3 uid="uid://b25j4mq6e1fso"]
 
-[ext_resource type="Script" uid="uid://bnkrnw0nf5fhm" path="res://addons/macro-n/src/gui/SweetOne/SweetOne.gd" id="1_axr5e"]
-[ext_resource type="Script" uid="uid://b4ypyfc1c0ybj" path="res://addons/macro-n/src/gui/util/Button.gd" id="2_x0cqq"]
+[ext_resource type="Script" uid="uid://bnkrnw0nf5fhm" path="res://addons/_Godot-IDE_/plugins/macro-n/src/gui/SweetOne/SweetOne.gd" id="1_axr5e"]
+[ext_resource type="Script" uid="uid://b4ypyfc1c0ybj" path="res://addons/_Godot-IDE_/plugins/macro-n/src/gui/util/Button.gd" id="2_x0cqq"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k3ugs"]
-content_margin_left = 5.0
-content_margin_top = 5.0
-content_margin_right = 5.0
-content_margin_bottom = 5.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tb81"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
 bg_color = Color(0.1155, 0.132, 0.1595, 1)
 corner_detail = 1
 anti_aliasing = false
@@ -29,7 +29,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_k3ugs")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3tb81")
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2

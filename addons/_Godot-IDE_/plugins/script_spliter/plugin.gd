@@ -7,6 +7,7 @@ extends EditorPlugin
 #	Script Spliter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 const BUILDER : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/builder.gd")
 const CONTEXT : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/context_window.gd")
 
@@ -19,6 +20,22 @@ const ICON_ADD_ROW : Texture = preload("res://addons/_Godot-IDE_/plugins/script_
 const ICON_REMOVE_ROW : Texture = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/split_rminus.svg")
 const ICON_FLOATING : Texture = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/atop.png")
 const ICON_TAB : Texture = preload("res://addons/_Godot-IDE_/plugins/script_spliter/assets/tab_icon.svg")
+
+const SPLIT_TYPES : Array[Array] = [
+	[0, 0], 
+	[2, 1], 
+	[1, 2], 
+	[3, 1], 
+	[1, 3], 
+	[2, 2], 
+	[3, 3], 
+	[4, 4],
+	[5, 5], 
+	[6, 6], 
+	[7, 7]
+	]
+	
+var _inputs : Array[InputEvent] = []
 
 var _rmb_editor_add_split : EditorContextMenuPlugin = null
 var _rmb_editor_remove_split: EditorContextMenuPlugin = null
@@ -35,21 +52,6 @@ var _menu_split_selector : Window = null
 var _builder : Object = null
 
 var _daemon_chaser : Node = null
-
-const SPLIT_TYPES : Array[Array] = [
-	[0, 0], 
-	[2, 1], 
-	[1, 2], 
-	[3, 1], 
-	[1, 3], 
-	[2, 2], 
-	[3, 3], 
-	[4, 4], 
-	[5, 5], 
-	[6, 6], 
-	[7, 7]
-	]
-var _inputs : Array[InputEvent] = []
 
 #region _REF_
 var _tab_container : Node = null:
@@ -80,6 +82,12 @@ var _d_chase : bool = false
 
 func get_builder() -> Object:
 	return _builder
+
+func find(root : Node, pattern : String, type : String) -> Node:
+	var e : Array[Node] = root.find_children(pattern, type, true, false)
+	if e.size() > 0:
+		return e[0]
+	return null
 
 func get_split_rows() -> int:
 	return _rows
@@ -150,8 +158,6 @@ func _init() -> void:
 			_inputs.append(__input)
 			
 	set_process_input(_inputs.size() > 0)
-	
-	
 	
 	var o : Object = _tab_container
 	if o == null:
@@ -325,13 +331,13 @@ func _setup(input : int) -> void:
 				settings.set_setting(&"plugin/script_spliter/rows", _rows)
 				settings.set_setting(&"plugin/script_spliter/columns", _columns)
 
-func _can_close_tab_in_split(path : PackedStringArray) -> bool:
+func _can_close_tab_in_split(_path : PackedStringArray) -> bool:
 	return _builder.has_other_tabs()
 	
-func _can_close_right_tab_in_split(path : PackedStringArray) -> bool:
+func _can_close_right_tab_in_split(_path : PackedStringArray) -> bool:
 	return _builder.has_right_tabs()
 	
-func _can_close_left_tab_in_split(path : PackedStringArray) -> bool:
+func _can_close_left_tab_in_split(_path : PackedStringArray) -> bool:
 	return _builder.has_left_tabs()
 
 func _close_all_tabs_in_split(__ : Variant) -> void:
@@ -472,7 +478,7 @@ func _ready() -> void:
 	_run()
 	
 	
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if is_instance_valid(_item_list):
 		if (_item_list as ItemList).item_count > 0:
 			set_physics_process(false)
@@ -485,7 +491,6 @@ func _notification(what: int) -> void:
 			_builder.free()
 
 func _input(event: InputEvent) -> void:
-	
 	if event.is_pressed():
 		for x : InputEvent in _inputs:
 			if event.is_match(x, true):

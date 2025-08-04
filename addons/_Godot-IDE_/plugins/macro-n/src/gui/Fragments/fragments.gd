@@ -18,6 +18,8 @@ const DOT = preload("res://addons/_Godot-IDE_/shared_resources/dot.svg")
 
 const EDIT = preload("res://addons/_Godot-IDE_/plugins/macro-n/src/gui/Fragments/component/Edit.tscn")
 
+signal on_create()
+
 @export var container : Node = null
 
 var _GetAllFragments : IGetAllFragments = null
@@ -356,13 +358,25 @@ func _make_components(root : Node) -> void:
 	
 	for x : Node in root.get_children():
 		x.queue_free()
+		
+	var objects : Array[Dictionary] = _GetAllFragments.execute()
+	if objects.size() < 1:
+		var label : Label = Label.new()
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		label.text = "You don't have any macros saved yet!"
+		root.add_child(label)
+		return
+		
 	_make_tittle_component(root)
 	
-	var objects : Array[Dictionary] = _GetAllFragments.execute()
 	for o : Dictionary in objects:
 		var val : String = o["shortcut"]
 		if val.is_empty():
 			continue
 		_make_component(root, o)
 	
-	
+func create() -> void:
+	on_create.emit()
+	close()	

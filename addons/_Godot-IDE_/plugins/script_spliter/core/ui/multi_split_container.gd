@@ -1,4 +1,5 @@
 @tool
+@icon("icon/MultiSpliter.svg")
 extends Container
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	https://github.com/CodeNameTwister/Multi-Split-Container

@@ -1,4 +1,5 @@
 @tool
+@icon("icon/MultiSpliterItem.svg")
 extends Control
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	https://github.com/CodeNameTwister/Multi-Split-Container

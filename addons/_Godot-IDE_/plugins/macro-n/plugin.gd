@@ -30,6 +30,11 @@ func half_life(txt : String, type : int) -> void:
 		macron_n = ResourceLoader.load("res://addons/_Godot-IDE_/plugins/macro-n/src/main.gd").new(self)
 	macron_n.execute(txt, type)
 
+func create_new() -> void:
+	if !is_instance_valid(macron_n):
+		macron_n = ResourceLoader.load("res://addons/_Godot-IDE_/plugins/macro-n/src/main.gd").new(self)
+	macron_n.execute("# CODE HERE", 2)
+
 func _init() -> void:
 	var input : Variant = IDE.get_config("macro_n", "invoke_input")
 	if input is InputEvent:

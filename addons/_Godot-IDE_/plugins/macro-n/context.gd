@@ -41,6 +41,8 @@ func show_macros() -> void:
 			]
 		)
 		
+		_fragments.on_create.connect(_helper.create_new)
+		
 	_fragments.popup_centered()
 	
 	

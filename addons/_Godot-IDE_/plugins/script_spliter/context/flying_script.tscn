@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://c13ema1e8n6k0"]
+[gd_scene load_steps=5 format=3 uid="uid://cr2xovtt6uo7s"]
 
-[ext_resource type="Script" uid="uid://dbkyfe5ri2p73" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/flying_script.gd" id="1_ypnio"]
-[ext_resource type="Texture2D" uid="uid://r6u1jtnbr4eg" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/atop.png" id="2_ykglw"]
-[ext_resource type="Script" uid="uid://bo38caobn2x7a" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/btn_callback.gd" id="3_3yfn5"]
+[ext_resource type="Script" uid="uid://dbkyfe5ri2p73" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/flying_script.gd" id="1_wfm3d"]
+[ext_resource type="Texture2D" uid="uid://r6u1jtnbr4eg" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/atop.png" id="2_q3d74"]
+[ext_resource type="Script" uid="uid://bo38caobn2x7a" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/btn_callback.gd" id="3_1p1sv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q3d74"]
 content_margin_left = 3.0
@@ -19,7 +19,7 @@ initial_position = 4
 size = Vector2i(805, 512)
 visible = false
 wrap_controls = true
-script = ExtResource("1_ypnio")
+script = ExtResource("1_wfm3d")
 _container = NodePath("PanelContainer/VC")
 _always_top = NodePath("PanelContainer/VC/HB/AlwaysTop")
 _close = NodePath("PanelContainer/VC/HB/Close")
@@ -48,7 +48,7 @@ tooltip_text = "Set always front visible the current window"
 theme_override_font_sizes/font_size = 12
 toggle_mode = true
 text = "Always Top"
-icon = ExtResource("2_ykglw")
+icon = ExtResource("2_q3d74")
 flat = true
 
 [node name="_move_to_center" type="Button" parent="PanelContainer/VC/HB"]
@@ -58,7 +58,7 @@ theme_override_font_sizes/font_size = 12
 toggle_mode = true
 text = "Move To Center"
 flat = true
-script = ExtResource("3_3yfn5")
+script = ExtResource("3_1p1sv")
 
 [node name="Close" type="Button" parent="PanelContainer/VC/HB"]
 visible = false

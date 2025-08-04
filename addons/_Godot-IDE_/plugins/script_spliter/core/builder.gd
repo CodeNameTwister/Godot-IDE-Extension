@@ -74,6 +74,11 @@ var _item_list : ItemList = null:
 				push_warning("[Script-Spliter] Can not find item list!")
 		return _item_list
 
+#region __FLAGS__
+var _update_list_queue : bool = false
+var _script_list_selection : bool = false
+#endregion
+
 #region __CONFIG__
 var _SPLIT_USE_HIGHLIGHT_SELECTED : bool = true
 var _MINIMAP_4_UNFOCUS_WINDOW : bool = false
@@ -100,15 +105,15 @@ var _UNFOCUS_COLOR : Color = Color.GRAY
 
 var _SWAP_BY_BUTTON : bool = true
 
+var _LIST_VISIBLE_SELECTED_COLOR : Color = Color.from_string("7b68ee", Color.CORNFLOWER_BLUE)
+var _LIST_VISIBLE_OTHERS_COLOR : Color = Color.from_string("4835bb", Color.DARK_BLUE)
+var _LIST_VISIBLE_SHOW_ACTIVES : bool = false
+
 #region _9_
 var HANDLE_BACK_FORWARD_BUTTONS : bool = true
 var HANDLE_BACKWARD_FORWARD_AS_NEXT_BACK_TAB : bool = false
 var HANDLE_BACK_FORWARD_BUFFER : int = 20
 var USE_NATIVE_ON_NOT_TABS : bool = true
-var _HANDLE_BACKWARD_KEY_PATH : String = "res://addons/_Godot-IDE_/plugins/script_spliter/io/backward_key_button.tres"
-var _HANDLE_FORWARD_KEY_PATH : String  = "res://addons/_Godot-IDE_/plugins/script_spliter/io/forward_key_button.tres"
-var _HANDLE_BACKWARD_MOUSE_BUTTON_PATH : String = "res://addons/_Godot-IDE_/plugins/script_spliter/io/backward_mouse_button.tres"
-var _HANDLE_FORWARD_MOUSE_BUTTON_PATH : String  = "res://addons/_Godot-IDE_/plugins/script_spliter/io/forward_mouse_button.tres"
 #endregion
 
 # CURRENT CONFIG
@@ -156,11 +161,10 @@ func _get_data_cfg() -> Array[Array]:
 		,[&"plugin/script_spliter/editor/behaviour/back_and_forward/handle_back_and_forward", &"HANDLE_BACK_FORWARD_BUTTONS"]
 		,[&"plugin/script_spliter/editor/behaviour/back_and_forward/history_size", &"HANDLE_BACK_FORWARD_BUFFER"]
 		,[&"plugin/script_spliter/editor/behaviour/back_and_forward/using_as_next_and_back_tab", &"HANDLE_BACKWARD_FORWARD_AS_NEXT_BACK_TAB"]
-		,[&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_key_button_path", &"_HANDLE_BACKWARD_KEY_PATH"]
-		,[&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_key_button_path", &"_HANDLE_FORWARD_KEY_PATH"]
-		,[&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_mouse_button_path", &"_HANDLE_BACKWARD_MOUSE_BUTTON_PATH"]
-		,[&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_mouse_button_path", &"_HANDLE_FORWARD_MOUSE_BUTTON_PATH"]
 		,[&"plugin/script_spliter/editor/behaviour/back_and_forward/use_native_handler_when_there_are_no_more_tabs", &"USE_NATIVE_ON_NOT_TABS"]
+		,[&"plugin/script_spliter/editor/list/selected_color", &"_LIST_VISIBLE_SELECTED_COLOR"]
+		,[&"plugin/script_spliter/editor/list/others_color", &"_LIST_VISIBLE_OTHERS_COLOR"]
+		,[&"plugin/script_spliter/editor/list/colorize_actives", &"_LIST_VISIBLE_SHOW_ACTIVES"]
 		]
 	return CFG
 	
@@ -342,14 +346,106 @@ func _on_update_list_search(txt : String) -> void:
 			_script_list.set_item_metadata(indx, item_list.get_item_metadata(x))
 			_script_list.set_item_tooltip(indx, item_list.get_item_tooltip(x))
 			_script_list.set_item_icon_modulate(indx, item_list.get_item_icon_modulate(x))
+			_script_list.set_item_custom_fg_color(indx, item_list.get_item_custom_fg_color(x))
+	_update_list_selection()
+	
+func _update_list_selection() -> void:
+	_script_list_selection = true
+	var nd : Object = self
+	
+	if !is_instance_valid(nd):
+		_script_list_selection = false
+		return
+		
+	var packed : PackedStringArray = []
+	var selected : String = ""
+	var others_selected : PackedStringArray = []
+	
+	var root : Node = _last_tool.get_root()
+	
+	for x : Mickeytools in _code_editors:
+		if !is_instance_valid(x):
+			continue
+			
+		var src : String = x.get_src()
+		
+		if x == _last_tool:
+			selected = src
+			
+		var v : Variant = x.get_control()
+		if is_instance_valid(v):
+			if v is Control:
+				if v.is_visible_in_tree():
+					packed.append(src)
+				elif x.get_root() == root:
+					others_selected.append(src)
+	
+	var color : Color = _LIST_VISIBLE_SELECTED_COLOR
+	var color_ctn : Color = _LIST_VISIBLE_SELECTED_COLOR
+	var others : Color = _LIST_VISIBLE_OTHERS_COLOR
+	color.a = 0.5
+	others.a = 0.5
+	color_ctn.a = 0.25
+	var item_list : ItemList = _item_list
+	
+	if is_instance_valid(item_list):
+		for x : int in _script_list.item_count:
+			var mt : String = _script_list.get_item_tooltip(x)
+			if packed.has(mt):
+				if selected == mt:
+					_script_list.set_item_custom_bg_color(x, color)
+					_script_list.set_item_custom_fg_color(x, Color.WHITE)
+				else:
+					if _LIST_VISIBLE_SHOW_ACTIVES:
+						_script_list.set_item_custom_fg_color(x, Color.DARK_GRAY)
+					_script_list.set_item_custom_bg_color(x, others)
+			else:
+				if _LIST_VISIBLE_SHOW_ACTIVES:
+				
+					if others_selected.has(mt):
+						_script_list.set_item_custom_bg_color(x, color_ctn)
+						_script_list.set_item_custom_fg_color(x, Color.GRAY)
+					else:
+						_script_list.set_item_custom_fg_color(x, Color.GRAY)
+				else:
+					_script_list.set_item_custom_bg_color(x, Color.TRANSPARENT)
+	
+	else:
+		for x : int in _script_list.item_count:
+			var mt : String = _script_list.get_item_tooltip(x)
+			if packed.has(mt):
+				if selected == mt:
+					_script_list.set_item_custom_bg_color(x, color)
+					_script_list.set_item_custom_fg_color(x, Color.WHITE)
+				else:
+					if _LIST_VISIBLE_SHOW_ACTIVES:
+						_script_list.set_item_custom_fg_color(x, Color.DARK_GRAY)
+					_script_list.set_item_custom_bg_color(x, others)
+			else:
+				if _LIST_VISIBLE_SHOW_ACTIVES:
+				
+					if others_selected.has(mt):
+						_script_list.set_item_custom_bg_color(x, color_ctn)
+						_script_list.set_item_custom_fg_color(x, Color.GRAY)
+					else:
+						_script_list.set_item_custom_fg_color(x, Color.GRAY)
+				else:
+					_script_list.set_item_custom_bg_color(x, Color.TRANSPARENT)
+	
+	set_deferred(&"_script_list_selection", false)
 	
 func _on_update_list() -> void:
 	if !is_instance_valid(_script_list):
 		return
 		
+	if _update_list_queue:
+		return
+	_update_list_queue = true
+		
 	if is_instance_valid(_filesearch):
 		if !_filesearch.text.is_empty():
 			_on_update_list_search(_filesearch.text)
+			set_deferred(&"_update_list_queue", false)
 			return
 			
 	_script_list.clear()
@@ -360,7 +456,9 @@ func _on_update_list() -> void:
 		_script_list.set_item_metadata(indx, item_list.get_item_metadata(x))
 		_script_list.set_item_tooltip(indx, item_list.get_item_tooltip(x))
 		_script_list.set_item_icon_modulate(indx, item_list.get_item_icon_modulate(x))
-	
+		_script_list.set_item_custom_fg_color(indx, item_list.get_item_custom_fg_color(x))
+	_update_list_selection()
+	set_deferred(&"_update_list_queue", false)
 #endregion
 
 func update_config() -> void:
@@ -380,29 +478,6 @@ func update_config() -> void:
 			var gui : Node = x.get_control()
 			if is_instance_valid(gui) and gui is Control:
 				gui.modulate = Color.WHITE
-	
-	for x : String in changes:
-		if "button_path" in x:
-			if !InputMap.has_action(&"ui_script_spliter_forward"):
-				InputMap.add_action(&"ui_script_spliter_forward")
-			else:
-				InputMap.action_erase_events(&"ui_script_spliter_forward")
-			
-			var key_0 : InputEventKey = ResourceLoader.load(_HANDLE_FORWARD_KEY_PATH)
-			var key_1 : InputEventMouseButton = ResourceLoader.load(_HANDLE_FORWARD_MOUSE_BUTTON_PATH)
-			InputMap.action_add_event(&"ui_script_spliter_forward", key_0)
-			InputMap.action_add_event(&"ui_script_spliter_forward", key_1)
-			
-			if !InputMap.has_action(&"ui_script_spliter_backward"):
-				InputMap.add_action(&"ui_script_spliter_backward")
-			else:
-				InputMap.action_erase_events(&"ui_script_spliter_backward")
-				
-			key_0 = ResourceLoader.load(_HANDLE_BACKWARD_KEY_PATH)
-			key_1 = ResourceLoader.load(_HANDLE_BACKWARD_MOUSE_BUTTON_PATH)
-			InputMap.action_add_event(&"ui_script_spliter_backward", key_0)
-			InputMap.action_add_event(&"ui_script_spliter_backward", key_1)
-			break
 
 func _update_container() -> void:
 	if !is_instance_valid(_main):
@@ -423,10 +498,10 @@ func _update_container() -> void:
 			var text : Variant = ResourceLoader.load(_SEPARATOR_BUTTON_ICON)
 			if text is Texture:
 				_main.drag_button_icon = text
-			#else:
-				#push_warning("[Script-Spliter] The resource is not a texture imported ", _SEPARATOR_BUTTON_ICON)
-		#else:
-			#push_warning("[Script-Spliter] Can not find the resource ", _SEPARATOR_BUTTON_ICON)
+			else:
+				push_warning("[Script-Spliter] The resource is not a texture imported ", _SEPARATOR_BUTTON_ICON)
+		else:
+			push_warning("[Script-Spliter] Can not find the resource ", _SEPARATOR_BUTTON_ICON)
 
 func _init(plugin : Object) -> void:
 	_plugin = plugin
@@ -836,7 +911,6 @@ class Mickeytools extends Object:
 			gvp.y = min(gvp.y, screen_rect.position.y + screen_rect.size.y - window.size.y + 16.0)
 			gvp.x = min(gvp.x, screen_rect.position.x + screen_rect.size.x - window.size.x + 16.0)
 			window.set_deferred(&"position", gvp)
-			
 
 	func _on_input(input : InputEvent) -> void:
 		if input is InputEventMouseMotion:
@@ -1271,6 +1345,58 @@ func _on_tab_change(tb : int = 0) -> void:
 		
 	process_update_queue(tb)
 
+
+func _clear_backward_settings() -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		if editor.has_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_key_button_path"):
+			var setting : Variant = editor.get_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_key_button_path")
+			if setting is String:
+				if ResourceLoader.exists(setting):
+					var res : Resource = ResourceLoader.load(setting)
+					if res is InputEvent:
+						res = res.duplicate()
+						if FileAccess.file_exists(setting) and DirAccess.remove_absolute(setting) == OK:
+							print("Deprecated: ", setting)
+						editor.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_key_button_input", res)
+			editor.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_key_button_path", null)
+		
+		if editor.has_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_key_button_path"):
+			var setting : Variant = editor.get_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_key_button_path")
+			if setting is String:
+				if ResourceLoader.exists(setting):
+					var res : Resource = ResourceLoader.load(setting)
+					if res is InputEvent:
+						res = res.duplicate()
+						if FileAccess.file_exists(setting) and DirAccess.remove_absolute(setting) == OK:
+							print("Deprecated: ", setting)
+						editor.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_key_button_input", res)
+			editor.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_key_button_path", null)
+		
+		if editor.has_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_mouse_button_path"):
+			var setting : Variant = editor.get_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_mouse_button_path")
+			if setting is String:
+				if ResourceLoader.exists(setting):
+					var res : Resource = ResourceLoader.load(setting)
+					if res is InputEvent:
+						res = res.duplicate()
+						if FileAccess.file_exists(setting) and DirAccess.remove_absolute(setting) == OK:
+							print("Deprecated: ", setting)
+						editor.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_mouse_button_input", res)
+			editor.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_mouse_button_path", null)
+	
+		if editor.has_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_mouse_button_path"):
+			var setting : Variant = editor.get_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_mouse_button_path")
+			if setting is String:
+				if ResourceLoader.exists(setting):
+					var res : Resource = ResourceLoader.load(setting)
+					if res is InputEvent:
+						res = res.duplicate()
+						if DirAccess.remove_absolute(setting) == OK:
+							print("Deprecated: ", setting)
+						editor.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_mouse_button_input", res)
+			editor.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_mouse_button_path", null)
+			
 func _setup(editor : TabContainer, setup : bool) -> void:	
 	const INIT_2 : Array[StringName] = [&"connect", &"disconnect"]
 	const INIT_3 : Array[Array] = [[&"tab_changed", &"_on_tab_change"],[&"child_entered_tree", &"_on_it"], [&"child_exiting_tree", &"_out_it"]]
@@ -1316,84 +1442,80 @@ func _setup(editor : TabContainer, setup : bool) -> void:
 		parent.move_child(_filesearch, 0)
 		
 		_set_callback()
-				
-		if !FileAccess.file_exists("res://addons/_Godot-IDE_/plugins/script_spliter/io/backward_key_button.tres"):
-			if DirAccess.dir_exists_absolute("res://addons/_Godot-IDE_/plugins/script_spliter/io"):
-				var input : InputEventKey = InputEventKey.new()
-				input.keycode = KEY_LEFT
-				input.alt_pressed = true
-				input.pressed = true
-				ResourceSaver.save(input, "res://addons/_Godot-IDE_/plugins/script_spliter/io/backward_key_button.tres")
-				input = null
-		if !FileAccess.file_exists("res://addons/_Godot-IDE_/plugins/script_spliter/io/forward_key_button.tres"):
-				if DirAccess.dir_exists_absolute("res://addons/_Godot-IDE_/plugins/script_spliter/io"):
-					var input : InputEventKey = InputEventKey.new()
-					input.keycode = KEY_RIGHT
-					input.alt_pressed = true
-					input.pressed = true
-					ResourceSaver.save(input, "res://addons/_Godot-IDE_/plugins/script_spliter/io/forward_key_button.tres")
-					input = null
-		if !FileAccess.file_exists("res://addons/_Godot-IDE_/plugins/script_spliter/io/backward_mouse_button.tres"):
-				if DirAccess.dir_exists_absolute("res://addons/_Godot-IDE_/plugins/script_spliter/io"):
-					var input : InputEventMouseButton = InputEventMouseButton.new()
-					input.button_index = MOUSE_BUTTON_XBUTTON1
-					input.pressed = true
-					ResourceSaver.save(input, "res://addons/_Godot-IDE_/plugins/script_spliter/io/backward_mouse_button.tres")
-					input = null
-		if !FileAccess.file_exists("res://addons/_Godot-IDE_/plugins/script_spliter/io/forward_mouse_button.tres"):
-				if DirAccess.dir_exists_absolute("res://addons/_Godot-IDE_/plugins/script_spliter/io"):
-					var input : InputEventMouseButton = InputEventMouseButton.new()
-					input.button_index = MOUSE_BUTTON_XBUTTON2
-					input.pressed = true
-					ResourceSaver.save(input, "res://addons/_Godot-IDE_/plugins/script_spliter/io/forward_mouse_button.tres")
-					input = null
 		
+		_clear_backward_settings()		
+					
 		if !InputMap.has_action(&"ui_script_spliter_forward"):
 			InputMap.add_action(&"ui_script_spliter_forward")
 		else:
 			InputMap.action_erase_events(&"ui_script_spliter_forward")
 		
-		if FileAccess.file_exists(_HANDLE_FORWARD_KEY_PATH):
-			var key_0 : InputEventKey = ResourceLoader.load(_HANDLE_FORWARD_KEY_PATH)
-			if key_0 is InputEvent:
-				InputMap.action_add_event(&"ui_script_spliter_forward", key_0)
-			else:
-				printerr("Not type InputEvent: ", key_0)
-		#else:
-			#printerr("Not exist file", _HANDLE_FORWARD_KEY_PATH)
-		
-		if FileAccess.file_exists(_HANDLE_FORWARD_MOUSE_BUTTON_PATH):
-			var key_1 : Variant = ResourceLoader.load(_HANDLE_FORWARD_MOUSE_BUTTON_PATH)
-			if key_1 is InputEvent:
-				InputMap.action_add_event(&"ui_script_spliter_forward", key_1)
-			else:
-				printerr("Not type InputEvent: ", key_1)
-		#else:
-			#printerr("Not exist file", _HANDLE_FORWARD_MOUSE_BUTTON_PATH)
-		
 		if !InputMap.has_action(&"ui_script_spliter_backward"):
 			InputMap.add_action(&"ui_script_spliter_backward")
 		else:
 			InputMap.action_erase_events(&"ui_script_spliter_backward")
-			
-		if FileAccess.file_exists(_HANDLE_BACKWARD_KEY_PATH):
-			var key_0 : Variant = ResourceLoader.load(_HANDLE_BACKWARD_KEY_PATH)
-			if key_0 is InputEvent:
-				InputMap.action_add_event(&"ui_script_spliter_backward", key_0)
-			else:
-				printerr("Not type InputEvent: ", key_0)
-		#else:
-			#printerr("Not exist file", _HANDLE_BACKWARD_KEY_PATH)
 		
-		if FileAccess.file_exists(_HANDLE_BACKWARD_MOUSE_BUTTON_PATH):
-			var key_1 : InputEventMouseButton = ResourceLoader.load(_HANDLE_BACKWARD_MOUSE_BUTTON_PATH)
-			if key_1 is InputEvent:
-				InputMap.action_add_event(&"ui_script_spliter_backward", key_1)
+		var editor_settings : EditorSettings = EditorInterface.get_editor_settings()
+		if editor_settings:
+			var input_event : Variant = null
+			if !editor_settings.has_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_key_button_input"):
+				var input : InputEventKey = InputEventKey.new()
+				input.keycode = KEY_LEFT
+				input.alt_pressed = true
+				input.pressed = true
+				editor_settings.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_key_button_input", input)
+				
+			input_event = editor_settings.get_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_key_button_input")
+			
+			if input_event is InputEvent:
+				InputMap.action_add_event(&"ui_script_spliter_backward", input_event)
 			else:
-				printerr("Not type InputEvent: ", key_1)
-		#else:
-			#printerr("Not exist file", _HANDLE_BACKWARD_MOUSE_BUTTON_PATH)
+				printerr("Not type InputEvent backward_key_button_input ", input_event)
 
+				
+			if !editor_settings.has_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_key_button_input"):
+				var input : InputEventKey = InputEventKey.new()
+				input.keycode = KEY_RIGHT
+				input.alt_pressed = true
+				input.pressed = true
+				editor_settings.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_key_button_input", input)
+			
+			input_event = editor_settings.get_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_key_button_input")
+			
+			if input_event is InputEvent:
+				InputMap.action_add_event(&"ui_script_spliter_forward", input_event)
+			else:
+				printerr("Not type InputEvent forward_key_button_input ", input_event)
+	
+				
+			if !editor_settings.has_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_mouse_button_input"):
+				var input : InputEventMouseButton = InputEventMouseButton.new()
+				input.button_index = MOUSE_BUTTON_XBUTTON1
+				input.pressed = true
+				editor_settings.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_mouse_button_input", input)
+			
+			input_event = editor_settings.get_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/backward_mouse_button_input")
+			
+			if input_event is InputEvent:
+				InputMap.action_add_event(&"ui_script_spliter_backward", input_event)
+			else:
+				printerr("Not type InputEvent backward_mouse_button_input ", input_event)
+	
+			if !editor_settings.has_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_mouse_button_input"):
+				var input : InputEventMouseButton = InputEventMouseButton.new()
+				input.button_index = MOUSE_BUTTON_XBUTTON2
+				input.pressed = true
+				editor_settings.set_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_mouse_button_input", input)
+			
+			input_event = editor_settings.get_setting(&"plugin/script_spliter/editor/behaviour/back_and_forward/forward_mouse_button_input")
+			
+			if input_event is InputEvent:
+				InputMap.action_add_event(&"ui_script_spliter_forward", input_event)
+			else:
+				printerr("Not type InputEvent forward_mouse_button_input ", input_event)
+	
+			
+				
 func _on_sub_change(__ : int, tab : TabContainer) -> void:
 	if _chaser_enabled:
 		return
@@ -1827,7 +1949,7 @@ func _on_container_exit() -> void:
 #endregion
 
 func remove_split(node : Node) -> void:
-	if _code_editors.size() > 1:
+	if can_remove_split(node):
 		if node is CodeEdit:
 			for it : int in range(_code_editors.size() - 1, -1, -1):
 				var x : Mickeytools = _code_editors[it]
@@ -1864,15 +1986,29 @@ func _get_unused_editor_control() -> Array[Node]:
 			out.append(x)
 	return out
 
-func _free_editor_container(control : Control) -> bool:
+func _free_editor_container(control : Control, expected : int) -> bool:
 	if control.get_parent() == _main:
 		for x : int in range(_code_editors.size() - 1, -1 , -1):
 			var c : Mickeytools = _code_editors[x]
+			
 			var cc : Variant = c.get_control()
 			if is_instance_valid(cc):
 				var _a : Node = cc.get_parent()
 				var _b : Node = control
 				if _a == _b or _a.get_parent() == _b:
+					if c == _last_tool and expected >= 0:
+						var index : int = control.get_index()
+						if index > 0 and index >= expected:
+							var child : Node = control.get_parent().get_child(maxi(0, expected - 1))
+							if child != control:
+								if !(child is TabContainer):
+									for z : Node in child.get_children():
+										if z is TabContainer:
+											child = z
+											break
+								if child is TabContainer:
+									queue_swap(c, child)
+									continue
 					remove_tool(c)
 			else:
 				remove_tool(c)
@@ -1967,29 +2103,21 @@ func find_editor(node : Node) -> Control:
 				return x
 	return null
 
-func can_remove_split(node : Node) -> bool:
+func can_remove_split(_node : Node) -> bool:
 	if !is_instance_valid(_main):
 		return false
 		
-	if node == null:
-		return _code_editors.size() > 1
-		
-	if _code_editors.size() > 1:
-		if node is CodeEdit:
-			var main : bool = false
-			for x : Mickeytools in _code_editors:
-				if x.is_floating():
-					continue
-				var item_list : Node = _item_list
-				if item_list:
-					var reference : Node = x.get_reference()
-					if reference.get_parent() != null:
-						if get_control_item_name(reference.get_index()).begins_with(_POP_SCRIPT_PLACEHOLDER):
-							continue
-				if main:
-					return true
-				main = true
-	return false
+	var nds : Array[Node] = []
+	for x : Mickeytools in _code_editors:
+		if x.is_floating():
+			continue
+		var root : Node = x.get_root()
+		if !is_instance_valid(root):
+			continue
+		if nds.has(root):
+			continue
+		nds.append(root)
+	return nds.size() > 1
 
 func get_control_item_name(index : int) -> String:
 	var item_list : Node = _item_list
@@ -2014,47 +2142,76 @@ func get_editor_item_text(c : int) -> String:
 				text = text.trim_suffix("(*)")
 	return text
 
-func can_add_split(_node : Node) -> bool:
+func can_add_split(node : Node) -> bool:
 	if !is_instance_valid(_main):
 		return false
-			
-	if _node == null:
-		return _code_editors.size() < _editor.get_child_count()
-			
-	for o : int in _editor.get_child_count():
-		if get_editor_item_text(o).begins_with(_POP_SCRIPT_PLACEHOLDER):
-			continue
-		var x : Node = _editor.get_child(o)
-		var created : bool = false
-		if x.has_method(&"get_base_editor"):
-			x = x.call(&"get_base_editor")
-			for m : Mickeytools in _code_editors:
-				if m.get_gui() == x:
-					created = true
-					break
-		else:
-			if x.get_child_count() > 0:
-				var child : Node = x.get_child(0)
-				for m : Mickeytools in _code_editors:
-					var gui : Node = m.get_gui()
-					if gui == x or child == gui:
-						created = true
-						break
-			else:
-				for m : Mickeytools in _code_editors:
-					var gui : Node = m.get_gui()
-					if gui == x :
-						created = true
-						break
-		if !created:
-			return true
-	return false
+	
+	var split : bool = false
+	
+	if node == null:
+		var nds : Array[Node] = []
+		var av : Array[Mickeytools] = []
+		for x : Mickeytools in _code_editors:
+			if x.is_floating():
+				continue
+			var root : Node = x.get_root()
+			if !is_instance_valid(root):
+				continue
+			if root.get_child_count() > 0:
+				av.append(x)
+				if nds.has(root):
+					continue
+				nds.append(root)
+		split = av.size() > nds.size()
+	else:
+		for x : Mickeytools in _code_editors:
+			if x.is_floating():
+				continue
+			var gui : Variant = x.get_gui()
+			if is_instance_valid(gui) and gui == node:
+				var root : Node = x.get_root()
+				if !is_instance_valid(root):
+					continue
+				split = root.get_child_count() > 1
+				break
+	if !split:
+		split = _code_editors.size() < _editor.get_child_count()
+	return split
 
 func add_split(control : Node) -> void:
+	if !can_add_split(control):
+		return
+	
 	var unused : Array[Node] = _get_unused_editor_control()
 	if unused.size() == 0:
-		print("[INFO] Not aviable split!")
-		return
+		var root : Node = null
+		var ctool : Mickeytools = null
+		for x : Mickeytools in _code_editors:
+			if x.is_floating():
+				continue
+			var gui : Variant = x.get_gui()
+			if is_instance_valid(gui) and gui == control:
+				var _root : Variant = x.get_root()
+				if !is_instance_valid(_root):
+					continue
+				root = _root
+				ctool = x
+				break
+		if root:
+			var tls : Array[Mickeytools] = []
+			for x : Mickeytools in _code_editors:
+				if x.is_floating():
+					continue
+				var _root : Variant = x.get_root()
+				if is_instance_valid(_root) and _root == root:
+					var gui : Variant = x.get_gui()
+					if is_instance_valid(gui) and x != ctool:
+						ctool.reset()
+						unused = _get_unused_editor_control()
+						break
+		if unused.size() < 1:
+			print("[INFO] Not aviable split!")
+			return
 
 	var current_unused : Node = control
 
@@ -2106,7 +2263,7 @@ func update_build(columns : int, rows : int) -> void:
 	_main.max_columns = current_columns
 
 	while _main.get_child_count() > totals:
-		if !_free_editor_container(_main.get_child(_main.get_child_count() - 1)):
+		if !_free_editor_container(_main.get_child(_main.get_child_count() - 1), totals):
 			break
 
 	while _main.get_child_count() < totals:
@@ -2127,7 +2284,6 @@ func update_build(columns : int, rows : int) -> void:
 		if null == create_code_editor(aviable, unused[0]):
 			break
 		aviable = get_aviable()
-	
 	process_update_queue()
 	
 

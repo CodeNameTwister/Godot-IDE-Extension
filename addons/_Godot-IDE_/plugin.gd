@@ -25,6 +25,10 @@ func _process(_delta: float) -> void:
 	if editor.is_scanning():
 		return
 	set_process(false)
+	
+	#Self-Secure All Loaded
+	_initialize()
+	
 	var base : String = get_script().resource_path.get_base_dir()
 	var path : String = base.path_join("plugins")
 	
