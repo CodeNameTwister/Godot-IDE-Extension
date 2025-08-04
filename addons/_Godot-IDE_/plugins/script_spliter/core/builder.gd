@@ -361,7 +361,9 @@ func _update_list_selection() -> void:
 	var selected : String = ""
 	var others_selected : PackedStringArray = []
 	
-	var root : Node = _last_tool.get_root()
+	var root : Node = null
+	if _last_tool:
+		root = _last_tool.get_root()
 	
 	for x : Mickeytools in _code_editors:
 		if !is_instance_valid(x):
