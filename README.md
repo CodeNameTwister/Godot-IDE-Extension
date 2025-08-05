@@ -5,7 +5,7 @@ Godot IDE Extension
 
 [![Godot Engine 4.3](https://img.shields.io/badge/Godot_Engine-4.x-blue)](https://godotengine.org/) ![Copyrights License](https://img.shields.io/badge/License-MIT-blue)
 
-This addon extends Godot's native code editor with additioinal functionality and usability.
+This addon extends Godot's native code editor with additional functionality and usability.
 
 ## Table of contents
 
