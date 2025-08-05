@@ -252,4 +252,5 @@ func _initialize() -> void:
 			IDE.VIRTUAL_METHODS = editor.get_setting("plugin/gd_override_functions/inheritance/virtual_functions_begins_with")
 		if editor.has_setting("plugin/gd_override_functions/inheritance/private_functions_begins_with"):
 			IDE.PRIVATE_METHODS = editor.get_setting("plugin/gd_override_functions/inheritance/private_functions_begins_with")
-		editor.settings_changed.connect(_on_changes)
+		if !editor.settings_changed.is_connected(_on_changes):
+			editor.settings_changed.connect(_on_changes)

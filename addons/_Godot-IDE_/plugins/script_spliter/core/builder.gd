@@ -13,7 +13,7 @@ const DD : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/cor
 const DDO : PackedScene = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/ui/dd.tscn")
 const DDITEM : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/DDItem.gd")
 const TOOL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_spliter/assets/tab_icon.svg")
-
+const EXPAND = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/expand.svg")
 
 #region POPSC	
 const FLYING_SCRIPT : PackedScene = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/flying_script.tscn")
@@ -89,7 +89,6 @@ var _SEPARATOR_LINE_SIZE : int = 8
 var _SEPARATOR_LINE_COLOR : Color = Color.MAGENTA
 var _SEPARATOR_BUTTON_SIZE : int = 19
 var _SEPARATOR_BUTTON_MODULATE : Color = Color.WHITE
-var _SEPARATOR_BUTTON_ICON : String = "res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/expand.svg"
 
 var _SEPARATOR_LINE_MOVEMENT : bool = true
 var _SEPARATOR_LINE_DOUBLE_CLICK : bool = true
@@ -151,8 +150,7 @@ func _get_data_cfg() -> Array[Array]:
 
 		,[&"plugin/script_spliter/line/button/size", &"_SEPARATOR_BUTTON_SIZE"]
 		,[&"plugin/script_spliter/line/button/modulate", &"_SEPARATOR_BUTTON_MODULATE"]
-		,[&"plugin/script_spliter/line/button/icon_path", &"_SEPARATOR_BUTTON_ICON"]
-		
+	
 		,[&"plugin/script_spliter/editor/behaviour/expand_on_focus", &"_BEHAVIOUR_CAN_EXPAND_ON_FOCUS"]
 		,[&"plugin/script_spliter/editor/behaviour/can_expand_on_same_focus", &"_BEHAVIOUR_CAN_EXPAND_SAME_ON_FOCUS"]
 		,[&"plugin/script_spliter/editor/behaviour/smooth_expand", &"_SEPARATOR_SMOOTH_EXPAND"]
@@ -399,6 +397,7 @@ func _update_list_selection() -> void:
 				if selected == mt:
 					_script_list.set_item_custom_bg_color(x, color)
 					_script_list.set_item_custom_fg_color(x, Color.WHITE)
+					_script_list.select(x, true)
 				else:
 					if _LIST_VISIBLE_SHOW_ACTIVES:
 						_script_list.set_item_custom_fg_color(x, Color.DARK_GRAY)
@@ -413,7 +412,6 @@ func _update_list_selection() -> void:
 						_script_list.set_item_custom_fg_color(x, Color.GRAY)
 				else:
 					_script_list.set_item_custom_bg_color(x, Color.TRANSPARENT)
-	
 	else:
 		for x : int in _script_list.item_count:
 			var mt : String = _script_list.get_item_tooltip(x)
@@ -435,7 +433,7 @@ func _update_list_selection() -> void:
 						_script_list.set_item_custom_fg_color(x, Color.GRAY)
 				else:
 					_script_list.set_item_custom_bg_color(x, Color.TRANSPARENT)
-	
+	_script_list.ensure_current_is_visible()
 	set_deferred(&"_script_list_selection", false)
 	
 func _on_update_list() -> void:
@@ -497,16 +495,8 @@ func _update_container() -> void:
 	_main.behaviour_expand_on_double_click = _SEPARATOR_LINE_DOUBLE_CLICK
 	_main.behaviour_can_move_by_line = _SEPARATOR_LINE_MOVEMENT
 	
-	if !_SEPARATOR_BUTTON_ICON.is_empty():
-		if FileAccess.file_exists(_SEPARATOR_BUTTON_ICON):
-			var text : Variant = ResourceLoader.load(_SEPARATOR_BUTTON_ICON)
-			if text is Texture:
-				_main.drag_button_icon = text
-			else:
-				push_warning("[Script-Spliter] The resource is not a texture imported ", _SEPARATOR_BUTTON_ICON)
-		else:
-			push_warning("[Script-Spliter] Can not find the resource ", _SEPARATOR_BUTTON_ICON)
-
+	_main.drag_button_icon = EXPAND
+	
 func _init(plugin : Object) -> void:
 	_plugin = plugin
 
