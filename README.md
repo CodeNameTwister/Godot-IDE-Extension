@@ -22,7 +22,7 @@ The Godot-IDE extension doesn't collect your data; it's completely free and open
 - [Special Thanks](#special-thanks-)
 
 ## Objetives
-The goal of this project is to provide Godot with some additional features by adding some extra payloads to improve the development experience and make it more similar to other existing development environments, but designed specifically by Godot users for Godot users.
+The goal of this project is to provide Godot with some additional features by adding some extra overload to improve the development experience and make it more similar to other existing development environments, but designed specifically by Godot users for Godot users.
 
 ## Preview
 ![Preview0](images/preview0.png)
