@@ -7,7 +7,8 @@ Godot IDE Extension
 
 This addon extends Godot's native code editor with additional functionality and usability.
 
-Why use this?, If you're looking for a similar experience to other IDEs for developing in GDScript, but don't want your data collected, this plugin is ideal.
+## Why use this?
+If you're looking for a similar experience to other IDEs for developing in GDScript integrated in Godot, this plugin is ideal.
 
 The Godot-IDE extension doesn't collect your data; it's completely free and open source. 
 
