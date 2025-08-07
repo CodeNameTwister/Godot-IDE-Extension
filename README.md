@@ -47,6 +47,11 @@ Each feature is described more fully in it's own repository, as well as down bel
  	* Macro-N
 
 * [Documentation](https://github.com/CodeNameTwister/Godot-IDE/blob/main/DOCUMENTATION.md)
+  
+>[!TIP]
+>* If you delete any plugin in the plugins folder, this addon will still work, so feel free to delete anything you don't want.
+>* If there are more plugin contributors in the future, I will add a panel to enable and disable plugins at your discretion.
+  
 
 ## How to use
 
@@ -83,6 +88,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 * Editor Settings
 	* In Editor Settings (with Advanced option enabled) you can change any option of this plugin in `plugin/godot_ide` or neighbors plugins of Godot-IDE.
  	* All plugins have their configuration parameters defined in that section, even for inputs.
+ 
 ## How to contribute
 
 ### Submit issues
