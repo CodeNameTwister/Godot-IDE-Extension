@@ -5,7 +5,12 @@ Godot IDE Extension
 
 [![Godot Engine 4.3](https://img.shields.io/badge/Godot_Engine-4.x-blue)](https://godotengine.org/) ![Copyrights License](https://img.shields.io/badge/License-MIT-blue)
 
-This addon extends Godot's native code editor with additioinal functionality and usability.
+This addon extends Godot's native code editor with additional functionality and usability.
+
+## Why use this?
+If you're looking for a similar experience to other IDEs for developing in GDScript integrated in Godot, this plugin is ideal.
+
+The Godot-IDE extension doesn't collect your data; it's completely free and open source. 
 
 ## Table of contents
 
@@ -18,7 +23,7 @@ This addon extends Godot's native code editor with additioinal functionality and
 - [Special Thanks](#special-thanks-)
 
 ## Objetives
-The goal of this project is to provide Godot with some additional features to improve the development experience without adding any extra overhead.
+The goal of this project is to provide Godot with some additional features by adding some extra overload to improve the development experience and make it more similar to other existing development environments, but designed specifically by Godot users for Godot users.
 
 ## Preview
 ![Preview0](images/preview0.png)
@@ -42,6 +47,11 @@ Each feature is described more fully in it's own repository, as well as down bel
  	* Macro-N
 
 * [Documentation](https://github.com/CodeNameTwister/Godot-IDE/blob/main/DOCUMENTATION.md)
+  
+>[!TIP]
+>* If you delete any plugin in the plugins folder, this addon will still work, so feel free to delete anything you don't want.
+>* If there are more plugin contributors in the future, I will add a panel to enable and disable plugins at your discretion.
+  
 
 ## How to use
 
@@ -78,6 +88,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 * Editor Settings
 	* In Editor Settings (with Advanced option enabled) you can change any option of this plugin in `plugin/godot_ide` or neighbors plugins of Godot-IDE.
  	* All plugins have their configuration parameters defined in that section, even for inputs.
+ 
 ## How to contribute
 
 ### Submit issues
