@@ -204,7 +204,7 @@ func _load_plugins(path : String) -> void:
 	
 	print("[Godot-IDE Extension]")
 	if authors.size() > 0:
-		print("> Plugins Contributors: {0}".format([", ".join(authors)]))
+		print("> Plugin Contributors: {0}".format([", ".join(authors)]))
 	
 		
 func _sugar_godot(dir : String, col : String = "blue") -> void:

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://nskxhl0fjw1r"]
+
+[ext_resource type="Script" uid="uid://crgvank36dki0" path="res://addons/script_spliter/core/ui/taby/separator.gd" id="1_e3o60"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_ksadu"]
+color = Color(0.569412, 0.524706, 0.84, 1)
+grow_begin = 4.0
+grow_end = 4.0
+thickness = 38
+
+[node name="HSeparator" type="VSeparator"]
+offset_right = 4.0
+offset_bottom = 4.0
+mouse_filter = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_ksadu")
+script = ExtResource("1_e3o60")

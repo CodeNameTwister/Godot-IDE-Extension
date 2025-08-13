@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://bko85r5vlyh0n"]
+
+[ext_resource type="Script" uid="uid://cbujbnm7i4u1n" path="res://addons/_Godot-IDE_/plugins/script_spliter/core/ui/taby/container.gd" id="1_acc0x"]
+
+[node name="Container" type="PanelContainer" node_paths=PackedStringArray("container")]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+script = ExtResource("1_acc0x")
+container = NodePath("Container")
+
+[node name="Container" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 1

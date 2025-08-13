@@ -1,5 +1,5 @@
 @tool
-extends TabContainer
+extends VBoxContainer
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Script Spliter
 #	https://github.com/CodeNameTwister/Script-Spliter
@@ -13,14 +13,22 @@ signal on_dragging(e : Control)
 signal out_dragging(e : Control)
 
 const DDTAB : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/DDTAB.gd")
+const CONTAINER = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/ui/taby/container.tscn")
+
 
 var _buffer_editors : Array[Object] = []
+
+var _tab_container : TabContainer = null
 
 #static var _tab_focus : StyleBox = null
 #static var _tab_disabled : StyleBox = null
 #static var _tab_selected : StyleBox = null
 #static var _tab_hovered : StyleBox = null
 #static var _tab_unselected : StyleBox = null
+
+func set_update_tab_extension(e : bool) -> void:
+	if is_instance_valid(tab):
+		tab.set_enable(e)
 
 func _config_tab(_tab : StyleBox) -> void:
 	if _tab is StyleBoxFlat:
@@ -30,9 +38,44 @@ func _config_tab(_tab : StyleBox) -> void:
 		#_tab.border_width_right = 0.0
 		#_tab.border_width_top = 0.0
 		#_tab.border_width_bottom = 0.1
+var tab : Control = null
 
 func _ready() -> void:
-	pass
+	if !is_instance_valid(_tab_container):
+		_init()
+	set(&"theme_override_constants/separation", -15)
+		
+func _init() -> void:
+	_tab_container = TabContainer.new()
+	_tab_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_tab_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_tab_container.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	var tb : TabBar = _tab_container.get_tab_bar()
+	if tb:
+		tb.auto_translate_mode = _tab_container.auto_translate_mode
+	
+	tab = CONTAINER.instantiate()
+	tab.set_ref(_tab_container.get_tab_bar())
+	
+	add_child(tab)
+	add_child(_tab_container)
+	tab.z_index = 2
+	
+	_tab_container.child_entered_tree.connect(_on_child)
+	_tab_container.child_exiting_tree.connect(_out_child)
+
+func get_tab_container() -> TabContainer:
+	return _tab_container
+
+func is_empty() -> bool:
+	return _tab_container.get_child_count() == 0
+	
+func get_container_children() -> Array[Node]:
+	return _tab_container.get_children()
+	
+func get_container() -> TabContainer:
+	return _tab_container
+	
 	#var root : Control = EditorInterface.get_base_control()
 	#if root:
 		#if _tab_focus == null:
@@ -110,16 +153,17 @@ func forward_editor() -> Object:
 			return o
 	return null
 
-
 func _on_child(n : Node) -> void:
 	if n is TabBar:
 		if n.get_script() != DDTAB:
 			n.set_script(DDTAB)
-
+#
 		if !n.on_start_drag.is_connected(_on_start_drag):
 			n.on_start_drag.connect(_on_start_drag)
 		if !n.on_stop_drag.is_connected(_on_stop_drag):
 			n.on_stop_drag.connect(_on_stop_drag)
+	elif is_instance_valid(tab):
+			tab.update()
 			
 func _out_child(n : Node) -> void:
 	if n is TabBar:
@@ -129,13 +173,15 @@ func _out_child(n : Node) -> void:
 			n.on_stop_drag.disconnect(_on_stop_drag)
 		if n.get_script() == DDTAB:
 			n.set_script(null)
+	elif is_instance_valid(tab):
+		tab.update()
 			
-func _on_stop_drag(tab : TabBar) -> void:
-	out_dragging.emit(tab)
+func update(color : Color) -> void:
+	tab.set_select_color(color)
+	tab.update()
+			
+func _on_stop_drag(_tab : TabBar) -> void:
+	out_dragging.emit(_tab)
 
-func _on_start_drag(tab : TabBar) -> void:
-	on_dragging.emit(tab)
-
-func _init() -> void:
-	child_entered_tree.connect(_on_child)
-	child_exiting_tree.connect(_out_child)
+func _on_start_drag(_tab : TabBar) -> void:
+	on_dragging.emit(_tab)

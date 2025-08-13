@@ -10,6 +10,7 @@ extends EditorPlugin
 
 const BUILDER : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/core/builder.gd")
 const CONTEXT : Script = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/context_window.gd")
+const SSP_CONTEXT = preload("res://addons/_Godot-IDE_/plugins/script_spliter/context/ssp_ctx.gd")
 
 const CMD_MENU_TOOL : String = "Script Spliter"
 
@@ -48,6 +49,8 @@ var _rmb_close_all_tab_in_split : EditorContextMenuPlugin = null
 var _rmb_close_all_tab_in_split_right : EditorContextMenuPlugin = null
 var _rmb_close_all_tab_in_split_left : EditorContextMenuPlugin = null
 
+var _ssp_ctx : EditorContextMenuPlugin = null
+
 var _menu_split_selector : Window = null
 var _builder : Object = null
 
@@ -79,6 +82,7 @@ var _refresh_warnings_on_save : bool = true
 
 var _frm : int = 0
 var _d_chase : bool = false
+var _started : bool = false
 
 func get_builder() -> Object:
 	return _builder
@@ -116,13 +120,24 @@ func _save_external_data() -> void:
 	set_deferred(&"_d_chase", false)
 
 func _process(__: float) -> void:
-	if _frm < 2:
+	if _frm < 5:
 		_frm += 1
 		return
 	_frm = 0
+	var fs : EditorFileSystem = EditorInterface.get_resource_filesystem()
+	if fs:
+		if fs.is_scanning():
+			return
+			
 	set_process(false)
 	if is_instance_valid(_builder):
-		_builder.update()
+		if !_started:
+			_started = true
+			var scripts_tab_container : Node = _tab_container
+			_builder.build(scripts_tab_container, _columns, _rows)
+			set_process.call_deferred(true)
+		else:
+			_builder.update()
 
 func _on_change_settings() -> void:
 	if is_instance_valid(_builder):
@@ -136,28 +151,42 @@ func _on_change_settings() -> void:
 func _init() -> void:
 	var editor : EditorSettings = EditorInterface.get_editor_settings()
 	if editor:
+		
+		if editor.has_setting(&"plugin/script_spliter/line/button/icon_path"):
+			editor.set_setting(&"plugin/script_spliter/line/button/icon_path", null)
+		
 		var KEYS : PackedInt64Array = [
 			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0
 		]
-		var key : String = "plugin/script_spliter/input/spliy_type_"
+		var key : String = "plugin/script_spliter/input/split_type_"
+		
+		var back_key : String = "plugin/script_spliter/input/spliy_type_" #FIXING
 		
 		for x : int in range(0, mini(SPLIT_TYPES.size(), KEYS.size()), 1):
-			var key_token : String = str(key, x + 1)
+			var back_token : String = str(back_key, x + 1)
 			var __input : InputEvent = null
+			if editor.has_setting(back_token):  #FIXING
+				var variant : Variant = editor.get_setting(back_token)
+				if variant is InputEvent:
+					__input = variant
+					_inputs.append(__input)
+					editor.set_setting(back_token, null)
+					continue
+			
+			var key_token : String = str(key, x + 1)
 			if editor.has_setting(key_token):
 				var variant : Variant = editor.get_setting(key_token)
 				if variant is InputEvent:
 					__input = variant
 					_inputs.append(__input)
 					continue
+					
 			__input = InputEventKey.new()
 			__input.pressed = true
 			__input.ctrl_pressed = true
 			__input.keycode = KEYS[x]
 			editor.set_setting(key_token, __input)
 			_inputs.append(__input)
-			
-	set_process_input(_inputs.size() > 0)
 	
 	var o : Object = _tab_container
 	if o == null:
@@ -193,8 +222,9 @@ func _run() -> void:
 		settings.settings_changed.connect(_on_change_settings)
 
 		_builder.init_1()
-		_builder.build(scripts_tab_container, _columns, _rows)
-		set_process_input(true)
+		
+		set_process.call_deferred(true)
+		set_process_input.call_deferred(_inputs.size() > 0)
 
 func set_type_split(columns : int, rows : int) -> void:
 	_columns = columns
@@ -270,6 +300,8 @@ func _setup(input : int) -> void:
 		_rmb_close_all_tab_in_split_left = CONTEXT.new(ctx_close_tabs_left, _close_all_tabs_in_split_left, _can_close_left_tab_in_split, ICON_TAB)
 		_rmb_close_all_tab_in_split_right = CONTEXT.new(ctx_close_tabs_right, _close_all_tabs_in_split_right, _can_close_right_tab_in_split, ICON_TAB)
 		
+		_ssp_ctx = SSP_CONTEXT.new()
+		
 		add_context_menu_plugin(EditorContextMenuPlugin.CONTEXT_SLOT_SCRIPT_EDITOR, _rmb_close_all_tab_in_split)
 		add_context_menu_plugin(EditorContextMenuPlugin.CONTEXT_SLOT_SCRIPT_EDITOR, _rmb_close_all_tab_in_split_left)
 		add_context_menu_plugin(EditorContextMenuPlugin.CONTEXT_SLOT_SCRIPT_EDITOR, _rmb_close_all_tab_in_split_right)
@@ -284,6 +316,8 @@ func _setup(input : int) -> void:
 		add_context_menu_plugin(EditorContextMenuPlugin.CONTEXT_SLOT_SCRIPT_EDITOR, _rmb_editor_pop_script)
 		add_context_menu_plugin(EditorContextMenuPlugin.CONTEXT_SLOT_SCRIPT_EDITOR_CODE, _rmb_editor_code_pop_script)
 
+		add_context_menu_plugin(EditorContextMenuPlugin.CONTEXT_SLOT_SCRIPT_EDITOR_CODE, _ssp_ctx)
+		
 		if !settings.has_setting(&"plugin/script_spliter/rows"):
 			settings.set_setting(&"plugin/script_spliter/rows", _rows)
 		else:
@@ -324,7 +358,8 @@ func _setup(input : int) -> void:
 			remove_context_menu_plugin(_rmb_editor_pop_script)
 		if is_instance_valid(_rmb_editor_code_pop_script):
 			remove_context_menu_plugin(_rmb_editor_code_pop_script)
-
+		if is_instance_valid(_ssp_ctx):
+			remove_context_menu_plugin(_ssp_ctx)
 
 		if settings.has_setting(&"plugin/script_spliter/save_rows_columns_count_on_exit"):
 			if settings.get_setting(&"plugin/script_spliter/save_rows_columns_count_on_exit") == true:
