@@ -142,7 +142,14 @@ func _on_gui(e : InputEvent, f : CodeEdit, t : CodeEdit) -> void:
 			if e is InputEventMouseButton:
 				if e.button_index == MOUSE_BUTTON_LEFT:
 					return
-		_on_focus(f, t)
+			_on_focus(f, t)
+	else:
+		if e.is_pressed():
+			if e is InputEventMouseButton:
+				if e.button_index != MOUSE_BUTTON_RIGHT:
+					return
+				_on_focus(f, t)
+	
 
 func _on_update(f : Variant, t : Variant, r : Variant) -> void:
 	if is_instance_valid(f) and is_instance_valid(t):

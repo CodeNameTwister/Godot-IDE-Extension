@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://cr2xovtt6uo7s"]
 
-[ext_resource type="Script" uid="uid://dbkyfe5ri2p73" path="res://addons/script_spliter/context/flying_script.gd" id="1_wfm3d"]
-[ext_resource type="Texture2D" uid="uid://r6u1jtnbr4eg" path="res://addons/script_spliter/context/icons/atop.png" id="2_q3d74"]
-[ext_resource type="Script" uid="uid://bo38caobn2x7a" path="res://addons/script_spliter/context/btn_callback.gd" id="3_1p1sv"]
+[ext_resource type="Script" uid="uid://dbkyfe5ri2p73" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/flying_script.gd" id="1_wfm3d"]
+[ext_resource type="Texture2D" uid="uid://r6u1jtnbr4eg" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/icons/atop.png" id="2_q3d74"]
+[ext_resource type="Script" uid="uid://bo38caobn2x7a" path="res://addons/_Godot-IDE_/plugins/script_spliter/context/btn_callback.gd" id="3_1p1sv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q3d74"]
 content_margin_left = 3.0

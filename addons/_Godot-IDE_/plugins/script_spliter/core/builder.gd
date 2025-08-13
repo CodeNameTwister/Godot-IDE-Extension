@@ -2178,6 +2178,8 @@ func build(editor : TabContainer, columns : int = 0, rows : int = 0) -> void:
 	update_rect.call_deferred()
 	
 func update_rect() -> void:
+	if !is_instance_valid(_container):
+		return
 	var _size : Vector2 = _container.size
 	_size.x = maxf(_container.size.x, 1.0)
 	_size.y = maxf(_container.size.y, 1.0)

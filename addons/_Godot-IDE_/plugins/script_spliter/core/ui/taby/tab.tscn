@@ -33,6 +33,7 @@ size_flags_horizontal = 0
 theme_override_constants/separation = 0
 
 [node name="PanelContainer" type="Button" parent="VBoxContainer/ButtonContainer"]
+auto_translate_mode = 2
 layout_mode = 2
 focus_mode = 0
 mouse_filter = 1
