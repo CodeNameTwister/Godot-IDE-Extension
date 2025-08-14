@@ -1188,6 +1188,7 @@ func control_reparent(_index : int, _control : Variant, parent : Variant, _paren
 class ReTweener extends RefCounted:
 	var _tween : Tween = null
 	var _ref : Control = null
+	var _last_ref : Variant = null
 	var color : Color = Color.MEDIUM_SLATE_BLUE
 
 	func create_tween(control : Control) -> void:
@@ -1195,10 +1196,16 @@ class ReTweener extends RefCounted:
 			return
 		var parent : Node = control.get_parent()
 
-		if parent:
+		if is_instance_valid(parent):
 			if _ref == control:
 				return
+			if is_instance_valid(_last_ref):
+				if _ref == _last_ref:
+					return
+			_last_ref = _ref
+			
 			clear()
+			
 			_tween = parent.get_tree().create_tween()
 			_ref = parent
 			_tween.tween_method(_callback, color, Color.WHITE, 0.35)
