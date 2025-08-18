@@ -38,19 +38,11 @@ select_all_on_focus = true
 [node name="ScopeOption" type="OptionButton" parent="MainContainer/HeaderContainer"]
 layout_mode = 2
 selected = 1
-item_count = 6
+item_count = 2
 popup/item_0/text = "Current File Only"
 popup/item_0/id = 0
 popup/item_1/text = "Entire Project"
 popup/item_1/id = 1
-popup/item_2/text = "Current File Only"
-popup/item_2/id = 0
-popup/item_3/text = "Entire Project"
-popup/item_3/id = 1
-popup/item_4/text = "Current File Only"
-popup/item_4/id = 0
-popup/item_5/text = "Entire Project"
-popup/item_5/id = 1
 
 [node name="PreviewContainer" type="HSplitContainer" parent="MainContainer"]
 layout_mode = 2

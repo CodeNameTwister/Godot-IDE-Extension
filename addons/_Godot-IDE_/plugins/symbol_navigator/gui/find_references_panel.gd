@@ -1,10 +1,9 @@
 @tool
 extends Control
-# =============================================================================	
-# Author: GodotIDE Team  
-# Symbol Navigator - Find References Bottom Panel
-#
-# UI for displaying symbol references in the editor's bottom panel
+# =============================================================================
+# Symbol Navigator - Find References Panel
+# Author: kyros
+# Bottom panel UI for displaying symbol references with navigation and code preview
 # =============================================================================	
 
 @export var search_bar : LineEdit = null
@@ -19,124 +18,67 @@ var _current_symbol : String = ""
 var _search_results : Array[Dictionary] = []
 
 func _ready() -> void:
-	print("[Find References] Panel _ready() called")
-	
-	# Force initialization of exported variables if they're null
+	# Initialize components and connections
 	_ensure_components_initialized()
 	
-	# Apply editor theme for better integration
+	# Apply editor theme for integration
 	var editor_control : Control = EditorInterface.get_base_control()
 	if editor_control:
-		# Apply editor's theme to match the bottom panel style
 		var theme = editor_control.get_theme()
 		if theme:
 			set_theme(theme)
 	
-	# Connect signals
+	# Connect UI signals
 	if search_button:
 		search_button.pressed.connect(_on_search_pressed)
-		print("[Find References] Search button connected")
-	else:
-		print("[Find References] Warning: search_button is null")
-		
 	if clear_button:
 		clear_button.pressed.connect(_on_clear_pressed)
-		print("[Find References] Clear button connected")
-	else:
-		print("[Find References] Warning: clear_button is null")
-		
 	if search_bar:
 		search_bar.text_submitted.connect(_on_search_submitted)
 		search_bar.text_changed.connect(_on_search_text_changed)
-		print("[Find References] Search bar connected")
-	else:
-		print("[Find References] Warning: search_bar is null")
-		
 	if results_tree:
 		results_tree.item_activated.connect(_on_item_activated)
 		results_tree.item_selected.connect(_on_item_selected)
-		print("[Find References] Results tree connected")
-	else:
-		print("[Find References] Warning: results_tree is null")
 	
-	# Set up tree columns for split panel layout
+	# Configure tree columns
 	if results_tree:
 		results_tree.set_column_titles_visible(true)
 		results_tree.set_column_title(0, "File / Reference")
 		results_tree.set_column_title(1, "Line")
 		results_tree.columns = 2
-		
-		# Set column ratios for navigation tree
-		results_tree.set_column_expand_ratio(0, 3.0)  # File/reference column (main info)
-		results_tree.set_column_expand_ratio(1, 1.0)  # Line column (compact)
-		print("[Find References] Tree setup completed")
+		results_tree.set_column_expand_ratio(0, 3.0)
+		results_tree.set_column_expand_ratio(1, 1.0)
 	
 	# Initialize UI state
 	_update_results_info("Enter a symbol to search")
 	_clear_code_display()
-	print("[Find References] Initial UI state set")
 
 func _ensure_components_initialized() -> void:
 	"""Ensure all exported components are properly initialized"""
-	print("[Find References] Initializing components...")
-	
 	if not search_bar:
 		search_bar = _find_component_robust("SearchBar", LineEdit)
-		print("[Find References] search_bar result: %s" % str(search_bar))
-	
 	if not results_tree:
 		results_tree = _find_component_robust("ResultsTree", Tree)
-		print("[Find References] results_tree result: %s" % str(results_tree))
-	
 	if not status_label:
 		status_label = _find_component_robust("StatusLabel", Label)
-		print("[Find References] status_label result: %s" % str(status_label))
-	
 	if not search_button:
 		search_button = _find_component_robust("SearchButton", Button)
-		print("[Find References] search_button result: %s" % str(search_button))
-	
 	if not clear_button:
 		clear_button = _find_component_robust("ClearButton", Button)
-		print("[Find References] clear_button result: %s" % str(clear_button))
-	
 	if not code_header:
 		code_header = _find_component_robust("CodeHeader", Label)
-		print("[Find References] code_header result: %s" % str(code_header))
-	
 	if not code_display:
 		code_display = _find_component_robust("CodeDisplay", TextEdit)
-		print("[Find References] code_display result: %s" % str(code_display))
 	
+	# Only log if critical components are missing
 	var missing_components = []
 	if not search_bar: missing_components.append("search_bar")
 	if not results_tree: missing_components.append("results_tree")
 	if not status_label: missing_components.append("status_label")
-	if not search_button: missing_components.append("search_button")
-	if not clear_button: missing_components.append("clear_button")
-	if not code_header: missing_components.append("code_header")
-	if not code_display: missing_components.append("code_display")
 	
-	if missing_components.is_empty():
-		print("[Find References] All components initialized successfully")
-	else:
-		print("[Find References] Missing components: %s" % ", ".join(missing_components))
+	if not missing_components.is_empty():
+		print("Error: Missing critical components: %s" % ", ".join(missing_components))
 
-func _debug_print_node_tree(node: Node, indent: int) -> void:
-	"""Recursively print the entire node tree for debugging"""
-	var indent_str = ""
-	for i in range(indent):
-		indent_str += "  "
-	
-	var node_info = "%s%s (%s)" % [indent_str, node.name, node.get_class()]
-	if node.get_child_count() > 0:
-		node_info += " [%d children]" % node.get_child_count()
-	print(node_info)
-	
-	# Recursively print children (limit depth to prevent spam)
-	if indent < 6:
-		for child in node.get_children():
-			_debug_print_node_tree(child, indent + 1)
 
 func _find_component_robust(component_name: String, component_type) -> Node:
 	"""Robust component finder using multiple strategies"""
@@ -147,34 +89,28 @@ func _find_component_robust(component_name: String, component_type) -> Node:
 	for path in expected_paths:
 		found_component = get_node_or_null(path)
 		if found_component and _is_correct_type(found_component, component_type):
-			print("[Find References] Found %s via path '%s'" % [component_name, path])
 			return found_component
 	
 	# Strategy 2: find_child() search
 	found_component = find_child(component_name, true, false)
 	if found_component and _is_correct_type(found_component, component_type):
-		print("[Find References] Found %s via find_child()" % component_name)
 		return found_component
 	
 	# Strategy 3: Recursive search by type and name
 	found_component = _recursive_find_by_type_and_name(self, component_type, component_name)
 	if found_component:
-		print("[Find References] Found %s via recursive type+name search" % component_name)
 		return found_component
 	
 	# Strategy 4: Recursive search by type only (first match)
 	found_component = _recursive_find_by_type(self, component_type)
 	if found_component:
-		print("[Find References] Found %s via recursive type search (first match)" % component_name)
 		return found_component
 	
 	# Strategy 5: Partial name matching
 	found_component = _recursive_find_by_partial_name(self, component_name.to_lower())
 	if found_component and _is_correct_type(found_component, component_type):
-		print("[Find References] Found %s via partial name matching" % component_name)
 		return found_component
 	
-	print("[Find References] Failed to find %s using all strategies" % component_name)
 	return null
 
 func _is_correct_type(node: Node, expected_type) -> bool:
@@ -255,9 +191,6 @@ func _recursive_find_by_partial_name(node: Node, partial_name: String) -> Node:
 
 func search_symbol(symbol: String) -> void:
 	"""Start a search for the given symbol and display results"""
-	print("[Find References] === STARTING SEARCH ===")
-	print("[Find References] Searching for symbol: '%s'" % symbol)
-	
 	_current_symbol = symbol
 	if search_bar:
 		search_bar.text = symbol
@@ -300,10 +233,12 @@ func _perform_search() -> void:
 	# Perform the actual search
 	_search_in_project()
 	
-	# Update UI
+	# Update UI and show results
 	_display_results()
 	var result_count = _search_results.size()
 	if result_count > 0:
+		# Log successful search
+		print("Found %d references to '%s'" % [result_count, _current_symbol])
 		_update_status("Found %d references to '%s'" % [result_count, _current_symbol])
 	else:
 		_update_status("No references found for '%s'" % _current_symbol)
@@ -341,6 +276,7 @@ func _search_in_directory(dir: EditorFileSystemDirectory) -> void:
 func _search_in_file(file_path: String) -> void:
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if not file:
+		print("Error: Cannot access file %s" % file_path.get_file())
 		return
 	
 	var line_number = 1
@@ -471,27 +407,20 @@ func _display_results() -> void:
 		_ensure_components_initialized()
 	
 	if not results_tree:
-		print("[Find References] Error: results_tree is still null after initialization")
-		print("[Find References] Attempting fallback display methods...")
+		print("Error: results_tree component not found")
 		_display_results_fallback()
 		return
 	
-	print("[Find References] Displaying results: %d items found" % _search_results.size())
-	
-	# Clear the tree completely
+	# Clear the tree and code display
 	results_tree.clear()
-	
-	# Clear code display
 	_clear_code_display()
 	
 	if _search_results.is_empty():
-		print("[Find References] No search results to display")
 		_update_results_info("No references found")
 		return
 	
 	# Create root item (hidden)
 	var root = results_tree.create_item()
-	
 	var file_groups = {}
 	
 	# Group results by file
@@ -501,14 +430,12 @@ func _display_results() -> void:
 			file_groups[file_path] = []
 		file_groups[file_path].append(result)
 	
-	# Update results info FIRST
+	# Update results info
 	var total_files = file_groups.size()
 	var total_refs = _search_results.size()
-	print("[Find References] Grouped into %d files, %d total references" % [total_files, total_refs])
 	_update_results_info("%d references in %d files" % [total_refs, total_files])
 	
-	# Create simplified tree structure for navigation
-	var items_created = 0
+	# Create tree structure for navigation
 	for file_path in file_groups.keys():
 		var file_item = root.create_child()
 		var file_name = file_path.get_file()
@@ -521,14 +448,12 @@ func _display_results() -> void:
 		
 		# File item styling
 		file_item.set_selectable(0, false)
-		file_item.set_custom_color(0, Color(0.8, 0.9, 1.0))  # Light blue for file headers
-		file_item.set_collapsed(false)  # Show references by default
-		items_created += 1
+		file_item.set_custom_color(0, Color(0.8, 0.9, 1.0))
+		file_item.set_collapsed(false)
 		
 		# Add individual references
 		for result in file_groups[file_path]:
 			var ref_item = file_item.create_child()
-			# Format: Line xxx: code content (truncate long lines)
 			var line_content = result.get("line_content", "")
 			var truncated_content = _truncate_line_content(line_content, 80)
 			ref_item.set_text(0, "  → Line %d: %s" % [result["line_number"], truncated_content])
@@ -536,21 +461,11 @@ func _display_results() -> void:
 			ref_item.set_metadata(0, result)
 			
 			# Reference item styling
-			ref_item.set_custom_color(0, Color(0.9, 0.9, 0.9))  # Standard text color
-			ref_item.set_custom_color(1, Color(0.8, 0.8, 0.6))  # Yellow tint for line numbers
-			items_created += 1
-	
-	print("[Find References] Created %d tree items total" % items_created)
+			ref_item.set_custom_color(0, Color(0.9, 0.9, 0.9))
+			ref_item.set_custom_color(1, Color(0.8, 0.8, 0.6))
 	
 	# Force tree update
 	results_tree.queue_redraw()
-	
-	# Ensure tree is visible and has proper size
-	root = results_tree.get_root()
-	if root and root.get_child_count() > 0:
-		print("[Find References] Tree has %d file groups with items" % root.get_child_count())
-	else:
-		print("[Find References] Warning: Tree root has no child items after creation")
 
 func _clear_code_display() -> void:
 	"""Clear the code display area"""
@@ -562,8 +477,6 @@ func _clear_code_display() -> void:
 
 func _update_results_info(info_text: String) -> void:
 	"""Update the results info label in the left panel"""
-	print("[Find References] Updating results info: %s" % info_text)
-	
 	# Ensure components are initialized first
 	if not results_tree:
 		_ensure_components_initialized()
@@ -572,34 +485,21 @@ func _update_results_info(info_text: String) -> void:
 	var results_info_label = get_node_or_null("MainContainer/MainContent/LeftPanel/ResultsInfo")
 	if results_info_label and results_info_label is Label:
 		results_info_label.text = info_text
-		print("[Find References] Successfully updated ResultsInfo via direct NodePath: %s" % info_text)
 		return
 	
 	# Method 2: Try using parent-child relationship
 	if results_tree and results_tree.get_parent():
 		var left_panel = results_tree.get_parent()
-		print("[Find References] Left panel found: %s" % left_panel.name)
-		
-		# List all children to debug
-		print("[Find References] Left panel children:")
-		for i in range(left_panel.get_child_count()):
-			var child = left_panel.get_child(i)
-			print("  - %s (%s)" % [child.name, child.get_class()])
 		
 		# Try to find ResultsInfo by searching through children
 		for i in range(left_panel.get_child_count()):
 			var child = left_panel.get_child(i)
 			if child.name == "ResultsInfo" and child is Label:
 				child.text = info_text
-				print("[Find References] Successfully updated ResultsInfo via parent search: %s" % info_text)
 				return
 		
-		print("[Find References] Error: ResultsInfo Label not found in children")
-	else:
-		print("[Find References] Error: results_tree or parent is null")
-	
-	# If we reach here, all methods failed
-	print("[Find References] Error: Could not update ResultsInfo via any method")
+		# Log error only if all methods fail
+		print("Error: ResultsInfo label not found in UI structure")
 
 func _update_code_display(result: Dictionary) -> void:
 	"""Update the right panel with code content for the selected reference"""
@@ -633,6 +533,7 @@ func _load_file_content(file_path: String) -> String:
 	"""Load the content of a file"""
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if not file:
+		print("Error: Cannot load file content for %s" % file_path.get_file())
 		return ""
 	var content = file.get_as_text()
 	file.close()
@@ -736,15 +637,12 @@ func _navigate_to_reference(file_path: String, line_number: int, column: int) ->
 				if code_edit:
 					code_edit.set_caret_line(line_number - 1)
 					code_edit.set_caret_column(column)
-					
-					# Ensure the editor gets focus
 					code_edit.grab_focus()
+	else:
+		print("Error: Cannot navigate to %s:%d" % [file_path.get_file(), line_number])
 
 func _display_results_fallback() -> void:
 	"""Fallback method to display results when Tree component is not available"""
-	print("[Find References] Using fallback display method")
-	
-	# Update results info with the data we have
 	var total_refs = _search_results.size()
 	if total_refs > 0:
 		var file_groups = {}
@@ -764,20 +662,16 @@ func _display_results_fallback() -> void:
 
 func _create_fallback_tree() -> void:
 	"""Create a Tree component dynamically when the scene component is missing"""
-	print("[Find References] Attempting to create fallback Tree component")
-	
 	# Find the left panel where the tree should be
 	var left_panel = get_node_or_null("MainContainer/MainContent/LeftPanel")
 	if not left_panel:
-		print("[Find References] Cannot find LeftPanel for fallback tree creation")
+		print("Error: Cannot find LeftPanel for tree creation")
 		return
 	
 	# Check if there's already a Tree somewhere
 	var existing_tree = _recursive_find_by_type(left_panel, Tree)
 	if existing_tree:
 		results_tree = existing_tree
-		print("[Find References] Found existing Tree in LeftPanel, using it")
-		# Try displaying results again
 		_display_results()
 		return
 	
@@ -797,8 +691,8 @@ func _create_fallback_tree() -> void:
 	new_tree.item_activated.connect(_on_item_activated)
 	new_tree.item_selected.connect(_on_item_selected)
 	
-	# Add to the left panel (insert after the header, before the info label)
-	var insert_position = 1  # After "ResultsHeader"
+	# Add to the left panel
+	var insert_position = 1
 	if left_panel.get_child_count() > insert_position:
 		left_panel.add_child(new_tree)
 		left_panel.move_child(new_tree, insert_position)
@@ -808,11 +702,8 @@ func _create_fallback_tree() -> void:
 	# Set size flags to expand
 	new_tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	
-	# Update our reference
+	# Update our reference and try again
 	results_tree = new_tree
-	print("[Find References] Created fallback Tree component successfully")
-	
-	# Try displaying results again
 	_display_results()
 
 func _update_status(message: String) -> void:

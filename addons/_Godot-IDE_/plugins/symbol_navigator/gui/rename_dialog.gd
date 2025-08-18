@@ -2,27 +2,20 @@
 extends Window
 
 # =============================================================================
-# Rename Symbol Dialog
-# Author: GodotIDE Team
-# Rename symbols across the entire project
+# Symbol Navigator - Rename Dialog
+# Author: kyros
+# Rename symbols (variables, functions, classes) across the entire project
 # 
-# GODOT 4.x COMPATIBILITY NOTES:
-# This implementation has been simplified for Godot 4.x compatibility.
-# Complex editor refresh mechanisms have been removed due to:
-# 1. Limited ScriptEditor API access in Godot 4.x
-# 2. API changes that made previous methods incompatible
-# 3. File system import issues caused by aggressive refresh strategies
+# Technical Features:
+# - Direct source replacement: Instantly update content in open editors
+# - Smart symbol matching: Precise word boundary matching with regex
+# - State preservation: Maintain user's cursor position and scroll state
+# - Quality assurance: Automatic file content verification after batch changes
 # 
-# CORE FUNCTIONALITY:
-# - Symbol renaming works perfectly (files are correctly modified)
-# - File system scanning is minimal and reliable
-# - User guidance is provided for manual editor refresh
-# 
-# USER WORKFLOW:
+# User Workflow:
 # 1. Select symbol → Press F2 (auto-preview)
 # 2. Enter new name → Press Enter or click Rename
-# 3. Files are modified and verified on disk
-# 4. If editor doesn't refresh: close and reopen the file
+# 3. Files modified and editor updates in real-time ✨
 # =============================================================================
 
 # UI components
@@ -163,22 +156,17 @@ func _on_rename_pressed() -> void:
 		var verification_success = _verify_modifications(new_name)
 		
 		if verification_success:
+			# Success - no log needed for normal operation
 			var message = "Successfully renamed '%s' to '%s' in %d locations" % [_current_symbol, new_name, _rename_results.size()]
-			print("[Rename Symbol] %s" % message)
 			_show_success(message)
-			
-			# Optional: Open the first modified file to show changes
-			_open_first_modified_file()
-			
-			# Final synchronization verification after a delay
-			call_deferred("_final_sync_verification", new_name)
 		else:
+			# Partial failure - files may be modified but verification failed
 			var warning = "Rename completed but verification failed. Please check files manually."
-			print("[Rename Symbol] Warning: %s" % warning)
 			_show_error(warning)
 		
 		hide()
 	else:
+		# Complete operation failure
 		_show_error("Rename operation failed. Some files may have been modified.")
 
 func _on_cancel_pressed() -> void:
@@ -203,9 +191,9 @@ func _on_text_changed(new_text: String) -> void:
 	if rename_button:
 		rename_button.disabled = not is_valid
 	
-	# Show character compatibility warning if needed
+	# Special Character Compatibility Check
 	if not trimmed_text.is_empty() and not _is_name_compatible(trimmed_text):
-		print("[Rename Symbol] ⚠️ Warning: '%s' contains special characters that may not display properly" % trimmed_text)
+		print("Warning: '%s' may contain incompatible characters" % trimmed_text)
 
 func _input(event: InputEvent) -> void:
 	"""Handle keyboard shortcuts"""
@@ -362,7 +350,7 @@ func _display_preview_results() -> void:
 			ref_item.set_text(1, str(result["line_number"]))
 
 func _perform_batch_rename(new_name: String) -> bool:
-	"""Perform the actual batch rename operation"""
+	"""Execute batch rename operation - core functionality"""
 	var files_to_modify = {}
 	
 	# Group modifications by file
@@ -374,33 +362,26 @@ func _perform_batch_rename(new_name: String) -> bool:
 	
 	var success_count = 0
 	var total_files = files_to_modify.size()
-	var total_modifications = _rename_results.size()
-	
-	print("[Rename Symbol] Starting batch rename: '%s' → '%s'" % [_current_symbol, new_name])
-	print("[Rename Symbol] Processing %d files with %d total modifications..." % [total_files, total_modifications])
 	
 	# Process each file
 	for file_path in files_to_modify.keys():
 		var modifications = files_to_modify[file_path]
-		print("[Rename Symbol] Processing file: %s (%d modifications)" % [file_path.get_file(), modifications.size()])
 		
 		if _modify_file(file_path, modifications, new_name):
 			success_count += 1
-			print("[Rename Symbol] ✅ Successfully modified: %s" % file_path.get_file())
 		else:
-			print("[Rename Symbol] ❌ Failed to modify file: %s" % file_path.get_file())
+			# Only log errors
+			print("Error: Failed to modify %s" % file_path.get_file())
 	
-	if success_count == total_files:
-		print("[Rename Symbol] 🎉 Batch rename completed successfully!")
-		print("[Rename Symbol] Modified %d files, %d total occurrences" % [success_count, total_modifications])
-	else:
-		print("[Rename Symbol] ⚠️ Partial success: %d/%d files modified" % [success_count, total_files])
+	# Only log if there were failures
+	if success_count != total_files:
+		print("Warning: Only %d/%d files modified successfully" % [success_count, total_files])
 	
 	return success_count == total_files
 
 func _modify_file(file_path: String, modifications: Array, new_name: String) -> bool:
-	"""Modify a single file with all its symbol replacements"""
-	# Read the file
+	"""Modify all symbol occurrences in a single file"""
+	# Read file content
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if not file:
 		return false
@@ -410,10 +391,10 @@ func _modify_file(file_path: String, modifications: Array, new_name: String) -> 
 		lines.append(file.get_line())
 	file.close()
 	
-	# Sort modifications by line and column (reverse order for safe replacement)
+	# Sort by line and column (reverse order for safe replacement)
 	modifications.sort_custom(func(a, b): return a["line_number"] > b["line_number"] or (a["line_number"] == b["line_number"] and a["column"] > b["column"]))
 	
-	# Apply modifications
+	# Apply all modifications
 	for mod in modifications:
 		var line_idx = mod["line_number"] - 1
 		if line_idx >= 0 and line_idx < lines.size():
@@ -421,15 +402,9 @@ func _modify_file(file_path: String, modifications: Array, new_name: String) -> 
 			var start_pos = mod["match_start"]
 			var end_pos = mod["match_end"]
 			
-			# Replace the symbol
+			# Execute symbol replacement
 			var new_line = old_line.substr(0, start_pos) + new_name + old_line.substr(end_pos)
 			lines[line_idx] = new_line
-			
-			# Log the specific change
-			var old_symbol = old_line.substr(start_pos, end_pos - start_pos)
-			print("[Rename Symbol]   Line %d: '%s' → '%s'" % [mod["line_number"], old_symbol, new_name])
-			print("[Rename Symbol]   Before: %s" % old_line.strip_edges())
-			print("[Rename Symbol]   After:  %s" % new_line.strip_edges())
 	
 	# Write back to file
 	file = FileAccess.open(file_path, FileAccess.WRITE)
@@ -516,264 +491,72 @@ func _show_success(message: String) -> void:
 	print("[Rename Symbol]")
 
 func _refresh_file_system() -> void:
-	"""Advanced file system and editor refresh for Godot 4.x"""
-	print("[Rename Symbol] Performing advanced editor refresh...")
-	
-	# Method 1: Try EditorInterface advanced reload methods
-	_try_editor_interface_reload()
-	
-	# Method 2: File system scan as backup
-	var fs : EditorFileSystem = EditorInterface.get_resource_filesystem()
-	if fs:
-		fs.scan()
-		print("[Rename Symbol] File system scan completed")
-	
-	print("[Rename Symbol] Advanced refresh sequence completed")
-
-func _try_editor_interface_reload() -> void:
-	"""Try various EditorInterface methods to force script reload"""
-	print("[Rename Symbol] Attempting EditorInterface reload methods...")
-	
-	# Get all modified files
-	var modified_files = []
+	"""Direct source replacement for immediate synchronization - core functionality"""
+	# Collect all modified file paths
+	var modified_files : PackedStringArray = PackedStringArray()
 	for result in _rename_results:
 		var file_path = result["file_path"]
 		if file_path not in modified_files:
 			modified_files.append(file_path)
 	
-	for file_path in modified_files:
-		print("[Rename Symbol] Trying reload methods for: %s" % file_path.get_file())
-		
-		# Method 1: Try reload_scene_from_path (if available)
-		_try_reload_scene_from_path(file_path)
-		
-		# Method 2: Force resource invalidation and reload
-		_force_resource_invalidation(file_path)
-		
-		# Method 3: Try editor resource refresh
-		_try_editor_resource_refresh(file_path)
-		
-		# Method 4: Deep ScriptEditor API calls
-		_try_script_editor_deep_refresh(file_path)
-		
-		# Method 5: File trigger mechanism
-		_try_file_trigger_refresh(file_path)
+	# Force reload with direct source replacement
+	_force_reload(modified_files)
 
-func _try_reload_scene_from_path(file_path: String) -> void:
-	"""Try using reload_scene_from_path if available"""
-	print("[Rename Symbol] Attempting reload_scene_from_path for: %s" % file_path.get_file())
+func _replace_src(path: String, new_text: String) -> void:
+	"""Replace source code in open editors - prevents user from losing work state"""
+	var item_list: ItemList = IDE.get_script_list()
+	var editor_container: TabContainer = IDE.get_script_editor_container()
 	
-	# Check if this method exists in Godot 4.x
-	if EditorInterface.has_method("reload_scene_from_path"):
-		# Call the method if it exists
-		EditorInterface.reload_scene_from_path(file_path)
-		print("[Rename Symbol] ✅ reload_scene_from_path called")
-	else:
-		print("[Rename Symbol] reload_scene_from_path not available in this Godot version")
-
-func _force_resource_invalidation(file_path: String) -> void:
-	"""Force resource cache invalidation and reload"""
-	print("[Rename Symbol] Force invalidating resource cache for: %s" % file_path.get_file())
-	
-	# Clear resource from cache if possible
-	if ResourceLoader.has_cached(file_path):
-		print("[Rename Symbol] Resource found in cache, attempting invalidation")
-		
-		# Load with CACHE_MODE_REPLACE to force refresh
-		var resource = ResourceLoader.load(file_path, "", ResourceLoader.CACHE_MODE_REPLACE)
-		if resource:
-			print("[Rename Symbol] ✅ Resource invalidation successful")
-			# Try to update any open editors with this resource
-			_update_open_editors_with_resource(resource, file_path)
-		else:
-			print("[Rename Symbol] Resource invalidation failed")
-
-func _try_editor_resource_refresh(file_path: String) -> void:
-	"""Try to refresh editor with the updated resource"""
-	print("[Rename Symbol] Attempting editor resource refresh for: %s" % file_path.get_file())
-	
-	# Load fresh resource
-	var resource = ResourceLoader.load(file_path, "", ResourceLoader.CACHE_MODE_IGNORE)
-	if resource:
-		# Try to edit the resource (this might refresh the editor)
-		EditorInterface.edit_resource(resource)
-		print("[Rename Symbol] ✅ Editor resource refresh completed")
-	else:
-		print("[Rename Symbol] Failed to load resource for refresh")
-
-func _try_script_editor_deep_refresh(file_path: String) -> void:
-	"""Try deep ScriptEditor API calls to force refresh"""
-	print("[Rename Symbol] Attempting deep ScriptEditor refresh for: %s" % file_path.get_file())
-	
-	var script_editor : ScriptEditor = EditorInterface.get_script_editor()
-	if not script_editor:
-		print("[Rename Symbol] ScriptEditor not accessible")
+	# Check API availability
+	if not is_instance_valid(item_list) or not is_instance_valid(editor_container):
 		return
 	
-	# Method 1: Try to get open scripts
-	_try_get_open_scripts_refresh(script_editor, file_path)
-	
-	# Method 2: Try to access current editor
-	_try_current_editor_refresh(script_editor, file_path)
-	
-	# Method 3: Try to trigger script reparse
-	_try_script_reparse(script_editor, file_path)
-
-func _try_get_open_scripts_refresh(script_editor: ScriptEditor, file_path: String) -> void:
-	"""Try using get_open_scripts if available"""
-	print("[Rename Symbol] Checking for get_open_scripts method...")
-	
-	if script_editor.has_method("get_open_scripts"):
-		print("[Rename Symbol] get_open_scripts method found, attempting refresh")
-		var open_scripts = script_editor.get_open_scripts()
-		
-		for script in open_scripts:
-			if script and script.resource_path == file_path:
-				print("[Rename Symbol] Found matching open script: %s" % file_path.get_file())
-				# Try to reload this specific script
-				_reload_specific_script(script_editor, script)
-				break
-	else:
-		print("[Rename Symbol] get_open_scripts not available")
-
-func _try_current_editor_refresh(script_editor: ScriptEditor, file_path: String) -> void:
-	"""Try to refresh through current editor"""
-	print("[Rename Symbol] Attempting current editor refresh...")
-	
-	var current_editor = script_editor.get_current_editor()
-	if current_editor:
-		print("[Rename Symbol] Current editor found, checking if it's our file")
-		# Check if we can get information about the current script
-		if current_editor.has_method("get_edited_script"):
-			var current_script = current_editor.get_edited_script()
-			if current_script and current_script.resource_path == file_path:
-				print("[Rename Symbol] Current editor is editing our modified file")
-				_refresh_current_editor(current_editor, file_path)
-
-func _try_script_reparse(script_editor: ScriptEditor, file_path: String) -> void:
-	"""Try to trigger script reparsing"""
-	print("[Rename Symbol] Attempting script reparse trigger...")
-	
-	# Check for reparse or refresh methods
-	if script_editor.has_method("reload_scripts"):
-		print("[Rename Symbol] reload_scripts method found")
-		script_editor.reload_scripts()
-	elif script_editor.has_method("refresh"):
-		print("[Rename Symbol] refresh method found")
-		script_editor.refresh()
-	else:
-		print("[Rename Symbol] No reparse methods available")
-
-func _reload_specific_script(script_editor: ScriptEditor, script) -> void:
-	"""Try to reload a specific script"""
-	print("[Rename Symbol] Attempting to reload specific script...")
-	
-	# Try various reload methods
-	if script_editor.has_method("reload_script"):
-		script_editor.reload_script(script)
-		print("[Rename Symbol] ✅ reload_script called")
-	else:
-		print("[Rename Symbol] reload_script method not available")
-
-func _refresh_current_editor(current_editor, file_path: String) -> void:
-	"""Try to refresh the current editor"""
-	print("[Rename Symbol] Refreshing current editor for: %s" % file_path.get_file())
-	
-	# Try various refresh methods on the current editor
-	if current_editor.has_method("reload"):
-		current_editor.reload()
-		print("[Rename Symbol] ✅ Current editor reload called")
-	elif current_editor.has_method("refresh"):
-		current_editor.refresh()
-		print("[Rename Symbol] ✅ Current editor refresh called")
-	else:
-		print("[Rename Symbol] No refresh methods available on current editor")
-
-func _try_file_trigger_refresh(file_path: String) -> void:
-	"""Try file system triggers to force editor refresh"""
-	print("[Rename Symbol] Attempting file trigger refresh for: %s" % file_path.get_file())
-	
-	# Method 1: Timestamp touch (safe, non-destructive)
-	_try_timestamp_touch(file_path)
-	
-	# Method 2: Temporary file creation trigger
-	_try_temp_file_trigger(file_path)
-	
-	# Method 3: File system notification
-	_try_fs_notification_trigger(file_path)
-
-func _try_timestamp_touch(file_path: String) -> void:
-	"""Try to touch the file timestamp to trigger file watching"""
-	print("[Rename Symbol] Attempting timestamp touch...")
-	
-	# Read the file content
-	var file = FileAccess.open(file_path, FileAccess.READ)
-	if not file:
-		print("[Rename Symbol] Cannot read file for timestamp touch")
+	if item_list.item_count != editor_container.get_tab_count():
 		return
 	
-	var content = file.get_as_text()
-	file.close()
-	
-	# Write it back immediately (this updates the modification time)
-	file = FileAccess.open(file_path, FileAccess.WRITE)
-	if file:
-		file.store_string(content)
-		file.close()
-		print("[Rename Symbol] ✅ Timestamp touch completed")
-	else:
-		print("[Rename Symbol] Failed to write for timestamp touch")
+	# Find and update open file editors
+	for x: int in item_list.item_count:
+		if path == item_list.get_item_tooltip(x):
+			var control: Control = editor_container.get_tab_control(x)
+			if control is ScriptEditorBase:
+				var editor: Control = control.get_base_editor()
+				if editor is CodeEdit:
+					# Save user's current view state
+					var scroll_h: int = editor.scroll_horizontal
+					var scroll_v: int = editor.scroll_vertical
+					var caret_line: int = editor.get_caret_line()
+					var caret_column: int = editor.get_caret_column()
+					
+					# Replace source content
+					editor.text = new_text
+					
+					# Restore user's view state (scroll position, cursor position)
+					editor.scroll_horizontal = scroll_h
+					editor.scroll_vertical = scroll_v
+					editor.set_caret_line(caret_line)
+					editor.set_caret_column(caret_column)
+					return
 
-func _try_temp_file_trigger(file_path: String) -> void:
-	"""Try creating a temporary file to trigger file system watching"""
-	print("[Rename Symbol] Attempting temp file trigger...")
-	
-	var dir_path = file_path.get_base_dir()
-	var temp_file_path = dir_path + "/.godot_refresh_trigger_temp"
-	
-	# Create a temporary file
-	var temp_file = FileAccess.open(temp_file_path, FileAccess.WRITE)
-	if temp_file:
-		temp_file.store_string("refresh trigger")
-		temp_file.close()
+func _force_reload(files: PackedStringArray, type_hint: String = "") -> void:
+	"""Force reload files, bypassing cache and updating open editors"""
+	for file: String in files:
+		if not ResourceLoader.exists(file):
+			continue
 		
-		# Wait a brief moment
-		await get_tree().process_frame
-		
-		# Remove the temporary file
-		DirAccess.remove_absolute(temp_file_path)
-		print("[Rename Symbol] ✅ Temp file trigger completed")
-	else:
-		print("[Rename Symbol] Failed to create temp file trigger")
+		if ResourceLoader.has_cached(file):
+			# Bypass cache to load fresh content
+			var resource: Resource = ResourceLoader.load(file, type_hint, ResourceLoader.CACHE_MODE_IGNORE)
+			if resource is Script:
+				# Directly replace source in open editors
+				_replace_src(resource.resource_path, resource.source_code)
 
-func _try_fs_notification_trigger(file_path: String) -> void:
-	"""Try to trigger file system notification manually"""
-	print("[Rename Symbol] Attempting FS notification trigger...")
-	
-	var fs : EditorFileSystem = EditorInterface.get_resource_filesystem()
-	if fs:
-		# Force update this specific file
-		fs.update_file(file_path)
-		print("[Rename Symbol] ✅ FS notification trigger called")
-		
-		# Wait for the update and then scan
-		await get_tree().process_frame
-		fs.scan()
-		print("[Rename Symbol] ✅ Follow-up scan completed")
-	else:
-		print("[Rename Symbol] FS notification trigger failed - no file system access")
 
-func _update_open_editors_with_resource(resource, file_path: String) -> void:
-	"""Try to update any open editors with the fresh resource"""
-	print("[Rename Symbol] Updating open editors with fresh resource")
-	
-	# This is a best-effort attempt to notify the editor of the change
-	# The resource should now be updated in memory
+
+
+
 
 func _verify_modifications(new_name: String) -> bool:
-	"""Verify that the modifications actually took effect by reading files"""
-	print("[Rename Symbol] Verifying modifications...")
-	
+	"""验证修改是否成功应用到文件 - 质量保证机制"""
 	var files_to_check = {}
 	for result in _rename_results:
 		var file_path = result["file_path"]
@@ -784,20 +567,22 @@ func _verify_modifications(new_name: String) -> bool:
 	var verified_files = 0
 	var total_files = files_to_check.size()
 	
+	# 逐文件验证修改结果
 	for file_path in files_to_check.keys():
 		if _verify_file_modifications(file_path, files_to_check[file_path], new_name):
 			verified_files += 1
-			print("[Rename Symbol] ✅ Verified: %s" % file_path.get_file())
+			# 只在失败时显示详细信息
 		else:
-			print("[Rename Symbol] ❌ Verification failed: %s" % file_path.get_file())
+			print("  ❌ Verification failed: %s" % file_path.get_file())
 	
 	var success = verified_files == total_files
-	print("[Rename Symbol] Verification result: %d/%d files verified" % [verified_files, total_files])
+	if not success:
+		print("  ⚠️ Verification: %d/%d files verified" % [verified_files, total_files])
 	
 	return success
 
 func _verify_file_modifications(file_path: String, modifications: Array, new_name: String) -> bool:
-	"""Verify modifications in a single file"""
+	"""Verify that modifications in a single file were successful"""
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if not file:
 		return false
@@ -812,50 +597,15 @@ func _verify_file_modifications(file_path: String, modifications: Array, new_nam
 		var line_idx = mod["line_number"] - 1
 		if line_idx >= 0 and line_idx < lines.size():
 			var line = lines[line_idx]
-			# Check if the new name exists at the expected position
+			# Check if the new name exists
 			if not new_name in line:
-				print("[Rename Symbol] Verification failed at line %d: new name '%s' not found" % [mod["line_number"], new_name])
 				return false
 		else:
-			print("[Rename Symbol] Verification failed: invalid line number %d" % mod["line_number"])
 			return false
 	
 	return true
 
-func _open_first_modified_file() -> void:
-	"""Open the first modified file in the script editor - simplified for Godot 4.x"""
-	if _rename_results.is_empty():
-		return
-		
-	var first_file = _rename_results[0]["file_path"]
-	var first_line = _rename_results[0]["line_number"]
-	
-	print("[Rename Symbol] Opening modified file: %s at line %d" % [first_file.get_file(), first_line])
-	
-	# Simple file opening - let Godot handle the refresh
-	var resource = ResourceLoader.load(first_file, "", ResourceLoader.CACHE_MODE_IGNORE)
-	if resource:
-		EditorInterface.edit_resource(resource)
-		print("[Rename Symbol] File opened successfully: %s" % first_file.get_file())
-	else:
-		print("[Rename Symbol] Warning: Could not load resource: %s" % first_file)
 
-func _final_sync_verification(new_name: String) -> void:
-	"""Final verification that files have been modified - simplified for Godot 4.x"""
-	print("[Rename Symbol] 🔍 Performing final verification...")
-	
-	# Simple re-verification of file changes
-	var final_verification = _verify_modifications(new_name)
-	
-	if final_verification:
-		print("[Rename Symbol] ✅ Final verification: All file changes confirmed on disk")
-		print("[Rename Symbol] ℹ️ Godot 4.x: Editor refresh may require manual action")
-		print("[Rename Symbol] 💡 If changes don't appear, try closing and reopening the file")
-	else:
-		print("[Rename Symbol] ❌ Final verification failed: Files may not be properly updated")
-		_show_sync_warning()
-
-# _verify_editor_content function removed - not compatible with Godot 4.x API
 
 func _show_sync_warning() -> void:
 	"""Show detailed warning and troubleshooting guide"""
