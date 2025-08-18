@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://byndwttsl5vau"]
+
+[node name="Window" type="Window"]
+title = "Rename Symbol"
+position = Vector2i(0, 36)
+size = Vector2i(700, 500)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 10
+
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 5
+
+[node name="SymbolLabel" type="Label" parent="MainContainer/HeaderContainer"]
+layout_mode = 2
+text = "Rename symbol to:"
+autowrap_mode = 3
+
+[node name="NewNameEdit" type="LineEdit" parent="MainContainer/HeaderContainer"]
+layout_mode = 2
+placeholder_text = "Enter new name..."
+select_all_on_focus = true
+
+[node name="ScopeOption" type="OptionButton" parent="MainContainer/HeaderContainer"]
+layout_mode = 2
+selected = 1
+item_count = 6
+popup/item_0/text = "Current File Only"
+popup/item_0/id = 0
+popup/item_1/text = "Entire Project"
+popup/item_1/id = 1
+popup/item_2/text = "Current File Only"
+popup/item_2/id = 0
+popup/item_3/text = "Entire Project"
+popup/item_3/id = 1
+popup/item_4/text = "Current File Only"
+popup/item_4/id = 0
+popup/item_5/text = "Entire Project"
+popup/item_5/id = 1
+
+[node name="PreviewContainer" type="HSplitContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PreviewTree" type="Tree" parent="MainContainer/PreviewContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+column_titles_visible = true
+hide_root = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="PreviewButton" type="Button" parent="MainContainer/HBoxContainer"]
+layout_mode = 2
+text = "Preview"
+
+[node name="RenameButton" type="Button" parent="MainContainer/HBoxContainer"]
+layout_mode = 2
+text = "Rename"
+
+[node name="CancelButton" type="Button" parent="MainContainer/HBoxContainer"]
+layout_mode = 2
+text = "Cancel"

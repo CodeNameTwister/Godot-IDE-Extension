@@ -1,0 +1,101 @@
+[gd_scene load_steps=2 format=3 uid="uid://hsyqdgwk3rr0"]
+
+[ext_resource type="Script" uid="uid://ccdxcm5e4uuaw" path="res://addons/_Godot-IDE_/plugins/symbol_navigator/gui/find_references_panel.gd" id="1_panel_script"]
+
+[node name="FindReferencesPanel" type="Control" node_paths=PackedStringArray("search_bar", "status_label", "search_button", "clear_button", "code_header", "code_display")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_panel_script")
+search_bar = NodePath("MainContainer/SearchSection/SearchBar")
+status_label = NodePath("MainContainer/StatusSection/StatusLabel")
+search_button = NodePath("MainContainer/SearchSection/SearchButton")
+clear_button = NodePath("MainContainer/SearchSection/SearchButton")
+code_header = NodePath("MainContainer/MainContent/RightPanel/CodeHeader")
+code_display = NodePath("MainContainer/MainContent/RightPanel/CodeDisplay")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SearchSection" type="HBoxContainer" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="SearchLabel" type="Label" parent="MainContainer/SearchSection"]
+layout_mode = 2
+text = "Search:"
+vertical_alignment = 1
+
+[node name="SearchBar" type="LineEdit" parent="MainContainer/SearchSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Enter symbol to find references..."
+select_all_on_focus = true
+
+[node name="SearchButton" type="Button" parent="MainContainer/SearchSection"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Find"
+
+[node name="Separator1" type="HSeparator" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="MainContent" type="HSplitContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 300
+
+[node name="LeftPanel" type="VBoxContainer" parent="MainContainer/MainContent"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ResultsInfo" type="Label" parent="MainContainer/MainContent/LeftPanel"]
+layout_mode = 2
+text = "Enter a symbol to search"
+
+[node name="RightPanel" type="VBoxContainer" parent="MainContainer/MainContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CodeHeader" type="Label" parent="MainContainer/MainContent/RightPanel"]
+layout_mode = 2
+text = "Select a reference to view code"
+
+[node name="CodeSeparator" type="HSeparator" parent="MainContainer/MainContent/RightPanel"]
+layout_mode = 2
+
+[node name="CodeDisplay" type="TextEdit" parent="MainContainer/MainContent/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Code content will appear here..."
+editable = false
+scroll_smooth = true
+scroll_v_scroll_speed = 60.0
+
+[node name="Separator2" type="HSeparator" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="StatusSection" type="HBoxContainer" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="MainContainer/StatusSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Clear"
+vertical_alignment = 1

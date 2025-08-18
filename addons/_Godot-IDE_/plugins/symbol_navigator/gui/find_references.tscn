@@ -1,0 +1,366 @@
+[gd_scene load_steps=2 format=3 uid="uid://b76nmixqh7tom"]
+
+[sub_resource type="GDScript" id="GDScript_ly0sj"]
+script/source = "@tool
+extends Window
+# =============================================================================	
+# Author: GodotIDE Team
+# Symbol Navigator - Find References Window
+#
+# UI for displaying symbol references across the project
+# =============================================================================	
+
+@export var search_bar : LineEdit = null
+@export var results_tree : Tree = null
+@export var status_label : Label = null
+@export var search_button : Button = null
+@export var close_button : Button = null
+
+var _current_symbol : String = \"\"
+var _search_results : Array[Dictionary] = []
+
+func _ready() -> void:
+	# Set up window
+	title = \"Find References\"
+	size = Vector2(800, 600)
+	
+	# Apply editor theme
+	var control : Control = EditorInterface.get_base_control()
+	if control:
+		get_child(0).add_theme_stylebox_override(&\"panel\", control.get_theme_stylebox(&\"panel\", &\"\"))
+	
+	# Connect window close signal
+	close_requested.connect(_on_close_pressed)
+	
+	# Connect signals
+	if search_button:
+		search_button.pressed.connect(_on_search_pressed)
+	if close_button:
+		close_button.pressed.connect(_on_close_pressed)
+	if search_bar:
+		search_bar.text_submitted.connect(_on_search_submitted)
+	if results_tree:
+		results_tree.item_activated.connect(_on_item_activated)
+	
+	# Set up tree
+	if results_tree:
+		results_tree.set_column_titles_visible(true)
+		results_tree.set_column_title(0, \"File\")
+		results_tree.set_column_title(1, \"Line\")
+		results_tree.set_column_title(2, \"Context\")
+		results_tree.columns = 3
+
+func search_symbol(symbol: String) -> void:
+	_current_symbol = symbol
+	if search_bar:
+		search_bar.text = symbol
+	_perform_search()
+
+func _on_search_pressed() -> void:
+	if search_bar:
+		_current_symbol = search_bar.text
+	_perform_search()
+
+func _on_search_submitted(text: String) -> void:
+	_current_symbol = text
+	_perform_search()
+
+func _on_close_pressed() -> void:
+	hide()
+
+func _perform_search() -> void:
+	if _current_symbol.is_empty():
+		_update_status(\"Please enter a symbol to search\")
+		return
+	
+	_update_status(\"Searching for references...\")
+	_clear_results()
+	
+	# Perform the actual search
+	_search_in_project()
+	
+	# Update UI
+	_display_results()
+	_update_status(\"Found %d references\" % _search_results.size())
+
+func _clear_results() -> void:
+	_search_results.clear()
+	if results_tree:
+		results_tree.clear()
+
+func _search_in_project() -> void:
+	var fs : EditorFileSystem = EditorInterface.get_resource_filesystem()
+	if not fs:
+		return
+	
+	var root_dir = fs.get_filesystem()
+	if root_dir:
+		_search_in_directory(root_dir)
+
+func _search_in_directory(dir: EditorFileSystemDirectory) -> void:
+	# Search in files
+	for i in range(dir.get_file_count()):
+		var file_path = dir.get_file_path(i)
+		var file_type = dir.get_file_type(i)
+		
+		# Only search in script files
+		if file_type == \"GDScript\" or file_path.ends_with(\".gd\"):
+			_search_in_file(file_path)
+	
+	# Search in subdirectories
+	for i in range(dir.get_subdir_count()):
+		_search_in_directory(dir.get_subdir(i))
+
+func _search_in_file(file_path: String) -> void:
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	if not file:
+		return
+	
+	var line_number = 1
+	while not file.eof_reached():
+		var line = file.get_line()
+		var matches = _find_symbol_in_line(line, _current_symbol)
+		
+		for match_pos in matches:
+			var result = {
+				\"file_path\": file_path,
+				\"line_number\": line_number,
+				\"line_content\": line.strip_edges(),
+				\"column\": match_pos
+			}
+			_search_results.append(result)
+		
+		line_number += 1
+	
+	file.close()
+
+func _find_symbol_in_line(line: String, symbol: String) -> Array[int]:
+	var matches: Array[int] = []
+	
+	# Skip lines that are likely false positives
+	var trimmed_line = line.strip_edges()
+	
+	# Skip comments (but allow commented code for reference)
+	if trimmed_line.begins_with(\"#\") and not trimmed_line.contains(\"func \"):
+		return matches
+	
+	# Skip string literals (basic detection)
+	if _is_in_string_literal(line, symbol):
+		return matches
+	
+	# Create regex pattern for word boundary matching
+	var regex = RegEx.new()
+	var pattern = \"\\\\b\" + _escape_regex_string(symbol) + \"\\\\b\"
+	regex.compile(pattern)
+	
+	var results = regex.search_all(line)
+	for result in results:
+		var match_pos = result.get_start()
+		
+		# Additional context-aware filtering
+		if _is_valid_symbol_context(line, match_pos, symbol):
+			matches.append(match_pos)
+	
+	return matches
+
+# Check if symbol is inside a string literal
+func _is_in_string_literal(line: String, symbol: String) -> bool:
+	var in_string = false
+	var in_triple_string = false
+	var quote_char = \"\"
+	
+	# Simple string detection (not perfect but catches most cases)
+	for i in range(line.length()):
+		var char = line[i]
+		
+		# Handle triple quotes
+		if i < line.length() - 2:
+			var triple = line.substr(i, 3)
+			if triple == '\"\"\"' or triple == \"'''\":
+				if not in_string:
+					in_triple_string = not in_triple_string
+					quote_char = triple[0]
+				continue
+		
+		# Handle single/double quotes
+		if char == '\"' or char == \"'\":
+			if not in_triple_string:
+				if not in_string:
+					in_string = true
+					quote_char = char
+				elif char == quote_char:
+					in_string = false
+					quote_char = \"\"
+	
+	# If we find the symbol and we're currently in a string, it's probably a false positive
+	return (in_string or in_triple_string) and symbol in line
+
+# Check if the symbol appears in a valid context
+func _is_valid_symbol_context(line: String, position: int, symbol: String) -> bool:
+	# Get context around the symbol
+	var start = max(0, position - 10)
+	var end = min(line.length(), position + symbol.length() + 10)
+	var context = line.substr(start, end - start)
+	
+	# Skip if it's part of a longer identifier (additional safety)
+	if position > 0:
+		var prev_char = line[position - 1]
+		if _is_identifier_char(prev_char):
+			return false
+	
+	if position + symbol.length() < line.length():
+		var next_char = line[position + symbol.length()]
+		if _is_identifier_char(next_char):
+			return false
+	
+	return true
+
+func _is_identifier_char(char: String) -> bool:
+	return char.is_valid_identifier() or char == \"_\"
+
+# Escape special regex characters since Godot 4 doesn't have RegEx.escape()
+func _escape_regex_string(text: String) -> String:
+	var escaped = text
+	# Order matters - escape backslash first
+	escaped = escaped.replace(\"\\\\\", \"\\\\\\\\\")
+	escaped = escaped.replace(\".\", \"\\\\.\")
+	escaped = escaped.replace(\"^\", \"\\\\^\")
+	escaped = escaped.replace(\"$\", \"\\\\$\")
+	escaped = escaped.replace(\"*\", \"\\\\*\")
+	escaped = escaped.replace(\"+\", \"\\\\+\")
+	escaped = escaped.replace(\"?\", \"\\\\?\")
+	escaped = escaped.replace(\"(\", \"\\\\(\")
+	escaped = escaped.replace(\")\", \"\\\\)\")
+	escaped = escaped.replace(\"[\", \"\\\\[\")
+	escaped = escaped.replace(\"]\", \"\\\\]\")
+	escaped = escaped.replace(\"{\", \"\\\\{\")
+	escaped = escaped.replace(\"}\", \"\\\\}\")
+	escaped = escaped.replace(\"|\", \"\\\\|\")
+	return escaped
+
+func _display_results() -> void:
+	if not results_tree:
+		return
+	
+	results_tree.clear()
+	var root = results_tree.create_item()
+	root.set_text(0, \"References (%d)\" % _search_results.size())
+	
+	var file_groups = {}
+	
+	# Group results by file
+	for result in _search_results:
+		var file_path = result[\"file_path\"]
+		if not file_groups.has(file_path):
+			file_groups[file_path] = []
+		file_groups[file_path].append(result)
+	
+	# Create tree structure
+	for file_path in file_groups.keys():
+		var file_item = root.create_child()
+		var file_name = file_path.get_file()
+		var relative_path = file_path.replace(\"res://\", \"\")
+		
+		file_item.set_text(0, file_name)
+		file_item.set_text(1, \"\")
+		file_item.set_text(2, relative_path)
+		file_item.set_metadata(0, {\"type\": \"file\", \"path\": file_path})
+		
+		# Add individual references
+		for result in file_groups[file_path]:
+			var ref_item = file_item.create_child()
+			ref_item.set_text(0, \"\")
+			ref_item.set_text(1, str(result[\"line_number\"]))
+			ref_item.set_text(2, result[\"line_content\"])
+			ref_item.set_metadata(0, result)
+
+func _on_item_activated() -> void:
+	var selected = results_tree.get_selected()
+	if not selected:
+		return
+	
+	var metadata = selected.get_metadata(0)
+	if not metadata:
+		return
+	
+	# Navigate to the reference
+	if metadata.has(\"file_path\") and metadata.has(\"line_number\"):
+		_navigate_to_reference(metadata[\"file_path\"], metadata[\"line_number\"], metadata.get(\"column\", 0))
+
+func _navigate_to_reference(file_path: String, line_number: int, column: int) -> void:
+	# Open the file in the script editor
+	var script = ResourceLoader.load(file_path)
+	if script and script is Script:
+		EditorInterface.edit_script(script)
+		
+		# Navigate to specific line
+		var script_editor = EditorInterface.get_script_editor()
+		if script_editor:
+			script_editor.goto_line(line_number - 1)
+			
+			# Focus on the specific column if possible
+			var current_editor = script_editor.get_current_editor()
+			if current_editor:
+				var code_edit : CodeEdit = current_editor.get_base_editor()
+				if code_edit:
+					code_edit.set_caret_line(line_number - 1)
+					code_edit.set_caret_column(column)
+
+func _update_status(message: String) -> void:
+	if status_label:
+		status_label.text = message
+"
+
+[node name="Window" type="Window" node_paths=PackedStringArray("search_bar", "results_tree", "status_label", "search_button", "close_button")]
+title = "Find References"
+position = Vector2i(0, 36)
+size = Vector2i(800, 600)
+script = SubResource("GDScript_ly0sj")
+search_bar = NodePath("VBoxContainer/SearchBar/SearchBar")
+results_tree = NodePath("VBoxContainer/MainContent/Tree")
+status_label = NodePath("VBoxContainer/Status/Label")
+search_button = NodePath("VBoxContainer/SearchBar/Button")
+close_button = NodePath("VBoxContainer/Status/Button")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="SearchBar" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/SearchBar"]
+layout_mode = 2
+text = "Search for:"
+
+[node name="SearchBar" type="LineEdit" parent="VBoxContainer/SearchBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="VBoxContainer/SearchBar"]
+layout_mode = 2
+text = "Search"
+
+[node name="MainContent" type="HSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Tree" type="Tree" parent="VBoxContainer/MainContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.0
+columns = 3
+column_titles_visible = true
+
+[node name="Status" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/Status"]
+layout_mode = 2
+text = "Ready"
+
+[node name="Button" type="Button" parent="VBoxContainer/Status"]
+layout_mode = 2
+text = "Close"
