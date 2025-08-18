@@ -1,9 +1,18 @@
-[gd_scene format=3 uid="uid://byndwttsl5vau"]
+[gd_scene load_steps=2 format=3 uid="uid://byndwttsl5vau"]
 
-[node name="Window" type="Window"]
+[ext_resource type="Script" uid="uid://b26eh3hs86gi4" path="res://addons/_Godot-IDE_/plugins/symbol_navigator/gui/rename_dialog.gd" id="1_rqbkt"]
+
+[node name="Window" type="Window" node_paths=PackedStringArray("new_name_edit", "scope_option", "preview_tree", "preview_button", "rename_button", "cancel_button")]
 title = "Rename Symbol"
 position = Vector2i(0, 36)
 size = Vector2i(700, 500)
+script = ExtResource("1_rqbkt")
+new_name_edit = NodePath("MainContainer/HeaderContainer/NewNameEdit")
+scope_option = NodePath("MainContainer/HeaderContainer/ScopeOption")
+preview_tree = NodePath("MainContainer/PreviewContainer/PreviewTree")
+preview_button = NodePath("MainContainer/HBoxContainer/PreviewButton")
+rename_button = NodePath("MainContainer/HBoxContainer/RenameButton")
+cancel_button = NodePath("MainContainer/HBoxContainer/CancelButton")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 anchors_preset = 15
