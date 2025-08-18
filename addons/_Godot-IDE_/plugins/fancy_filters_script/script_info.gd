@@ -417,18 +417,19 @@ func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
 							_pop.callback = _on_pop_selection.bind(item)
 							_pop.enable_copy_override(!is_first and MEMBER_METHOD_ICON == icon)
 							
-							_pop.position = get_global_mouse_position() # Delete? #5
-							_pop.popup() # Delete? #5
-							## MACOS: Uncomment #5
-							#var os_name : String = OS.get_name()
-							#match  os_name:
-								#"macOS":
-									#_pop.popup_centered()
-								#"iOS":
-									#_pop.popup_centered()
-								#_:
-									#_pop.position = get_global_mouse_position() # IDE.clamp
-									#_pop.popup()
+							var os_name : String = OS.get_name()
+							match  os_name:
+								"macOS":
+									var mouse_global : Vector2 = get_global_mouse_position()
+									var offset : Vector2 = Vector2(10.0, 10.0) #HINT: dot scale: interface/editor/display_scale ## I leave this here, maybe use for a future testing and update.
+									var popup_rect : Rect2 = Rect2(mouse_global + offset, Vector2.ZERO)
+									_pop.popup_on_parent(popup_rect)
+								"iOS":
+									_pop.popup_centered()
+								_:
+									# Others platforms.
+									_pop.position = get_global_mouse_position()
+									_pop.popup()
 							return
 			
 	
