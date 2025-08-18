@@ -556,7 +556,7 @@ func _force_reload(files: PackedStringArray, type_hint: String = "") -> void:
 
 
 func _verify_modifications(new_name: String) -> bool:
-	"""验证修改是否成功应用到文件 - 质量保证机制"""
+	"""Verify that modifications were successfully applied to the file - Quality Assurance Mechanism"""
 	var files_to_check = {}
 	for result in _rename_results:
 		var file_path = result["file_path"]
@@ -567,11 +567,11 @@ func _verify_modifications(new_name: String) -> bool:
 	var verified_files = 0
 	var total_files = files_to_check.size()
 	
-	# 逐文件验证修改结果
+	# Validate modification results file by file
 	for file_path in files_to_check.keys():
 		if _verify_file_modifications(file_path, files_to_check[file_path], new_name):
 			verified_files += 1
-			# 只在失败时显示详细信息
+			# Show details only on failures
 		else:
 			print("  ❌ Verification failed: %s" % file_path.get_file())
 	
