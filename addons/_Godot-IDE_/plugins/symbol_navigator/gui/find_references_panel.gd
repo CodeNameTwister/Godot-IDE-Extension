@@ -528,7 +528,10 @@ func _display_results() -> void:
 		# Add individual references
 		for result in file_groups[file_path]:
 			var ref_item = file_item.create_child()
-			ref_item.set_text(0, "  → Line %d" % result["line_number"])
+			# Format: Line xxx: code content (truncate long lines)
+			var line_content = result.get("line_content", "")
+			var truncated_content = _truncate_line_content(line_content, 80)
+			ref_item.set_text(0, "  → Line %d: %s" % [result["line_number"], truncated_content])
 			ref_item.set_text(1, str(result["line_number"]))
 			ref_item.set_metadata(0, result)
 			
@@ -658,6 +661,15 @@ func _get_context_content(file_content: String, target_line: int, context_lines:
 		context_lines_array.append(prefix + line_content)
 	
 	return "\n".join(context_lines_array)
+
+func _truncate_line_content(line: String, max_length: int) -> String:
+	"""Truncate line content if it's too long, preserving meaningful code"""
+	if line.length() <= max_length:
+		return line
+	
+	# Try to show the beginning and add ellipsis
+	var truncated = line.substr(0, max_length - 3)
+	return truncated + "..."
 
 func _highlight_symbol_in_line(line: String, symbol: String) -> String:
 	"""Highlight symbol in a line of code"""
