@@ -25,21 +25,45 @@ extends Window
 @export var preview_button : Button = null
 @export var rename_button : Button = null
 @export var cancel_button : Button = null
+@export var select_all_button : Button = null
+@export var unselect_all_button : Button = null
+@export var selection_status : Label = null
 
 # Data
 var _current_symbol : String = ""
 var _rename_results : Array = []
+var _selected_items : Array = []  # Tracks which items are selected for rename
+var _file_groups : Dictionary = {}  # Maps file_path to array of result indices
+var _file_selections : Dictionary = {}  # Maps file_path to selection state
 var _scope_project_wide : bool = true
 
+# Window state management
+const CONFIG_SECTION = "symbol_navigator"
+const CONFIG_SIZE_KEY = "rename_dialog_size"
+const CONFIG_POSITION_KEY = "rename_dialog_position" 
+const CONFIG_SAVE_STATE_KEY = "save_window_state"
+const DEFAULT_SIZE = Vector2i(700, 500)
+const MIN_SIZE = Vector2i(400, 300)
+
 func _ready() -> void:
+	print("[Rename Dialog] _ready() called - initializing UI components")
+	
 	# Find UI components
 	_find_ui_components()
+	
+	# Validate UI components were found
+	_validate_ui_components()
 	
 	# Connect signals
 	_connect_signals()
 	
 	# Setup tree
 	_setup_preview_tree()
+	
+	# Connect window state management signals
+	_connect_window_state_signals()
+	
+	print("[Rename Dialog] Initialization complete")
 
 func _find_ui_components() -> void:
 	"""Find and assign UI components"""
@@ -49,36 +73,137 @@ func _find_ui_components() -> void:
 	preview_button = find_child("PreviewButton") as Button
 	rename_button = find_child("RenameButton") as Button
 	cancel_button = find_child("CancelButton") as Button
+	select_all_button = find_child("SelectAllButton") as Button
+	unselect_all_button = find_child("UnselectAllButton") as Button
+	selection_status = find_child("SelectionStatus") as Label
+
+func _validate_ui_components() -> void:
+	"""Validate that all UI components were found and report missing ones"""
+	var missing_components = []
+	
+	if not new_name_edit:
+		missing_components.append("NewNameEdit")
+	if not scope_option:
+		missing_components.append("ScopeOption")
+	if not preview_tree:
+		missing_components.append("PreviewTree")
+	if not preview_button:
+		missing_components.append("PreviewButton")
+	if not rename_button:
+		missing_components.append("RenameButton")
+	if not cancel_button:
+		missing_components.append("CancelButton")
+	if not select_all_button:
+		missing_components.append("SelectAllButton")
+	if not unselect_all_button:
+		missing_components.append("UnselectAllButton")
+	if not selection_status:
+		missing_components.append("SelectionStatus")
+	
+	if missing_components.size() > 0:
+		print("[Rename Dialog] WARNING: Missing UI components: ", missing_components)
+		push_warning("[Rename Dialog] Missing UI components: " + str(missing_components))
+	else:
+		print("[Rename Dialog] All UI components found successfully")
 
 func _connect_signals() -> void:
 	"""Connect button signals"""
+	print("[Rename Dialog] Connecting signals...")
+	
+	var connected_count = 0
+	
 	if preview_button:
 		preview_button.pressed.connect(_on_preview_pressed)
+		connected_count += 1
 	if rename_button:
 		rename_button.pressed.connect(_on_rename_pressed)
+		connected_count += 1
 	if cancel_button:
 		cancel_button.pressed.connect(_on_cancel_pressed)
+		connected_count += 1
 	if scope_option:
 		scope_option.item_selected.connect(_on_scope_changed)
+		connected_count += 1
 	if new_name_edit:
 		new_name_edit.text_changed.connect(_on_text_changed)
+		connected_count += 1
+	if select_all_button:
+		select_all_button.pressed.connect(_on_select_all_pressed)
+		connected_count += 1
+	if unselect_all_button:
+		unselect_all_button.pressed.connect(_on_unselect_all_pressed)
+		connected_count += 1
+	if preview_tree:
+		preview_tree.item_edited.connect(_on_tree_item_edited)
+		connected_count += 1
+	
+	print("[Rename Dialog] Connected %d signals" % connected_count)
+
+func _connect_window_state_signals() -> void:
+	"""Connect window state management signals"""
+	print("[Rename Dialog] Connecting window state signals...")
+	
+	# Connect visibility change to save state when window closes
+	visibility_changed.connect(_on_visibility_changed)
+	
+	# Connect size and position changes for real-time saving
+	size_changed.connect(_on_window_resized)
+	
+	print("[Rename Dialog] Window state signals connected")
 
 func _setup_preview_tree() -> void:
 	"""Setup the preview tree columns"""
 	if not preview_tree:
 		return
 		
-	preview_tree.columns = 2
-	preview_tree.set_column_title(0, "File / Location")
-	preview_tree.set_column_title(1, "Line")
-	preview_tree.set_column_expand_ratio(0, 3.0)
-	preview_tree.set_column_expand_ratio(1, 1.0)
+	preview_tree.columns = 3
+	preview_tree.set_column_title(0, "✓")
+	preview_tree.set_column_title(1, "File / Location")
+	preview_tree.set_column_title(2, "Line")
+	preview_tree.set_column_expand_ratio(0, 0.3)  # Checkbox column (narrow)
+	preview_tree.set_column_expand_ratio(1, 3.0)  # File/Location column (wide)
+	preview_tree.set_column_expand_ratio(2, 0.7)  # Line number column (narrow)
 	preview_tree.hide_root = true
 
 func set_symbol(symbol: String) -> void:
 	"""Set the symbol to be renamed"""
 	_current_symbol = symbol
 	
+	# Check if UI components are ready
+	if not _are_ui_components_ready():
+		print("[Rename Dialog] UI components not ready, deferring set_symbol call")
+		# Defer the call until the next frame when components should be ready
+		call_deferred("_deferred_set_symbol", symbol)
+		return
+	
+	_apply_symbol_to_ui(symbol)
+
+func _are_ui_components_ready() -> bool:
+	"""Check if all required UI components are available"""
+	return (new_name_edit != null and 
+			scope_option != null and 
+			preview_tree != null and 
+			preview_button != null and 
+			rename_button != null and 
+			cancel_button != null)
+
+func _deferred_set_symbol(symbol: String) -> void:
+	"""Deferred version of set_symbol, called when UI is ready"""
+	if not _are_ui_components_ready():
+		print("[Rename Dialog] ERROR: UI components still not ready after deferral")
+		print("[Rename Dialog] new_name_edit: ", new_name_edit)
+		print("[Rename Dialog] scope_option: ", scope_option) 
+		print("[Rename Dialog] preview_tree: ", preview_tree)
+		print("[Rename Dialog] preview_button: ", preview_button)
+		print("[Rename Dialog] rename_button: ", rename_button)
+		print("[Rename Dialog] cancel_button: ", cancel_button)
+		return
+	
+	print("[Rename Dialog] UI components ready, applying symbol: ", symbol)
+	_apply_symbol_to_ui(symbol)
+
+func _apply_symbol_to_ui(symbol: String) -> void:
+	"""Apply the symbol to the UI components"""
 	# Update UI
 	if new_name_edit:
 		new_name_edit.text = symbol
@@ -93,6 +218,11 @@ func set_symbol(symbol: String) -> void:
 func _auto_preview() -> void:
 	"""Automatically trigger preview without changing the current name"""
 	print("[Rename Symbol] Auto-triggering preview for symbol: '%s'" % _current_symbol)
+	
+	# Verify UI components are still available
+	if not _are_ui_components_ready():
+		print("[Rename Symbol] ERROR: UI components not ready during auto-preview")
+		return
 	
 	# Clear previous results
 	_rename_results.clear()
@@ -157,7 +287,7 @@ func _on_rename_pressed() -> void:
 		
 		if verification_success:
 			# Success - no log needed for normal operation
-			var message = "Successfully renamed '%s' to '%s' in %d locations" % [_current_symbol, new_name, _rename_results.size()]
+			var message = "Successfully renamed '%s' to '%s' in %d locations" % [_current_symbol, new_name, _selected_items.size()]
 			_show_success(message)
 		else:
 			# Partial failure - files may be modified but verification failed
@@ -215,6 +345,206 @@ func _input(event: InputEvent) -> void:
 				# F5 triggers manual preview
 				_on_preview_pressed()
 				get_viewport().set_input_as_handled()
+			KEY_A:
+				# Ctrl+A for select all
+				if event.ctrl_pressed:
+					_on_select_all_pressed()
+					get_viewport().set_input_as_handled()
+
+func _on_select_all_pressed() -> void:
+	"""Select all items for renaming"""
+	if not preview_tree:
+		return
+	
+	_selected_items.clear()
+	
+	# Add all valid indices to selected items
+	for i in range(_rename_results.size()):
+		_selected_items.append(i)
+	
+	# Update file selections
+	for file_path in _file_groups.keys():
+		_file_selections[file_path] = true
+	
+	# Update checkboxes in tree
+	_update_tree_checkboxes(true)
+	_update_selection_status()
+
+func _on_unselect_all_pressed() -> void:
+	"""Unselect all items"""
+	if not preview_tree:
+		return
+	
+	_selected_items.clear()
+	
+	# Update file selections
+	for file_path in _file_groups.keys():
+		_file_selections[file_path] = false
+	
+	# Update checkboxes in tree
+	_update_tree_checkboxes(false)
+	_update_selection_status()
+
+func _on_tree_item_edited() -> void:
+	"""Handle checkbox clicks in tree (both file-level and item-level)"""
+	var edited_item = preview_tree.get_edited()
+	if not edited_item:
+		return
+	
+	var metadata = edited_item.get_metadata(0)
+	if metadata == null:
+		return
+	
+	var is_checked = edited_item.is_checked(0)
+	
+	if metadata.has("type"):
+		if metadata["type"] == "file":
+			# Handle file-level checkbox
+			_on_file_checkbox_changed(metadata["path"], is_checked)
+		elif metadata["type"] == "item":
+			# Handle item-level checkbox
+			_on_item_checkbox_changed(metadata["index"], is_checked)
+	
+	_update_selection_status()
+
+func _on_file_checkbox_changed(file_path: String, is_checked: bool) -> void:
+	"""Handle file-level checkbox changes"""
+	if not _file_groups.has(file_path):
+		return
+	
+	# Update file selection state
+	_file_selections[file_path] = is_checked
+	
+	# Update all items in this file
+	for item_data in _file_groups[file_path]:
+		var index = item_data["index"]
+		
+		if is_checked:
+			# Add to selected items if not already there
+			if index not in _selected_items:
+				_selected_items.append(index)
+		else:
+			# Remove from selected items
+			if index in _selected_items:
+				_selected_items.erase(index)
+	
+	# Update the visual state of child checkboxes
+	_update_child_checkboxes(file_path, is_checked)
+
+func _on_item_checkbox_changed(index: int, is_checked: bool) -> void:
+	"""Handle individual item checkbox changes"""
+	if is_checked and index not in _selected_items:
+		_selected_items.append(index)
+	elif not is_checked and index in _selected_items:
+		_selected_items.erase(index)
+	
+	# Update the parent file's checkbox state based on children
+	var file_path = _rename_results[index]["file_path"]
+	_update_file_checkbox_state(file_path)
+
+func _update_tree_checkboxes(checked: bool) -> void:
+	"""Update all checkboxes in the tree (both files and items)"""
+	if not preview_tree:
+		return
+	
+	var root = preview_tree.get_root()
+	if not root:
+		return
+	
+	_iterate_tree_items(root, func(item):
+		var metadata = item.get_metadata(0)
+		if metadata != null and metadata.has("type"):
+			# Update both file and item checkboxes
+			item.set_checked(0, checked)
+	)
+
+func _iterate_tree_items(item: TreeItem, callback: Callable) -> void:
+	"""Recursively iterate through tree items"""
+	if item:
+		callback.call(item)
+		var child = item.get_first_child()
+		while child:
+			_iterate_tree_items(child, callback)
+			child = child.get_next()
+
+func _update_child_checkboxes(file_path: String, checked: bool) -> void:
+	"""Update all child checkboxes for a file"""
+	if not preview_tree:
+		return
+	
+	var root = preview_tree.get_root()
+	if not root:
+		return
+	
+	# Find the file item and update its children
+	_iterate_tree_items(root, func(item):
+		var metadata = item.get_metadata(0)
+		if metadata != null and metadata.has("type"):
+			if metadata["type"] == "file" and metadata["path"] == file_path:
+				# Found the file item, update its children
+				var child = item.get_first_child()
+				while child:
+					child.set_checked(0, checked)
+					child = child.get_next()
+	)
+
+func _update_file_checkbox_state(file_path: String) -> void:
+	"""Update file checkbox based on children selection state (tri-state logic)"""
+	if not _file_groups.has(file_path):
+		return
+	
+	# Count selected items in this file
+	var selected_count = 0
+	var total_count = _file_groups[file_path].size()
+	
+	for item_data in _file_groups[file_path]:
+		var index = item_data["index"]
+		if index in _selected_items:
+			selected_count += 1
+	
+	# Update file checkbox state and visual appearance
+	var root = preview_tree.get_root()
+	if root:
+		_iterate_tree_items(root, func(item):
+			var metadata = item.get_metadata(0)
+			if metadata != null and metadata.has("type"):
+				if metadata["type"] == "file" and metadata["path"] == file_path:
+					if selected_count == 0:
+						# None selected
+						item.set_checked(0, false)
+						_file_selections[file_path] = false
+					elif selected_count == total_count:
+						# All selected
+						item.set_checked(0, true)
+						_file_selections[file_path] = true
+					else:
+						# Partial selection - show as checked but different visual state
+						item.set_checked(0, true)
+						_file_selections[file_path] = true
+						# In Godot, we can't easily show tri-state, but we track it logically
+		)
+
+func _update_selection_status() -> void:
+	"""Update the selection status label"""
+	if not selection_status:
+		return
+	
+	var total_items = _rename_results.size()
+	var selected_items = _selected_items.size()
+	var total_files = _file_groups.size()
+	var selected_files = 0
+	
+	# Count how many files have at least one selected item
+	for file_path in _file_groups.keys():
+		var has_selected = false
+		for item_data in _file_groups[file_path]:
+			if item_data["index"] in _selected_items:
+				has_selected = true
+				break
+		if has_selected:
+			selected_files += 1
+	
+	selection_status.text = "%d files, %d of %d items selected" % [selected_files, selected_items, total_items]
 
 func _search_symbol_occurrences() -> void:
 	"""Search for all occurrences of the symbol"""
@@ -315,50 +645,93 @@ func _display_preview_results() -> void:
 		return
 	
 	preview_tree.clear()
+	_selected_items.clear()
+	_file_groups.clear()
+	_file_selections.clear()
 	
 	if _rename_results.is_empty():
 		var root = preview_tree.create_item()
 		var no_results = root.create_child()
-		no_results.set_text(0, "No occurrences found")
+		no_results.set_text(1, "No occurrences found")  # Column 1 (File/Location)
+		no_results.set_text(2, "")  # Column 2 (Line)
+		_update_selection_status()
 		return
 	
 	var root = preview_tree.create_item()
 	
-	# Group by file
-	var file_groups = {}
-	for result in _rename_results:
+	# Group by file and store in class variables
+	for i in range(_rename_results.size()):
+		var result = _rename_results[i]
 		var file_path = result["file_path"]
-		if not file_groups.has(file_path):
-			file_groups[file_path] = []
-		file_groups[file_path].append(result)
+		if not _file_groups.has(file_path):
+			_file_groups[file_path] = []
+		_file_groups[file_path].append({"index": i, "result": result})
+	
+	# Initialize file selections (all selected by default)
+	for file_path in _file_groups.keys():
+		_file_selections[file_path] = true
 	
 	# Display grouped results
-	for file_path in file_groups.keys():
+	for file_path in _file_groups.keys():
 		var file_item = root.create_child()
 		var file_name = file_path.get_file()
-		file_item.set_text(0, "%s (%d occurrences)" % [file_name, file_groups[file_path].size()])
-		file_item.set_text(1, "")
-		file_item.set_custom_color(0, Color(0.8, 0.9, 1.0))
 		
-		# Add occurrences
-		for result in file_groups[file_path]:
+		# Column 0: File-level checkbox (selected by default)
+		file_item.set_cell_mode(0, TreeItem.CELL_MODE_CHECK)
+		file_item.set_checked(0, true)  # Default to selected
+		file_item.set_editable(0, true)
+		
+		# Column 1: File name and count
+		file_item.set_text(1, "%s (%d occurrences)" % [file_name, _file_groups[file_path].size()])
+		
+		# Column 2: Empty for file headers
+		file_item.set_text(2, "")
+		file_item.set_custom_color(1, Color(0.8, 0.9, 1.0))
+		
+		# Store file path as metadata for file-level checkbox handling
+		file_item.set_metadata(0, {"type": "file", "path": file_path})
+		
+		# Add occurrences with checkboxes
+		for item_data in _file_groups[file_path]:
+			var result = item_data["result"]
+			var index = item_data["index"]
+			
 			var ref_item = file_item.create_child()
+			
+			# Column 0: Checkbox (selected by default)
+			ref_item.set_cell_mode(0, TreeItem.CELL_MODE_CHECK)
+			ref_item.set_checked(0, true)  # Default to selected
+			ref_item.set_editable(0, true)
+			
+			# Column 1: File/Location info
 			var line_content = result["line_content"]
 			if line_content.length() > 60:
 				line_content = line_content.substr(0, 57) + "..."
-			ref_item.set_text(0, "  → Line %d: %s" % [result["line_number"], line_content])
-			ref_item.set_text(1, str(result["line_number"]))
+			ref_item.set_text(1, "  → Line %d: %s" % [result["line_number"], line_content])
+			
+			# Column 2: Line number
+			ref_item.set_text(2, str(result["line_number"]))
+			
+			# Store the index as metadata for tracking
+			ref_item.set_metadata(0, {"type": "item", "index": index})
+			
+			# Add to selected items (all selected by default)
+			_selected_items.append(index)
+	
+	_update_selection_status()
 
 func _perform_batch_rename(new_name: String) -> bool:
 	"""Execute batch rename operation - core functionality"""
 	var files_to_modify = {}
 	
-	# Group modifications by file
-	for result in _rename_results:
-		var file_path = result["file_path"]
-		if not files_to_modify.has(file_path):
-			files_to_modify[file_path] = []
-		files_to_modify[file_path].append(result)
+	# Group modifications by file (only selected items)
+	for i in _selected_items:
+		if i >= 0 and i < _rename_results.size():
+			var result = _rename_results[i]
+			var file_path = result["file_path"]
+			if not files_to_modify.has(file_path):
+				files_to_modify[file_path] = []
+			files_to_modify[file_path].append(result)
 	
 	var success_count = 0
 	var total_files = files_to_modify.size()
@@ -423,13 +796,31 @@ func _get_current_script_path() -> String:
 	if not script_editor:
 		return ""
 	
-	var current_editor = script_editor.get_current_editor()
-	if not current_editor:
-		return ""
+	# Method 1: Try to get current script directly
+	var current_script = script_editor.get_current_script()
+	if current_script and current_script.resource_path != "":
+		return current_script.resource_path
 	
-	var script = current_editor.get_base_editor().get_script()
-	if script:
-		return script.resource_path
+	# Method 2: Try through current editor
+	var current_editor = script_editor.get_current_editor()
+	if current_editor:
+		if current_editor is ScriptEditorBase:
+			var base_editor = current_editor.get_base_editor()
+			if base_editor and base_editor is CodeEdit:
+				# Try to get script from the editor
+				var script = current_editor.get_edited_resource()
+				if script and script.resource_path != "":
+					return script.resource_path
+	
+	# Method 3: Try through editor selection
+	var editor_selection = EditorInterface.get_selection()
+	if editor_selection:
+		var selected = editor_selection.get_selected_nodes()
+		if selected.size() > 0:
+			var node = selected[0]
+			var script = node.get_script()
+			if script and script.resource_path != "":
+				return script.resource_path
 	
 	return ""
 
@@ -492,12 +883,14 @@ func _show_success(message: String) -> void:
 
 func _refresh_file_system() -> void:
 	"""Direct source replacement for immediate synchronization - core functionality"""
-	# Collect all modified file paths
+	# Collect all modified file paths (only selected items)
 	var modified_files : PackedStringArray = PackedStringArray()
-	for result in _rename_results:
-		var file_path = result["file_path"]
-		if file_path not in modified_files:
-			modified_files.append(file_path)
+	for i in _selected_items:
+		if i >= 0 and i < _rename_results.size():
+			var result = _rename_results[i]
+			var file_path = result["file_path"]
+			if file_path not in modified_files:
+				modified_files.append(file_path)
 	
 	# Force reload with direct source replacement
 	_force_reload(modified_files)
@@ -558,11 +951,13 @@ func _force_reload(files: PackedStringArray, type_hint: String = "") -> void:
 func _verify_modifications(new_name: String) -> bool:
 	"""Verify that modifications were successfully applied to the file - Quality Assurance Mechanism"""
 	var files_to_check = {}
-	for result in _rename_results:
-		var file_path = result["file_path"]
-		if not files_to_check.has(file_path):
-			files_to_check[file_path] = []
-		files_to_check[file_path].append(result)
+	for i in _selected_items:
+		if i >= 0 and i < _rename_results.size():
+			var result = _rename_results[i]
+			var file_path = result["file_path"]
+			if not files_to_check.has(file_path):
+				files_to_check[file_path] = []
+			files_to_check[file_path].append(result)
 	
 	var verified_files = 0
 	var total_files = files_to_check.size()
@@ -632,3 +1027,121 @@ func _show_sync_warning() -> void:
 	print("[Rename Symbol]    • Restart Godot editor completely")
 	print("[Rename Symbol]    • This resolves most caching issues")
 	print("[Rename Symbol]")
+
+# =============================================================================
+# Window State Management
+# =============================================================================
+
+func _save_window_state() -> void:
+	"""Save current window position and size to editor settings"""
+	# Only save if feature is enabled
+	var save_enabled = IDE.get_config(CONFIG_SECTION, CONFIG_SAVE_STATE_KEY)
+	if save_enabled == null:
+		save_enabled = true  # Default to enabled
+		
+	if not save_enabled:
+		return
+	
+	print("[Rename Dialog] Saving window state - Position: %s, Size: %s" % [position, size])
+	
+	# Save current position and size
+	IDE.set_config(CONFIG_SECTION, CONFIG_POSITION_KEY, position)
+	IDE.set_config(CONFIG_SECTION, CONFIG_SIZE_KEY, size)
+
+func _restore_window_state() -> void:
+	"""Restore window position and size from editor settings"""
+	var save_enabled = IDE.get_config(CONFIG_SECTION, CONFIG_SAVE_STATE_KEY)
+	if save_enabled == null:
+		save_enabled = true  # Default to enabled
+		
+	if not save_enabled:
+		print("[Rename Dialog] Window state saving disabled, using defaults")
+		return
+	
+	# Restore size
+	var saved_size = IDE.get_config(CONFIG_SECTION, CONFIG_SIZE_KEY)
+	if saved_size != null and saved_size is Vector2i:
+		# Ensure minimum size constraints
+		saved_size.x = max(saved_size.x, MIN_SIZE.x)
+		saved_size.y = max(saved_size.y, MIN_SIZE.y)
+		size = saved_size
+		print("[Rename Dialog] Restored window size: %s" % size)
+	else:
+		size = DEFAULT_SIZE
+		print("[Rename Dialog] Using default window size: %s" % size)
+	
+	# Restore position
+	var saved_position = IDE.get_config(CONFIG_SECTION, CONFIG_POSITION_KEY)
+	if saved_position != null and saved_position is Vector2i:
+		if _is_position_valid(saved_position, size):
+			position = saved_position
+			print("[Rename Dialog] Restored window position: %s" % position)
+		else:
+			print("[Rename Dialog] Saved position %s is invalid, centering window" % saved_position)
+			_center_on_screen()
+	else:
+		print("[Rename Dialog] No saved position, centering window")
+		_center_on_screen()
+
+func _is_position_valid(pos: Vector2i, window_size: Vector2i) -> bool:
+	"""Check if the window position is valid (visible on screen)"""
+	var screen_bounds = _get_screen_bounds()
+	
+	# Check if at least part of the window is visible
+	var window_rect = Rect2i(pos, window_size)
+	var intersection = screen_bounds.intersection(window_rect)
+	
+	# Require at least 100x100 pixels to be visible
+	return intersection.size.x >= 100 and intersection.size.y >= 100
+
+func _get_screen_bounds() -> Rect2i:
+	"""Get the bounds of all available screens"""
+	# Simple fallback - just use a reasonable screen size
+	return Rect2i(0, 0, 1920, 1080)
+
+func _center_on_screen() -> void:
+	"""Position the window using platform-specific popup positioning"""
+	var os_name: String = OS.get_name()
+	match os_name:
+		"macOS":
+			var mouse_global: Vector2 = get_viewport().get_global_mouse_position()
+			var offset: Vector2 = Vector2(10.0, 10.0)
+			var popup_rect: Rect2 = Rect2(mouse_global + offset, Vector2.ZERO)
+			popup_on_parent(popup_rect)
+		"iOS":
+			popup_centered()
+		_:
+			# Others platforms
+			position = get_viewport().get_global_mouse_position()
+			popup()
+
+func popup_with_saved_state() -> void:
+	"""Show the window with restored state or platform-specific positioning"""
+	var save_enabled = IDE.get_config(CONFIG_SECTION, CONFIG_SAVE_STATE_KEY)
+	if save_enabled == null:
+		save_enabled = true
+	
+	if save_enabled:
+		var saved_position = IDE.get_config(CONFIG_SECTION, CONFIG_POSITION_KEY)
+		if saved_position != null and saved_position is Vector2i and _is_position_valid(saved_position, size):
+			# Use saved position if valid
+			_restore_window_state()
+			show()
+			grab_focus()
+			return
+	
+	# No saved position or invalid position - use platform-specific positioning
+	_center_on_screen()
+	grab_focus()
+
+func _on_visibility_changed() -> void:
+	"""Handle window visibility changes"""
+	if not visible:
+		# Window is being hidden, save the state
+		_save_window_state()
+
+func _on_window_resized() -> void:
+	"""Handle window resize events"""
+	# Save state when window is resized (with a small delay to avoid excessive saves)
+	if visible:
+		call_deferred("_save_window_state")

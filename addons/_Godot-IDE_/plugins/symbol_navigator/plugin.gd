@@ -116,12 +116,22 @@ func _open_rename_dialog() -> void:
 		push_warning("[Symbol Navigator] No symbol found at cursor")
 		return
 		
+	print("[Symbol Navigator] Opening rename dialog for symbol: ", current_symbol)
+		
 	if not is_instance_valid(_rename_dialog):
+		print("[Symbol Navigator] Creating new rename dialog instance")
 		_rename_dialog = RENAME_SYMBOL_UI.instantiate()
 		add_child(_rename_dialog)
 		
+		# Wait for the dialog to be ready before calling methods on it
+		if not _rename_dialog.is_node_ready():
+			print("[Symbol Navigator] Dialog not ready, waiting for ready signal")
+			await _rename_dialog.ready
+		
+		print("[Symbol Navigator] Dialog ready, setting symbol")
+	
 	_rename_dialog.set_symbol(current_symbol)
-	_rename_dialog.popup_centered()
+	_rename_dialog.popup_with_saved_state()
 
 # Get symbol at current cursor position
 func _get_symbol_at_cursor() -> String:
