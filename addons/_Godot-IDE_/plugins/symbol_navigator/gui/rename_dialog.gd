@@ -46,8 +46,6 @@ const DEFAULT_SIZE = Vector2i(700, 500)
 const MIN_SIZE = Vector2i(400, 300)
 
 func _ready() -> void:
-	print("[Rename Dialog] _ready() called - initializing UI components")
-	
 	# Find UI components
 	_find_ui_components()
 	
@@ -62,8 +60,6 @@ func _ready() -> void:
 	
 	# Connect window state management signals
 	_connect_window_state_signals()
-	
-	print("[Rename Dialog] Initialization complete")
 
 func _find_ui_components() -> void:
 	"""Find and assign UI components"""
@@ -101,15 +97,10 @@ func _validate_ui_components() -> void:
 		missing_components.append("SelectionStatus")
 	
 	if missing_components.size() > 0:
-		print("[Rename Dialog] WARNING: Missing UI components: ", missing_components)
 		push_warning("[Rename Dialog] Missing UI components: " + str(missing_components))
-	else:
-		print("[Rename Dialog] All UI components found successfully")
 
 func _connect_signals() -> void:
 	"""Connect button signals"""
-	print("[Rename Dialog] Connecting signals...")
-	
 	var connected_count = 0
 	
 	if preview_button:
@@ -137,19 +128,14 @@ func _connect_signals() -> void:
 		preview_tree.item_edited.connect(_on_tree_item_edited)
 		connected_count += 1
 	
-	print("[Rename Dialog] Connected %d signals" % connected_count)
 
 func _connect_window_state_signals() -> void:
 	"""Connect window state management signals"""
-	print("[Rename Dialog] Connecting window state signals...")
-	
 	# Connect visibility change to save state when window closes
 	visibility_changed.connect(_on_visibility_changed)
 	
 	# Connect size and position changes for real-time saving
 	size_changed.connect(_on_window_resized)
-	
-	print("[Rename Dialog] Window state signals connected")
 
 func _setup_preview_tree() -> void:
 	"""Setup the preview tree columns"""
@@ -171,7 +157,6 @@ func set_symbol(symbol: String) -> void:
 	
 	# Check if UI components are ready
 	if not _are_ui_components_ready():
-		print("[Rename Dialog] UI components not ready, deferring set_symbol call")
 		# Defer the call until the next frame when components should be ready
 		call_deferred("_deferred_set_symbol", symbol)
 		return
@@ -199,7 +184,6 @@ func _deferred_set_symbol(symbol: String) -> void:
 		print("[Rename Dialog] cancel_button: ", cancel_button)
 		return
 	
-	print("[Rename Dialog] UI components ready, applying symbol: ", symbol)
 	_apply_symbol_to_ui(symbol)
 
 func _apply_symbol_to_ui(symbol: String) -> void:
@@ -217,8 +201,6 @@ func _apply_symbol_to_ui(symbol: String) -> void:
 
 func _auto_preview() -> void:
 	"""Automatically trigger preview without changing the current name"""
-	print("[Rename Symbol] Auto-triggering preview for symbol: '%s'" % _current_symbol)
-	
 	# Verify UI components are still available
 	if not _are_ui_components_ready():
 		print("[Rename Symbol] ERROR: UI components not ready during auto-preview")
@@ -234,9 +216,7 @@ func _auto_preview() -> void:
 	_display_preview_results()
 	
 	# Update status
-	if _rename_results.size() > 0:
-		print("[Rename Symbol] Found %d occurrences across files" % _rename_results.size())
-	else:
+	if _rename_results.size() == 0:
 		print("[Rename Symbol] No occurrences found for symbol: '%s'" % _current_symbol)
 
 func _on_preview_pressed() -> void:
@@ -323,7 +303,7 @@ func _on_text_changed(new_text: String) -> void:
 	
 	# Special Character Compatibility Check
 	if not trimmed_text.is_empty() and not _is_name_compatible(trimmed_text):
-		print("Warning: '%s' may contain incompatible characters" % trimmed_text)
+		pass  # Silently validate compatibility
 
 func _input(event: InputEvent) -> void:
 	"""Handle keyboard shortcuts"""
@@ -556,7 +536,6 @@ func _search_symbol_occurrences() -> void:
 	if not root_dir:
 		return
 	
-	print("[Rename Symbol] Searching for '%s' occurrences..." % _current_symbol)
 	
 	if _scope_project_wide:
 		_search_in_directory(root_dir)
@@ -860,26 +839,8 @@ func _is_name_compatible(name: String) -> bool:
 	return true
 
 func _show_success(message: String) -> void:
-	"""Show success message with enhanced refresh options"""
+	"""Show success message"""
 	print("[Rename Symbol] ✅ SUCCESS: %s" % message)
-	print("[Rename Symbol]")
-	print("[Rename Symbol] 🚀 ADVANCED REFRESH ATTEMPTED:")
-	print("[Rename Symbol] Multiple editor refresh methods have been tried automatically")
-	print("[Rename Symbol] ")
-	print("[Rename Symbol] 🔄 IF CHANGES STILL DON'T APPEAR:")
-	print("[Rename Symbol] ")
-	print("[Rename Symbol] 1️⃣ QUICK FIX: Use F2 → Enter again")
-	print("[Rename Symbol]    • The rename function includes aggressive refresh")
-	print("[Rename Symbol]    • This triggers all available refresh methods")
-	print("[Rename Symbol] ")
-	print("[Rename Symbol] 2️⃣ MANUAL: Close and reopen the file")
-	print("[Rename Symbol]    • File menu → Close → Open Recent")
-	print("[Rename Symbol]    • This always works as final solution")
-	print("[Rename Symbol] ")
-	print("[Rename Symbol] 3️⃣ VERIFY: Files are definitely modified on disk")
-	print("[Rename Symbol]    • Check with external editor if needed")
-	print("[Rename Symbol]    • The rename operation itself is 100% reliable")
-	print("[Rename Symbol]")
 
 func _refresh_file_system() -> void:
 	"""Direct source replacement for immediate synchronization - core functionality"""
@@ -1003,30 +964,8 @@ func _verify_file_modifications(file_path: String, modifications: Array, new_nam
 
 
 func _show_sync_warning() -> void:
-	"""Show detailed warning and troubleshooting guide"""
-	print("[Rename Symbol] ⚠️ SYNCHRONIZATION WARNING")
-	print("[Rename Symbol] Files were modified but verification had issues")
-	print("[Rename Symbol]")
-	print("[Rename Symbol] 🔧 TROUBLESHOOTING STEPS:")
-	print("[Rename Symbol]")
-	print("[Rename Symbol] 1️⃣ CHECK FILE CONTENTS:")
-	print("[Rename Symbol]    • Open files in external editor (VS Code, etc.)")
-	print("[Rename Symbol]    • Verify that changes were actually made")
-	print("[Rename Symbol]")
-	print("[Rename Symbol] 2️⃣ IF FILES ARE CHANGED:")
-	print("[Rename Symbol]    • Close the file in Godot")
-	print("[Rename Symbol]    • Reopen the file from File menu")
-	print("[Rename Symbol]    • Changes should now appear")
-	print("[Rename Symbol]")
-	print("[Rename Symbol] 3️⃣ IF FILES ARE NOT CHANGED:")
-	print("[Rename Symbol]    • The rename operation may have failed")
-	print("[Rename Symbol]    • Try the rename operation again")
-	print("[Rename Symbol]    • Check file permissions")
-	print("[Rename Symbol]")
-	print("[Rename Symbol] 4️⃣ LAST RESORT:")
-	print("[Rename Symbol]    • Restart Godot editor completely")
-	print("[Rename Symbol]    • This resolves most caching issues")
-	print("[Rename Symbol]")
+	"""Show warning about synchronization issues"""
+	print("[Rename Symbol] ⚠️ Files were modified but verification had issues")
 
 # =============================================================================
 # Window State Management
@@ -1042,7 +981,6 @@ func _save_window_state() -> void:
 	if not save_enabled:
 		return
 	
-	print("[Rename Dialog] Saving window state - Position: %s, Size: %s" % [position, size])
 	
 	# Save current position and size
 	IDE.set_config(CONFIG_SECTION, CONFIG_POSITION_KEY, position)
@@ -1055,7 +993,6 @@ func _restore_window_state() -> void:
 		save_enabled = true  # Default to enabled
 		
 	if not save_enabled:
-		print("[Rename Dialog] Window state saving disabled, using defaults")
 		return
 	
 	# Restore size
@@ -1065,22 +1002,17 @@ func _restore_window_state() -> void:
 		saved_size.x = max(saved_size.x, MIN_SIZE.x)
 		saved_size.y = max(saved_size.y, MIN_SIZE.y)
 		size = saved_size
-		print("[Rename Dialog] Restored window size: %s" % size)
 	else:
 		size = DEFAULT_SIZE
-		print("[Rename Dialog] Using default window size: %s" % size)
 	
 	# Restore position
 	var saved_position = IDE.get_config(CONFIG_SECTION, CONFIG_POSITION_KEY)
 	if saved_position != null and saved_position is Vector2i:
 		if _is_position_valid(saved_position, size):
 			position = saved_position
-			print("[Rename Dialog] Restored window position: %s" % position)
 		else:
-			print("[Rename Dialog] Saved position %s is invalid, centering window" % saved_position)
 			_center_on_screen()
 	else:
-		print("[Rename Dialog] No saved position, centering window")
 		_center_on_screen()
 
 func _is_position_valid(pos: Vector2i, window_size: Vector2i) -> bool:
