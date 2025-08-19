@@ -12,10 +12,24 @@ extends Control
 @export var search_button : Button = null
 @export var clear_button : Button = null
 @export var code_header : Label = null
-@export var code_display : TextEdit = null
+@export var code_display : RichTextLabel = null
+@export var case_sensitive_check : CheckBox = null
+@export var match_mode_option : OptionButton = null
+@export var exclude_dirs_button : Button = null
+
+enum MatchMode {
+	WORD_BOUNDARY,    # Word boundary matching (default)
+	EXACT,           # Hole line exact match
+	STARTS_WITH,     # Start matching
+	CONTAINS,        # Include match
+	ENDS_WITH        # end match
+}
 
 var _current_symbol : String = ""
 var _search_results : Array[Dictionary] = []
+var _case_sensitive : bool = false
+var _match_mode : MatchMode = MatchMode.WORD_BOUNDARY
+var _excluded_directories : Array[String] = []
 
 func _ready() -> void:
 	# Initialize components and connections
@@ -39,6 +53,13 @@ func _ready() -> void:
 	if results_tree:
 		results_tree.item_activated.connect(_on_item_activated)
 		results_tree.item_selected.connect(_on_item_selected)
+	if case_sensitive_check:
+		case_sensitive_check.toggled.connect(_on_case_sensitive_toggled)
+	if match_mode_option:
+		match_mode_option.item_selected.connect(_on_match_mode_changed)
+		_setup_match_mode_options()
+	if exclude_dirs_button:
+		exclude_dirs_button.pressed.connect(_on_exclude_dirs_pressed)
 	
 	# Configure tree columns
 	if results_tree:
@@ -52,6 +73,27 @@ func _ready() -> void:
 	# Initialize UI state
 	_update_results_info("Enter a symbol to search")
 	_clear_code_display()
+	
+	# Load saved configuration
+	_load_configuration()
+
+func _load_configuration() -> void:
+	"""Load saved configuration settings"""
+	# Load case sensitivity setting
+	var saved_case_sensitive = IDE.get_config("symbol_navigator", "case_sensitive")
+	_case_sensitive = saved_case_sensitive
+	if case_sensitive_check:
+		case_sensitive_check.set_pressed_no_signal(_case_sensitive)
+	
+	# Load match mode setting
+	var saved_match_mode = IDE.get_config("symbol_navigator", "match_mode")
+	_match_mode = saved_match_mode as MatchMode
+	if match_mode_option:
+		match_mode_option.select(saved_match_mode)
+	
+	# Load excluded directories
+	var saved_excluded_dirs = IDE.get_config("symbol_navigator", "excluded_directories")
+	_excluded_directories = saved_excluded_dirs
 
 func _ensure_components_initialized() -> void:
 	"""Ensure all exported components are properly initialized"""
@@ -69,6 +111,12 @@ func _ensure_components_initialized() -> void:
 		code_header = _find_component_robust("CodeHeader", Label)
 	if not code_display:
 		code_display = _find_component_robust("CodeDisplay", TextEdit)
+	if not case_sensitive_check:
+		case_sensitive_check = _find_component_robust("CaseSensitiveCheck", CheckBox)
+	if not match_mode_option:
+		match_mode_option = _find_component_robust("MatchModeOption", OptionButton)
+	if not exclude_dirs_button:
+		exclude_dirs_button = _find_component_robust("ExcludeDirsButton", Button)
 	
 	# Only log if critical components are missing
 	var missing_components = []
@@ -126,6 +174,12 @@ func _is_correct_type(node: Node, expected_type) -> bool:
 		return node is Button
 	elif expected_type == TextEdit:
 		return node is TextEdit
+	elif expected_type == CheckBox:
+		return node is CheckBox
+	elif expected_type == OptionButton:
+		return node is OptionButton
+	elif expected_type == RichTextLabel:
+		return node is RichTextLabel
 	else:
 		# Fallback to class name comparison
 		return node.get_class() == str(expected_type).get_slice(":", 0)
@@ -150,6 +204,12 @@ func _get_expected_paths(component_name: String) -> Array[String]:
 			paths.append("MainContainer/MainContent/RightPanel/CodeHeader")
 		"CodeDisplay":
 			paths.append("MainContainer/MainContent/RightPanel/CodeDisplay")
+		"CaseSensitiveCheck":
+			paths.append("MainContainer/SearchSection/CaseSensitiveCheck")
+		"MatchModeOption":
+			paths.append("MainContainer/SearchSection/MatchModeOption")
+		"ExcludeDirsButton":
+			paths.append("MainContainer/SearchSection/ExcludeDirsButton")
 	
 	return paths
 
@@ -222,6 +282,100 @@ func _on_clear_pressed() -> void:
 	_update_status("Cleared")
 	_update_results_info("Enter a symbol to search")
 
+func _on_case_sensitive_toggled(pressed: bool) -> void:
+	_case_sensitive = pressed
+	# Save setting
+	IDE.set_config("symbol_navigator", "case_sensitive", _case_sensitive)
+	# Automatically re-search if we have a current symbol
+	if not _current_symbol.is_empty():
+		_perform_search()
+
+func _on_match_mode_changed(index: int) -> void:
+	_match_mode = index as MatchMode
+	# Save setting
+	IDE.set_config("symbol_navigator", "match_mode", _match_mode)
+	# Automatically re-search if we have a current symbol
+	if not _current_symbol.is_empty():
+		_perform_search()
+
+func _setup_match_mode_options() -> void:
+	if not match_mode_option:
+		return
+	
+	match_mode_option.clear()
+	match_mode_option.add_item("Word Boundary")
+	match_mode_option.add_item("Exact Match")
+	match_mode_option.add_item("Starts With")
+	match_mode_option.add_item("Contains")
+	match_mode_option.add_item("Ends With")
+	match_mode_option.selected = _match_mode
+
+func _on_exclude_dirs_pressed() -> void:
+	"""Show dialog to configure excluded directories"""
+	_show_exclude_dirs_dialog()
+
+func _show_exclude_dirs_dialog() -> void:
+	"""Show a simple dialog to configure excluded directories"""
+	var dialog = AcceptDialog.new()
+	dialog.title = "Configure Excluded Directories"
+	dialog.size = Vector2i(400, 300)
+	
+	var vbox = VBoxContainer.new()
+	dialog.add_child(vbox)
+	
+	var info_label = Label.new()
+	info_label.text = "Enter directory names to exclude from search (one per line):"
+	vbox.add_child(info_label)
+	
+	var text_edit = TextEdit.new()
+	text_edit.text = "\n".join(_excluded_directories)
+	text_edit.custom_minimum_size = Vector2(380, 200)
+	vbox.add_child(text_edit)
+	
+	var button_container = HBoxContainer.new()
+	vbox.add_child(button_container)
+	
+	var save_button = Button.new()
+	save_button.text = "Save"
+	button_container.add_child(save_button)
+	
+	var cancel_button = Button.new()
+	cancel_button.text = "Cancel"
+	button_container.add_child(cancel_button)
+	
+	# Add dialog to scene tree
+	get_tree().current_scene.add_child(dialog)
+	
+	# Connect signals
+	save_button.pressed.connect(func():
+		_save_excluded_directories(text_edit.text)
+		dialog.queue_free()
+	)
+	cancel_button.pressed.connect(func():
+		dialog.queue_free()
+	)
+	
+	dialog.popup_centered()
+
+func _save_excluded_directories(text: String) -> void:
+	"""Save excluded directories from text input"""
+	_excluded_directories.clear()
+	var lines = text.split("\n")
+	for line in lines:
+		var trimmed = line.strip_edges()
+		if not trimmed.is_empty():
+			_excluded_directories.append(trimmed)
+	
+	# Save to configuration
+	IDE.set_config("symbol_navigator", "excluded_directories", _excluded_directories)
+	
+	# Update status
+	_update_status("Updated excluded directories")
+	
+	# Re-search if we have a current symbol
+	if not _current_symbol.is_empty():
+		_perform_search()
+
 func _perform_search() -> void:
 	if _current_symbol.is_empty():
 		_update_status("Please enter a symbol to search")
@@ -260,6 +414,11 @@ func _search_in_project() -> void:
 		_search_in_directory(root_dir)
 
 func _search_in_directory(dir: EditorFileSystemDirectory) -> void:
+	# Check if this directory should be excluded
+	var dir_name = dir.get_name()
+	if _should_exclude_directory(dir_name):
+		return
+	
 	# Search in files
 	for i in range(dir.get_file_count()):
 		var file_path = dir.get_file_path(i)
@@ -272,6 +431,13 @@ func _search_in_directory(dir: EditorFileSystemDirectory) -> void:
 	# Search in subdirectories
 	for i in range(dir.get_subdir_count()):
 		_search_in_directory(dir.get_subdir(i))
+
+func _should_exclude_directory(dir_name: String) -> bool:
+	"""Check if a directory should be excluded from search"""
+	for excluded_dir in _excluded_directories:
+		if dir_name == excluded_dir or dir_name.begins_with(excluded_dir + "/"):
+			return true
+	return false
 
 func _search_in_file(file_path: String) -> void:
 	var file = FileAccess.open(file_path, FileAccess.READ)
@@ -307,24 +473,49 @@ func _find_symbol_in_line(line: String, symbol: String) -> Array[int]:
 	if trimmed_line.begins_with("#") and not trimmed_line.contains("func "):
 		return matches
 	
-	# Skip string literals (basic detection)
-	if _is_in_string_literal(line, symbol):
+	# Skip string literals (basic detection) - only for word boundary mode
+	if _match_mode == MatchMode.WORD_BOUNDARY and _is_in_string_literal(line, symbol):
 		return matches
 	
-	# Create regex pattern for word boundary matching
-	var regex = RegEx.new()
-	var pattern = "\\b" + _escape_regex_string(symbol) + "\\b"
-	regex.compile(pattern)
+	# Apply case sensitivity
+	var search_line = line if _case_sensitive else line.to_lower()
+	var search_symbol = symbol if _case_sensitive else symbol.to_lower()
 	
-	var results = regex.search_all(line)
+	# Create regex pattern based on match mode
+	var regex = RegEx.new()
+	var pattern = _get_match_pattern(search_symbol)
+	if regex.compile(pattern) != OK:
+		return matches
+	
+	var results = regex.search_all(search_line)
 	for result in results:
 		var match_pos = result.get_start()
 		
-		# Additional context-aware filtering
-		if _is_valid_symbol_context(line, match_pos, symbol):
+		# Additional context-aware filtering (only for word boundary mode)
+		if _match_mode == MatchMode.WORD_BOUNDARY:
+			if _is_valid_symbol_context(line, match_pos, symbol):
+				matches.append(match_pos)
+		else:
 			matches.append(match_pos)
 	
 	return matches
+
+func _get_match_pattern(symbol: String) -> String:
+	var escaped_symbol = _escape_regex_string(symbol)
+	
+	match _match_mode:
+		MatchMode.WORD_BOUNDARY:
+			return "\\b" + escaped_symbol + "\\b"
+		MatchMode.EXACT:
+			return "^" + escaped_symbol + "$"
+		MatchMode.STARTS_WITH:
+			return "^" + escaped_symbol
+		MatchMode.CONTAINS:
+			return escaped_symbol
+		MatchMode.ENDS_WITH:
+			return escaped_symbol + "$"
+		_:
+			return "\\b" + escaped_symbol + "\\b"
 
 # Check if symbol is inside a string literal
 func _is_in_string_literal(line: String, symbol: String) -> bool:
@@ -508,26 +699,23 @@ func _update_code_display(result: Dictionary) -> void:
 	
 	var file_path = result["file_path"]
 	var line_number = result["line_number"]
+	var column = result.get("column", 0)
 	var file_name = file_path.get_file()
 	
 	# Update header
 	if code_header:
 		code_header.text = "%s:%d" % [file_name, line_number]
 	
-	# Load and display file content
+	# Load and display file content with color highlighting
 	if code_display:
 		var file_content = _load_file_content(file_path)
 		if not file_content.is_empty():
-			# Show context around the line (e.g., 5 lines before and after)
-			var context_content = _get_context_content(file_content, line_number, 5)
+			# Show context around the line with BBCode highlighting
+			var context_content = _get_context_content_with_highlighting(file_content, line_number, column, 5)
 			code_display.text = context_content
 			
-			# Try to scroll to the target line (approximate)
-			var lines = context_content.split("\n")
-			for i in range(lines.size()):
-				if lines[i].contains("►"):  # Our highlight marker
-					code_display.scroll_vertical = i * 20  # Approximate line height
-					break
+			# Enable BBCode parsing for color highlighting
+			code_display.bbcode_enabled = true
 
 func _load_file_content(file_path: String) -> String:
 	"""Load the content of a file"""
@@ -539,6 +727,32 @@ func _load_file_content(file_path: String) -> String:
 	file.close()
 	return content
 
+func _get_context_content_with_highlighting(file_content: String, target_line: int, target_column: int, context_lines: int) -> String:
+	"""Get file content with context around the target line, with BBCode color highlighting"""
+	var lines = file_content.split("\n")
+	var start_line = max(0, target_line - context_lines - 1)
+	var end_line = min(lines.size() - 1, target_line + context_lines - 1)
+	
+	var context_lines_array = []
+	for i in range(start_line, end_line + 1):
+		var line_content = lines[i]
+		var line_num = i + 1
+		
+		# Add line number prefix
+		var prefix = "%3d: " % line_num
+		var formatted_line = prefix + line_content
+		
+		# Apply syntax highlighting to the target line
+		if line_num == target_line:
+			formatted_line = prefix + _highlight_symbol_with_bbcode(line_content, _current_symbol)
+			# Use different background color for target line
+			formatted_line = "[bgcolor=#2d2d30]" + formatted_line + "[/bgcolor]"
+		
+		context_lines_array.append(formatted_line)
+	
+	return "\n".join(context_lines_array)
+
+# Keep the old function for backward compatibility (if needed elsewhere)
 func _get_context_content(file_content: String, target_line: int, context_lines: int) -> String:
 	"""Get file content with context around the target line, with highlighting"""
 	var lines = file_content.split("\n")
@@ -572,8 +786,41 @@ func _truncate_line_content(line: String, max_length: int) -> String:
 	var truncated = line.substr(0, max_length - 3)
 	return truncated + "..."
 
+func _highlight_symbol_with_bbcode(line: String, symbol: String) -> String:
+	"""Highlight symbol in a line of code using BBCode formatting"""
+	if symbol.is_empty():
+		return line
+	
+	# Apply case sensitivity for the display
+	var search_line = line if _case_sensitive else line.to_lower()
+	var search_symbol = symbol if _case_sensitive else symbol.to_lower()
+	
+	# Create regex pattern based on match mode
+	var regex = RegEx.new()
+	var pattern = _get_match_pattern(search_symbol)
+	if regex.compile(pattern) != OK:
+		return line
+	
+	# Apply highlighting using BBCode
+	var highlighted = line
+	var results = regex.search_all(search_line)
+	
+	# Apply highlights from right to left to preserve positions
+	results.reverse()
+	for result in results:
+		var start_pos = result.get_start()
+		var end_pos = result.get_end()
+		var match_text = line.substr(start_pos, end_pos - start_pos)
+		
+		# Create highlighted version with yellow background and bold text
+		var highlight = "[bgcolor=yellow][color=black][b]%s[/b][/color][/bgcolor]" % match_text
+		
+		highlighted = highlighted.substr(0, start_pos) + highlight + highlighted.substr(end_pos)
+	
+	return highlighted
+
 func _highlight_symbol_in_line(line: String, symbol: String) -> String:
-	"""Highlight symbol in a line of code"""
+	"""Highlight symbol in a line of code (legacy version with symbols)"""
 	if symbol.is_empty():
 		return line
 	
