@@ -37,13 +37,6 @@ var _file_groups : Dictionary = {}  # Maps file_path to array of result indices
 var _file_selections : Dictionary = {}  # Maps file_path to selection state
 var _scope_project_wide : bool = true
 
-# Window state management
-const CONFIG_SECTION = "symbol_navigator"
-const CONFIG_SIZE_KEY = "rename_dialog_size"
-const CONFIG_POSITION_KEY = "rename_dialog_position" 
-const CONFIG_SAVE_STATE_KEY = "save_window_state"
-const DEFAULT_SIZE = Vector2i(700, 500)
-const MIN_SIZE = Vector2i(400, 300)
 
 func _ready() -> void:
 	# Find UI components
@@ -57,9 +50,6 @@ func _ready() -> void:
 	
 	# Setup tree
 	_setup_preview_tree()
-	
-	# Connect window state management signals
-	_connect_window_state_signals()
 
 func _find_ui_components() -> void:
 	"""Find and assign UI components"""
@@ -129,13 +119,6 @@ func _connect_signals() -> void:
 		connected_count += 1
 	
 
-func _connect_window_state_signals() -> void:
-	"""Connect window state management signals"""
-	# Connect visibility change to save state when window closes
-	visibility_changed.connect(_on_visibility_changed)
-	
-	# Connect size and position changes for real-time saving
-	size_changed.connect(_on_window_resized)
 
 func _setup_preview_tree() -> void:
 	"""Setup the preview tree columns"""
@@ -966,114 +949,3 @@ func _verify_file_modifications(file_path: String, modifications: Array, new_nam
 func _show_sync_warning() -> void:
 	"""Show warning about synchronization issues"""
 	print("[Rename Symbol] ⚠️ Files were modified but verification had issues")
-
-# =============================================================================
-# Window State Management
-# =============================================================================
-
-func _save_window_state() -> void:
-	"""Save current window position and size to editor settings"""
-	# Only save if feature is enabled
-	var save_enabled = IDE.get_config(CONFIG_SECTION, CONFIG_SAVE_STATE_KEY)
-	if save_enabled == null:
-		save_enabled = true  # Default to enabled
-		
-	if not save_enabled:
-		return
-	
-	
-	# Save current position and size
-	IDE.set_config(CONFIG_SECTION, CONFIG_POSITION_KEY, position)
-	IDE.set_config(CONFIG_SECTION, CONFIG_SIZE_KEY, size)
-
-func _restore_window_state() -> void:
-	"""Restore window position and size from editor settings"""
-	var save_enabled = IDE.get_config(CONFIG_SECTION, CONFIG_SAVE_STATE_KEY)
-	if save_enabled == null:
-		save_enabled = true  # Default to enabled
-		
-	if not save_enabled:
-		return
-	
-	# Restore size
-	var saved_size = IDE.get_config(CONFIG_SECTION, CONFIG_SIZE_KEY)
-	if saved_size != null and saved_size is Vector2i:
-		# Ensure minimum size constraints
-		saved_size.x = max(saved_size.x, MIN_SIZE.x)
-		saved_size.y = max(saved_size.y, MIN_SIZE.y)
-		size = saved_size
-	else:
-		size = DEFAULT_SIZE
-	
-	# Restore position
-	var saved_position = IDE.get_config(CONFIG_SECTION, CONFIG_POSITION_KEY)
-	if saved_position != null and saved_position is Vector2i:
-		if _is_position_valid(saved_position, size):
-			position = saved_position
-		else:
-			_center_on_screen()
-	else:
-		_center_on_screen()
-
-func _is_position_valid(pos: Vector2i, window_size: Vector2i) -> bool:
-	"""Check if the window position is valid (visible on screen)"""
-	var screen_bounds = _get_screen_bounds()
-	
-	# Check if at least part of the window is visible
-	var window_rect = Rect2i(pos, window_size)
-	var intersection = screen_bounds.intersection(window_rect)
-	
-	# Require at least 100x100 pixels to be visible
-	return intersection.size.x >= 100 and intersection.size.y >= 100
-
-func _get_screen_bounds() -> Rect2i:
-	"""Get the bounds of all available screens"""
-	# Simple fallback - just use a reasonable screen size
-	return Rect2i(0, 0, 1920, 1080)
-
-func _center_on_screen() -> void:
-	"""Position the window using platform-specific popup positioning"""
-	var os_name: String = OS.get_name()
-	match os_name:
-		"macOS":
-			var mouse_global: Vector2 = get_viewport().get_global_mouse_position()
-			var offset: Vector2 = Vector2(10.0, 10.0)
-			var popup_rect: Rect2 = Rect2(mouse_global + offset, Vector2.ZERO)
-			popup_on_parent(popup_rect)
-		"iOS":
-			popup_centered()
-		_:
-			# Others platforms
-			position = get_viewport().get_global_mouse_position()
-			popup()
-
-func popup_with_saved_state() -> void:
-	"""Show the window with restored state or platform-specific positioning"""
-	var save_enabled = IDE.get_config(CONFIG_SECTION, CONFIG_SAVE_STATE_KEY)
-	if save_enabled == null:
-		save_enabled = true
-	
-	if save_enabled:
-		var saved_position = IDE.get_config(CONFIG_SECTION, CONFIG_POSITION_KEY)
-		if saved_position != null and saved_position is Vector2i and _is_position_valid(saved_position, size):
-			# Use saved position if valid
-			_restore_window_state()
-			show()
-			grab_focus()
-			return
-	
-	# No saved position or invalid position - use platform-specific positioning
-	_center_on_screen()
-	grab_focus()
-
-func _on_visibility_changed() -> void:
-	"""Handle window visibility changes"""
-	if not visible:
-		# Window is being hidden, save the state
-		_save_window_state()
-
-func _on_window_resized() -> void:
-	"""Handle window resize events"""
-	# Save state when window is resized (with a small delay to avoid excessive saves)
-	if visible:
-		call_deferred("_save_window_state")

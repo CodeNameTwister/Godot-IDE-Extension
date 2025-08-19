@@ -131,7 +131,7 @@ func _open_rename_dialog() -> void:
 		print("[Symbol Navigator] Dialog ready, setting symbol")
 	
 	_rename_dialog.set_symbol(current_symbol)
-	_rename_dialog.popup_with_saved_state()
+	_rename_dialog.popup_centered()
 
 # Get symbol at current cursor position
 func _get_symbol_at_cursor() -> String:
