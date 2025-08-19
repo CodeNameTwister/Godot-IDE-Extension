@@ -23,12 +23,14 @@ func _ready() -> void:
 	_on_exit()
 	
 func _on_enter() -> void:
+	add_to_group(&"__SPLITER_BUTTON_TAB__")
 	if !is_pinned:
 		button_pin.set(&"theme_override_colors/icon_normal_color", Color.WHITE)
 	button_close.set(&"theme_override_colors/font_color", Color.WHITE)
 	
 
 func _on_exit() -> void:
+	remove_from_group(&"__SPLITER_BUTTON_TAB__")
 	var c : Color = Color.WHITE
 	c.a = 0.25
 	button_close.set(&"theme_override_colors/font_color", c)

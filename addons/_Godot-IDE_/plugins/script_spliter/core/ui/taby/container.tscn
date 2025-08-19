@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bko85r5vlyh0n"]
 
-[ext_resource type="Script" uid="uid://cbujbnm7i4u1n" path="res://addons/_Godot-IDE_/plugins/script_spliter/core/ui/taby/container.gd" id="1_acc0x"]
+[ext_resource type="Script" uid="uid://cbujbnm7i4u1n" path="res://addons/script_spliter/core/ui/taby/container.gd" id="1_acc0x"]
 
 [node name="Container" type="PanelContainer" node_paths=PackedStringArray("container")]
 anchors_preset = 10

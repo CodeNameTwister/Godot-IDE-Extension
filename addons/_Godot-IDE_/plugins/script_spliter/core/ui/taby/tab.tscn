@@ -6,7 +6,8 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hvct0"]
 
-[node name="PanelContainer2" type="PanelContainer" node_paths=PackedStringArray("color_rect", "button_main", "button_close", "button_pin")]
+[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("color_rect", "button_main", "button_close", "button_pin")]
+anchors_preset = -1
 offset_right = 49.0
 offset_bottom = 31.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hvct0")
@@ -37,9 +38,9 @@ auto_translate_mode = 2
 layout_mode = 2
 focus_mode = 0
 mouse_filter = 1
-theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
 button_mask = 3
 shortcut_feedback = false
 shortcut_in_tooltip = false

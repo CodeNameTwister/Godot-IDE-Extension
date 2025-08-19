@@ -195,3 +195,5 @@ func _on_input(e : InputEvent) -> void:
 							if x is TabContainer:
 								parent.emit_signal(&"out_dragging",x.get_tab_bar())
 								return
+		elif e.button_index == 2:
+			pressed.emit()

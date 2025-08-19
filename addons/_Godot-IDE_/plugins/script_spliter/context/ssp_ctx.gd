@@ -162,6 +162,12 @@ func _on_update(f : Variant, t : Variant, r : Variant) -> void:
 func _on_focus(f : CodeEdit, t : CodeEdit) -> void:
 	if !is_instance_valid(f) or !is_instance_valid(t):
 		return
+	if f.text != t.text:
+		var sv : float = f.scroll_vertical
+		var sh : int = f.scroll_horizontal
+		f.set(&"text", t.text)
+		f.scroll_vertical = sv	
+		f.scroll_horizontal = sh
 	var sv0 : float = f.scroll_vertical
 	var sh0 : int = f.scroll_horizontal
 	var sv1 : float = t.scroll_vertical
@@ -178,7 +184,6 @@ func _on_focus(f : CodeEdit, t : CodeEdit) -> void:
 	p.move_child(f, index)
 	
 func _on_text_change(ca : CodeEdit, cb : CodeEdit) -> void:
-	
 	if cb.has_method(&"set_text_reference"):
 		cb.call(&"set_text_reference", ca.text)
 		return

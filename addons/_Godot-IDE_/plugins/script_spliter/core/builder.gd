@@ -2692,105 +2692,205 @@ func search_by_symbol(reference : Node) -> void:
 #endregion
 
 #region 0.3.6
-var last_hover_tab : TabBar = null
+var last_hover_tab : Control = null
 
-func get_hover_tab(tabs : Array[TabBar] = []) -> TabBar:
-	var nodes : Array[TabBar] = tabs
+func get_hover_tab(tabs : Array[Control] = []) -> TabBar:
+	var nodes : Array[Control] = tabs
 	if tabs.size() == 0:
 		nodes = get_tabs()
-	for n : TabBar in nodes:
-		if n.get_global_rect().has_point(n.get_global_mouse_position()):
-			return n
+	if USE_OLD_TABS_BEHAVIOUR:
+		for n : Control in nodes:
+			if n is TabBar:
+				if n.get_global_rect().has_point(n.get_global_mouse_position()):
+					return n
+	else:
+		for n : Control in nodes:
+			if n.has_method(&"get_src"):
+				if n.get_global_rect().has_point(n.get_global_mouse_position()):
+					return n
 	return null
 	
 func has_other_tabs() -> bool:
-	var tabs : Array[TabBar] = get_tabs()
-	var hover : TabBar = get_hover_tab(tabs)
+	var tabs : Array[Control] = get_tabs()
+	var hover : Control = get_hover_tab(tabs)
 	last_hover_tab = hover
 	if is_instance_valid(hover):
-		var container : TabContainer = hover.get_parent()
-		if container.get_tab_count() > 1:
+		var container : TabContainer = null
+		
+		if USE_OLD_TABS_BEHAVIOUR:
+			container = hover.get_parent()
+		else:
+			var p : Node = hover
+			for __ : int in range(4):
+				if p == null:
+					return false
+				p = p.get_parent()
+			for x : Node in p.get_children():
+				if x is TabContainer:
+					container = x
+					break
+		
+		if is_instance_valid(container) and container.get_tab_count() > 1:
 			var index :int = container.current_tab
 			if index > 0 and index < container.get_tab_count() - 1:
 				return true
 	return false
 	
 func has_right_tabs() -> bool:
-	var tabs : Array[TabBar] = get_tabs()
-	var hover : TabBar = get_hover_tab(tabs)
+	var tabs : Array[Control] = get_tabs()
+	var hover : Control = get_hover_tab(tabs)
 	last_hover_tab = hover
 	if is_instance_valid(hover):
-		var container : TabContainer = hover.get_parent()
-		var index : int = container.current_tab
-		return index > -1 and index < container.get_tab_count() - 1
+		var container : TabContainer = null
+		
+		if USE_OLD_TABS_BEHAVIOUR:
+			container = hover.get_parent()
+		else:
+			var p : Node = hover
+			for __ : int in range(4):
+				if p == null:
+					return false
+				p = p.get_parent()
+			for x : Node in p.get_children():
+				if x is TabContainer:
+					container = x
+					break
+					
+		if is_instance_valid(container):
+			var index : int = container.current_tab
+			return index > -1 and index < container.get_tab_count() - 1
 	return false
 	
 func has_left_tabs() -> bool:
-	var tabs : Array[TabBar] = get_tabs()
-	var hover : TabBar = get_hover_tab(tabs)
+	var tabs : Array[Control] = get_tabs()
+	var hover : Control = get_hover_tab(tabs)
 	last_hover_tab = hover
 	if is_instance_valid(hover):
-		var container : TabContainer = hover.get_parent()
-		var index : int = container.current_tab
-		return index > 0
+		var container : TabContainer = null
+		
+		if USE_OLD_TABS_BEHAVIOUR:
+			container = hover.get_parent()
+		else:
+			var p : Node = hover
+			for __ : int in range(4):
+				if p == null:
+					return false
+				p = p.get_parent()
+			for x : Node in p.get_children():
+				if x is TabContainer:
+					container = x
+					break
+		
+		if is_instance_valid(container):
+			var index : int = container.current_tab
+			return index > 0
 	return false
 	
-func get_tabs() -> Array[TabBar]:
-	var tabs : Array[TabBar] = []
-	var nodes : Array[Node] = _plugin.get_tree().get_nodes_in_group(&"__SPLITER_TAB__")
+func get_tabs() -> Array[Control]:
+	var tabs : Array[Control] = []
+	var nodes : Array[Node] = []
+	if USE_OLD_TABS_BEHAVIOUR:
+		nodes = _plugin.get_tree().get_nodes_in_group(&"__SPLITER_TAB__")
+	else:
+		nodes = _plugin.get_tree().get_nodes_in_group(&"__SPLITER_BUTTON_TAB__")
 	for x : Node in nodes:
-		if x is TabBar:
+		if x is Control:
 			tabs.append(x)
 	return tabs
 	
 func close_right_tabs() -> void:
-	var hover : TabBar = last_hover_tab
+	var hover : Control = last_hover_tab
 	if is_instance_valid(hover):
-		var container : TabContainer = hover.get_parent()
-		var index : int = container.current_tab
-		if index > -1 and container.get_child_count() > index:
-			var childs : Array[Node] = container.get_children()
-			var out : Array[Node] = []
-			var _tools : Array[Mickeytools] = []
-			for c : int in range(index + 1, childs.size(), 1):
-				out.append(childs[c])
-			for x : Mickeytools in _code_editors:
-				if x.get_control() in out:
-					_tools.append(x)
-			for t : Mickeytools in _tools:
-				t.reset(true)
+		var container : TabContainer = null
+		
+		if USE_OLD_TABS_BEHAVIOUR:
+			container = hover.get_parent()
+		else:
+			var p : Node = hover
+			for __ : int in range(4):
+				if p == null:
+					return
+				p = p.get_parent()
+			for x : Node in p.get_children():
+				if x is TabContainer:
+					container = x
+					break
+					
+		if is_instance_valid(container):		
+			var index : int = container.current_tab
+			if index > -1 and container.get_child_count() > index:
+				var childs : Array[Node] = container.get_children()
+				var out : Array[Node] = []
+				var _tools : Array[Mickeytools] = []
+				for c : int in range(index + 1, childs.size(), 1):
+					out.append(childs[c])
+				for x : Mickeytools in _code_editors:
+					if x.get_control() in out:
+						_tools.append(x)
+				for t : Mickeytools in _tools:
+					t.reset(true)
 				
 func close_left_tabs() -> void:
-	var hover : TabBar = last_hover_tab
+	var hover : Control = last_hover_tab
 	if is_instance_valid(hover):
-		var container : TabContainer = hover.get_parent()
-		var index : int = container.current_tab
-		if index > -1 and container.get_child_count() > index:
-			var childs : Array[Node] = container.get_children()
-			var out : Array[Node] = []
-			var _tools : Array[Mickeytools] = []
-			for c : int in range(index - 1, -1, -1):
-				out.append(childs[c])
-			for x : Mickeytools in _code_editors:
-				if x.get_control() in out:
-					_tools.append(x)
-			for t : Mickeytools in _tools:
-				t.reset(true)
+		var container : TabContainer = null
+		
+		if USE_OLD_TABS_BEHAVIOUR:
+			container = hover.get_parent()
+		else:
+			var p : Node = hover
+			for __ : int in range(4):
+				if p == null:
+					return
+				p = p.get_parent()
+			for x : Node in p.get_children():
+				if x is TabContainer:
+					container = x
+					break
+		
+		if is_instance_valid(container):
+			var index : int = container.current_tab
+			if index > -1 and container.get_child_count() > index:
+				var childs : Array[Node] = container.get_children()
+				var out : Array[Node] = []
+				var _tools : Array[Mickeytools] = []
+				for c : int in range(index - 1, -1, -1):
+					out.append(childs[c])
+				for x : Mickeytools in _code_editors:
+					if x.get_control() in out:
+						_tools.append(x)
+				for t : Mickeytools in _tools:
+					t.reset(true)
 				
 func close_other_tabs() -> void:
-	var hover : TabBar = last_hover_tab
+	var hover : Control = last_hover_tab
 	if is_instance_valid(hover):
-		var container : TabContainer = hover.get_parent()
-		var index : int = container.current_tab
-		if index > -1 and container.get_child_count() > index:
-			var out : Array[Node] = container.get_children()
-			var _tools : Array[Mickeytools] = []
-			out.erase(container.get_child(index))
-			for x : Mickeytools in _code_editors:
-				if x.get_control() in out:
-					_tools.append(x)
-			for t : Mickeytools in _tools:
-				t.reset(true)
+		var container : TabContainer = null
+		
+		if USE_OLD_TABS_BEHAVIOUR:
+			container = hover.get_parent()
+		else:
+			var p : Node = hover
+			for __ : int in range(4):
+				if p == null:
+					return
+				p = p.get_parent()
+			for x : Node in p.get_children():
+				if x is TabContainer:
+					container = x
+					break
+					
+		if is_instance_valid(container):
+			var index : int = container.current_tab
+			if index > -1 and container.get_child_count() > index:
+				var out : Array[Node] = container.get_children()
+				var _tools : Array[Mickeytools] = []
+				out.erase(container.get_child(index))
+				for x : Mickeytools in _code_editors:
+					if x.get_control() in out:
+						_tools.append(x)
+				for t : Mickeytools in _tools:
+					t.reset(true)
 #endregion
 
 func swap_by_src(l : String, r : String, as_left : bool = true) -> void:
