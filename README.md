@@ -40,6 +40,8 @@ Each feature is described more fully in it's own repository, as well as down bel
 	https://github.com/CodeNameTwister/Quick-Folds
 * GD Override Functions:
 	https://github.com/CodeNameTwister/GD-Override-Functions
+* Refactor Tool Symbol Navigator:
+	https://github.com/kyrosle/Godot-IDE/tree/kyros/add_find_reference_and_rename
 * The following plugins are integrated with this addon, they are not published as a separate plugin.
 	* Fancy Filters Script: 
 	* Fancy Search Files
@@ -84,6 +86,10 @@ Each feature is described more fully in it's own repository, as well as down bel
 	* With selected text use `Ctrl + E` for Invoke Macro.
 	* With selected text use `Ctrl + SHIFT + E` for Invoke Macro with bypass.
  	* Show all saved Macros with `Alt + END`shortcut.
+
+* Refactor Tool Symbol Navigator:
+	* When you have a symbol selected in the editor, use `F12` for open the panel for find and view symbol references.
+	* When you have a smybol selected in the editor, use `F2` for open the panel for find and rename symbol references.
 
 * Editor Settings
 	* In Editor Settings (with Advanced option enabled) you can change any option of this plugin in `plugin/godot_ide` or neighbors plugins of Godot-IDE.
