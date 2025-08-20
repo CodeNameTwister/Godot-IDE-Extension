@@ -1,0 +1,108 @@
+[gd_scene load_steps=2 format=3 uid="uid://byndwttsl5vau"]
+
+[ext_resource type="Script" uid="uid://b26eh3hs86gi4" path="res://addons/_Godot-IDE_/plugins/symbol_navigator/gui/rename_dialog.gd" id="1_rqbkt"]
+
+[node name="Window" type="Window" node_paths=PackedStringArray("new_name_edit", "scope_option", "preview_tree", "preview_button", "rename_button", "cancel_button", "select_all_button", "unselect_all_button", "selection_status")]
+title = "Rename Symbol"
+position = Vector2i(0, 36)
+size = Vector2i(700, 500)
+script = ExtResource("1_rqbkt")
+new_name_edit = NodePath("MarginContainer/MainContainer/HeaderContainer/NewNameEdit")
+scope_option = NodePath("MarginContainer/MainContainer/HeaderContainer/ScopeOption")
+preview_tree = NodePath("MarginContainer/MainContainer/PreviewContainer/PreviewTree")
+preview_button = NodePath("MarginContainer/MainContainer/HBoxContainer/PreviewButton")
+rename_button = NodePath("MarginContainer/MainContainer/HBoxContainer/RenameButton")
+cancel_button = NodePath("MarginContainer/MainContainer/HBoxContainer/CancelButton")
+select_all_button = NodePath("MarginContainer/MainContainer/SelectionControls/SelectAllButton")
+unselect_all_button = NodePath("MarginContainer/MainContainer/SelectionControls/UnselectAllButton")
+selection_status = NodePath("MarginContainer/MainContainer/SelectionControls/SelectionStatus")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="MainContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderContainer" type="VBoxContainer" parent="MarginContainer/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 5
+
+[node name="SymbolLabel" type="Label" parent="MarginContainer/MainContainer/HeaderContainer"]
+layout_mode = 2
+text = "Rename symbol to:"
+autowrap_mode = 3
+
+[node name="NewNameEdit" type="LineEdit" parent="MarginContainer/MainContainer/HeaderContainer"]
+layout_mode = 2
+placeholder_text = "Enter new name..."
+select_all_on_focus = true
+
+[node name="ScopeOption" type="OptionButton" parent="MarginContainer/MainContainer/HeaderContainer"]
+layout_mode = 2
+selected = 1
+item_count = 2
+popup/item_0/text = "Current File Only"
+popup/item_0/id = 0
+popup/item_1/text = "Entire Project"
+popup/item_1/id = 1
+
+[node name="SelectionControls" type="HBoxContainer" parent="MarginContainer/MainContainer"]
+layout_direction = 2
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="SelectionStatus" type="Label" parent="MarginContainer/MainContainer/SelectionControls"]
+layout_direction = 2
+layout_mode = 2
+text = "0 of 0 selected"
+horizontal_alignment = 2
+
+[node name="SelectAllButton" type="Button" parent="MarginContainer/MainContainer/SelectionControls"]
+layout_mode = 2
+text = "Select All"
+alignment = 2
+
+[node name="UnselectAllButton" type="Button" parent="MarginContainer/MainContainer/SelectionControls"]
+layout_mode = 2
+text = "Unselect All"
+alignment = 2
+
+[node name="PreviewContainer" type="HSplitContainer" parent="MarginContainer/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PreviewTree" type="Tree" parent="MarginContainer/MainContainer/PreviewContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+column_titles_visible = true
+hide_root = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="PreviewButton" type="Button" parent="MarginContainer/MainContainer/HBoxContainer"]
+layout_mode = 2
+text = "Preview"
+
+[node name="RenameButton" type="Button" parent="MarginContainer/MainContainer/HBoxContainer"]
+layout_mode = 2
+text = "Rename"
+
+[node name="CancelButton" type="Button" parent="MarginContainer/MainContainer/HBoxContainer"]
+layout_mode = 2
+text = "Cancel"
