@@ -6,6 +6,8 @@
 title = "Rename Symbol"
 position = Vector2i(0, 36)
 size = Vector2i(700, 500)
+visible = false
+exclusive = true
 script = ExtResource("1_rqbkt")
 new_name_edit = NodePath("MarginContainer/MainContainer/HeaderContainer/NewNameEdit")
 scope_option = NodePath("MarginContainer/MainContainer/HeaderContainer/ScopeOption")
@@ -106,3 +108,6 @@ text = "Rename"
 [node name="CancelButton" type="Button" parent="MarginContainer/MainContainer/HBoxContainer"]
 layout_mode = 2
 text = "Cancel"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="focus_exited" from="." to="." method="_on_focus_exited"]

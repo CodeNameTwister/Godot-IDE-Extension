@@ -309,12 +309,21 @@ func _navigate_to_reference(file_path: String, line_number: int, column: int) ->
 func _update_status(message: String) -> void:
 	if status_label:
 		status_label.text = message
+
+
+func _on_close_requested() -> void:
+	_on_close_pressed()
+
+
+func _on_focus_exited() -> void:
+	_on_close_pressed()
 "
 
 [node name="Window" type="Window" node_paths=PackedStringArray("search_bar", "results_tree", "status_label", "search_button", "close_button")]
 title = "Find References"
 position = Vector2i(0, 36)
 size = Vector2i(800, 600)
+exclusive = true
 script = SubResource("GDScript_ly0sj")
 search_bar = NodePath("VBoxContainer/SearchBar/SearchBar")
 results_tree = NodePath("VBoxContainer/MainContent/Tree")
@@ -364,3 +373,6 @@ text = "Ready"
 [node name="Button" type="Button" parent="VBoxContainer/Status"]
 layout_mode = 2
 text = "Close"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="focus_exited" from="." to="." method="_on_focus_exited"]

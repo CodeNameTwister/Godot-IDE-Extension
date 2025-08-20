@@ -80,20 +80,23 @@ func _ready() -> void:
 func _load_configuration() -> void:
 	"""Load saved configuration settings"""
 	# Load case sensitivity setting
-	var saved_case_sensitive = IDE.get_config("symbol_navigator", "case_sensitive")
-	_case_sensitive = saved_case_sensitive
+	var saved_case_sensitive = IDE.get_config("symbol_navigator", "case_sensitive") #if not exist config, return a null
+	if saved_case_sensitive is bool:
+		_case_sensitive = saved_case_sensitive
 	if case_sensitive_check:
 		case_sensitive_check.set_pressed_no_signal(_case_sensitive)
 	
 	# Load match mode setting
 	var saved_match_mode = IDE.get_config("symbol_navigator", "match_mode")
-	_match_mode = saved_match_mode as MatchMode
-	if match_mode_option:
-		match_mode_option.select(saved_match_mode)
+	if null != saved_match_mode:
+		_match_mode = saved_match_mode as MatchMode
+		if match_mode_option:
+			match_mode_option.select(saved_match_mode)
 	
 	# Load excluded directories
 	var saved_excluded_dirs = IDE.get_config("symbol_navigator", "excluded_directories")
-	_excluded_directories = saved_excluded_dirs
+	if null != saved_excluded_dirs:
+		_excluded_directories = saved_excluded_dirs
 
 func _ensure_components_initialized() -> void:
 	"""Ensure all exported components are properly initialized"""
@@ -664,7 +667,8 @@ func _clear_code_display() -> void:
 		code_header.text = "Select a reference to view code"
 	if code_display:
 		code_display.text = ""
-		code_display.placeholder_text = "Code content will appear here..."
+		#Change to set if property placeholder_text not exist Godot 4.4.1
+		code_display.set(&"placeholder_text", "Code content will appear here...")
 
 func _update_results_info(info_text: String) -> void:
 	"""Update the results info label in the left panel"""

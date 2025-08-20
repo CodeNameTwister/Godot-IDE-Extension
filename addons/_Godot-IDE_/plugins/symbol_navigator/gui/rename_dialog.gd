@@ -949,3 +949,11 @@ func _verify_file_modifications(file_path: String, modifications: Array, new_nam
 func _show_sync_warning() -> void:
 	"""Show warning about synchronization issues"""
 	print("[Rename Symbol] ⚠️ Files were modified but verification had issues")
+
+
+func _on_close_requested() -> void:
+	_on_cancel_pressed()
+
+
+func _on_focus_exited() -> void:
+	_on_cancel_pressed()
