@@ -89,7 +89,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 
 * Refactor Tool Symbol Navigator:
 	* When you have a symbol selected in the editor, use `F12` for open the panel for find and view symbol references.
-	* When you have a smybol selected in the editor, use `F2` for open the panel for find and rename symbol references.
+	* When you have a symbol selected in the editor, use `F2` for open the panel for find and rename symbol references.
 
 * Editor Settings
 	* In Editor Settings (with Advanced option enabled) you can change any option of this plugin in `plugin/godot_ide` or neighbors plugins of Godot-IDE.
