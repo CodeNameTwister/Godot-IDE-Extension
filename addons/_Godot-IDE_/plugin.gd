@@ -26,9 +26,9 @@ func _on_resource_saved(resource : Resource) -> void:
 	for x : EditorPlugin in _plugins:
 		x.resource_saved.emit(resource)
 	
-func _on_scene_closed(scene_root: Node) -> void:
+func _on_scene_closed(filepath: String) -> void:
 	for x : EditorPlugin in _plugins:
-		x.scene_closed.emit(scene_root)
+		x.scene_closed.emit(filepath)
 	
 func _on_scene_changed(scene_root: Node) -> void:
 	for x : EditorPlugin in _plugins:
