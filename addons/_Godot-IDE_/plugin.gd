@@ -13,7 +13,34 @@ var _enable_plugins : Dictionary = {}
 
 func _ready() -> void:
 	debug = false
+	
+	main_screen_changed.connect(_on_main_screen_changed)
+	resource_saved.connect(_on_resource_saved)
+	scene_closed.connect(_on_scene_closed)
+	scene_changed.connect(_on_scene_changed)
+	scene_saved.connect(_on_scene_saved)
+	
 	_initialize()
+	
+func _on_resource_saved(resource : Resource) -> void:
+	for x : EditorPlugin in _plugins:
+		x.resource_saved.emit(resource)
+	
+func _on_scene_closed(scene_root: Node) -> void:
+	for x : EditorPlugin in _plugins:
+		x.scene_closed.emit(scene_root)
+	
+func _on_scene_changed(scene_root: Node) -> void:
+	for x : EditorPlugin in _plugins:
+		x.scene_changed.emit(scene_root)
+	
+func _on_scene_saved(filepath: String) -> void:
+	for x : EditorPlugin in _plugins:
+		x.scene_saved.emit(filepath)
+	
+func _on_main_screen_changed(screen_name : String) -> void:
+	for x : EditorPlugin in _plugins:
+		x.main_screen_changed.emit(screen_name)
 	
 func _enter_tree() -> void:	
 	set_process(true)
@@ -126,6 +153,7 @@ func _exit_tree() -> void:
 		if is_instance_valid(x):
 			if !x.is_queued_for_deletion():
 				x.queue_free()
+		
 	_plugins.clear()
 	_init_config(0)
 	
@@ -133,8 +161,21 @@ func _exit_tree() -> void:
 	if editor:
 		if editor.settings_changed.is_connected(_on_changes):
 			editor.settings_changed.disconnect(_on_changes)
+			
+	if is_instance_valid(IDE._menu):
+		IDE._menu.queue_free()
+		IDE._menu = null
 	
 func _load_plugins(path : String) -> void:
+	if !is_instance_valid(IDE._menu):
+		var file : MenuButton = get_file_menu_button()
+		if is_instance_valid(file):
+			var root : Node = file.get_parent()
+			IDE._menu = MenuButton.new()
+			IDE._menu.text = "Godot-IDE"
+			root.add_child(_menu)
+			root.move_child(_menu, mini(1, root.get_child_count() - 1))
+			
 	if !DirAccess.dir_exists_absolute(path):
 		path = path.get_base_dir().get_file()
 		if EditorInterface.is_plugin_enabled(path):

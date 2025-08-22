@@ -481,7 +481,7 @@ func _on_change(screen_name : String) -> void:
 	if screen_name == "Script":
 		if is_instance_valid(_builder):
 			_builder.update_rect.call_deferred()
-	
+			_builder.grab_focus.call_deferred()
 
 func _enter_tree() -> void:
 	_setup(1)

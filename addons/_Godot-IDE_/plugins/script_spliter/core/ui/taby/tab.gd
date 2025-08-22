@@ -70,7 +70,7 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 				if root:
 					root.add_child(line)
 			if line:
-				var rct : Rect2 = get_global_rect()
+				var rct : Rect2 = owner.get_global_rect()
 				line.update(self)
 				if at_position.x <= size.x * 0.5:
 					line.global_position = rct.position

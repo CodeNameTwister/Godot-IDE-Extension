@@ -20,8 +20,6 @@ var _id_switch_panels : int = -1
 var _c_input_show_hide : InputEventKey = null
 var _c_input_switch_panels : InputEventKey = null
 
-var _menu : MenuButton = null
-
 func _init() -> void:
 	var input0 : Variant = IDE.get_config("fancy_filters_script", "show_hide")
 	var input1 : Variant = IDE.get_config("fancy_filters_script", "switch_panels")
@@ -94,33 +92,26 @@ func _enter_tree() -> void:
 		if _container.get_index() != expected_index:
 			toggle_position()
 			
-		_menu = MenuButton.new()
-		_menu.text = "Godot-IDE"
-		_menu.visible = false
+		var menu : MenuButton = IDE.get_menu_button()		
+		if is_instance_valid(menu):			
+			var pop : PopupMenu = menu.get_popup()
+			var total : int = pop.item_count
+			var msg : String = _get_traduce("Show/Hide Scripts and Filters Panel")
 		
-		var file : MenuButton = IDE.get_file_menu_button()
-		var root : Node = file.get_parent()
-		
-		root.add_child(_menu)
-		
-		var pop : PopupMenu = _menu.get_popup()
-		var total : int = pop.item_count
-		var msg : String = _get_traduce("Show/Hide Scripts and Filters Panel")
-		
-		pop.index_pressed.connect(_on_pop_pressed)
-		
-		_add_input(pop, msg, _c_input_show_hide)
-		_id_show_hide_tool = total
-		
-		total = pop.item_count
-		msg = _get_traduce("Toggle Script Info/Script List Panel")
-		_add_input(pop, msg, _c_input_switch_panels)
-		_id_switch_panels = total
+			pop.index_pressed.connect(_on_pop_pressed)
 			
-		total = pop.item_count
-		msg = _get_traduce("Toggle Position Script and Filters Panel")
-		pop.add_item(msg, -1) #, KEY_MASK_CTRL | KEY_NOT_DEFINED_YET
-		_id_toggle_position_tool =total
+			_add_input(pop, msg, _c_input_show_hide)
+			_id_show_hide_tool = total
+			
+			total = pop.item_count
+			msg = _get_traduce("Toggle Script Info/Script List Panel")
+			_add_input(pop, msg, _c_input_switch_panels)
+			_id_switch_panels = total
+				
+			total = pop.item_count
+			msg = _get_traduce("Toggle Position Script and Filters Panel")
+			pop.add_item(msg, -1) #, KEY_MASK_CTRL | KEY_NOT_DEFINED_YET
+			_id_toggle_position_tool =total
 		
 func _add_input(pop : PopupMenu, msg : String, input : InputEventKey) -> void:
 	if null != input:
@@ -143,10 +134,6 @@ func _ready() -> void:
 		if !is_instance_valid(scene):
 			return
 		await scene.process_frame
-	if is_instance_valid(_menu):
-		var p : Node = _menu.get_parent()
-		p.move_child(_menu, 0)
-		_menu.visible = true
 		
 func _input(event: InputEvent) -> void:
 	if event.is_pressed() and event.is_match(_c_input_switch_panels):
@@ -172,9 +159,6 @@ func toggle_position() -> void:
 func _exit_tree() -> void:
 	var container : VSplitContainer = IDE.get_script_list_container()
 	
-	if is_instance_valid(_menu):
-		_menu.queue_free()
-		_menu = null
 	
 	if is_instance_valid(_container) and _container.is_inside_tree():
 		IDE.set_config("fancy_filter_script", "script_list_and_filter_to_right", _container.get_index() > 0)
@@ -197,4 +181,5 @@ func _exit_tree() -> void:
 				parent.move_child(container, 0)
 				parent.split_offset = -size
 				parent.clamp_split_offset.call_deferred()
-				
+			
+	#TODO: Remove new menu buttons	

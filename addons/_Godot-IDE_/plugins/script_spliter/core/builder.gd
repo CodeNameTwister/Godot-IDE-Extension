@@ -1165,6 +1165,18 @@ class Mickeytools extends Object:
 			if _helper.add_last_script_used.is_valid():
 				_helper.add_last_script_used(_src)
 
+func grab_focus() -> void:
+	var sc : ScriptEditor = EditorInterface.get_script_editor()
+	if is_instance_valid(sc):
+		var ce : ScriptEditorBase = sc.get_current_editor()
+		if is_instance_valid(ce):
+			var control : Control = ce.get_base_editor()
+			for x : Mickeytools in _code_editors:
+				var mcontrol : Control = x.get_control()
+				if mcontrol == control or mcontrol.find_child(control.name, true, false) != null:
+					x.grab_focus(true)
+					return
+
 func control_reparent(_index : int, _control : Variant, parent : Variant, _parent : Variant) -> void:
 	if !is_instance_valid(_control):
 		return

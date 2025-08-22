@@ -19,6 +19,8 @@ static var debug : bool = true
 static var PRIVATE_METHODS : String = "__"
 static var VIRTUAL_METHODS : String = "_"
 
+static var _menu : MenuButton = null
+
 #region DEV_API
 ## Get current editor container for edit/view scripts.
 static func get_script_editor_container() -> TabContainer:
@@ -148,6 +150,10 @@ static func get_script_properties_list(script : Script, full : bool = true, chec
 		return _generate_native(script.get_instance_base_type(), data, data.size()-1)
 	else:
 		return _generate(script)
+		
+## Get editor menu of godot-ide-extension from editor container.
+static func get_menu_button() -> MenuButton:
+	return _menu
 #endregion
 
 
