@@ -41,19 +41,31 @@ Each feature is described more fully in it's own repository, as well as down bel
 * GD Override Functions:
 	https://github.com/CodeNameTwister/GD-Override-Functions
 * Refactor Tool Symbol Navigator:
-	https://github.com/kyrosle/Godot-IDE/tree/kyros/add_find_reference_and_rename
+	https://github.com/CodeNameTwister/Godot-IDE/tree/main/addons/_Godot-IDE_/plugins/symbol_navigator
+	*  Find Symbol References (`Shift + F12`)
+	  - **Instant Search**: Select a symbol and press `Shift + F12` to find all its usages.
+	  - **Interactive Panel**: View results grouped by file in the bottom panel.
+	  - **Code Preview**: Click any reference to see a preview of the code context.
+	  - **Quick Navigation**: Double-click a reference to jump directly to the line.
+	  - **Advanced Filtering**: Customize searches with case sensitivity, multiple match modes, and directory exclusion.
+	* Rename Symbol (`F2`)
+	  - **Smart Refactoring**: Select a symbol and press `F2` to open the rename dialog.
+	  - **Interactive Preview**: Review all potential changes before renaming. Use checkboxes to include or exclude specific references.
+	  - **Scope Control**: Choose to rename within the current file or the entire project.
+	  - **Seamless Updates**: Modifies open files directly without annoying "reload" popups, preserving your scroll and cursor position.
+	  - **Safe & Verified**: Automatically verifies that changes were applied correctly after the operation.
 * The following plugins are integrated with this addon, they are not published as a separate plugin.
-	* Fancy Filters Script: 
-	* Fancy Search Files
-	* Fancy Search Class
- 	* Macro-N
+  * Fancy Filters Script: 
+  * Fancy Search Files
+  * Fancy Search Class
+  * Macro-N
 
 * [Documentation](https://github.com/CodeNameTwister/Godot-IDE/blob/main/DOCUMENTATION.md)
-  
+
 >[!TIP]
 >* If you delete any plugin in the plugins folder, this addon will still work, so feel free to delete anything you don't want.
 >* If there are more plugin contributors in the future, I will add a panel to enable and disable plugins at your discretion.
-  
+
 
 ## How to use
 
@@ -88,13 +100,19 @@ Each feature is described more fully in it's own repository, as well as down bel
  	* Show all saved Macros with `Alt + END`shortcut.
 
 * Refactor Tool Symbol Navigator:
-	* When you have a symbol selected in the editor, use `F12` for open the panel for find and view symbol references.
-	* When you have a symbol selected in the editor, use `F2` for open the panel for find and rename symbol references.
-
+	* Find References
+	  1. In the script editor, place your cursor on or select a symbol (e.g., a function or variable name).
+	  2. Press **`Shift + F12`**.
+	  3. The "Find References" panel will open at the bottom with the results.
+	* Rename Symbol
+	  1. In the script editor, select a symbol you want to rename.
+	  2. Press **`F2`**.
+	  3. In the dialog, enter the new name, review the previewed changes, and click **Rename**.
+	
 * Editor Settings
 	* In Editor Settings (with Advanced option enabled) you can change any option of this plugin in `plugin/godot_ide` or neighbors plugins of Godot-IDE.
  	* All plugins have their configuration parameters defined in that section, even for inputs.
- 
+
 ## How to contribute
 
 ### Submit issues
