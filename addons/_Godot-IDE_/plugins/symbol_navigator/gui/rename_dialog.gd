@@ -22,7 +22,6 @@ extends Window
 @export var new_name_edit : LineEdit = null
 @export var scope_option : OptionButton = null
 @export var preview_tree : Tree = null
-@export var preview_button : Button = null
 @export var rename_button : Button = null
 @export var cancel_button : Button = null
 @export var select_all_button : Button = null
@@ -56,7 +55,6 @@ func _find_ui_components() -> void:
 	new_name_edit = find_child("NewNameEdit") as LineEdit
 	scope_option = find_child("ScopeOption") as OptionButton
 	preview_tree = find_child("PreviewTree") as Tree
-	preview_button = find_child("PreviewButton") as Button
 	rename_button = find_child("RenameButton") as Button
 	cancel_button = find_child("CancelButton") as Button
 	select_all_button = find_child("SelectAllButton") as Button
@@ -73,8 +71,6 @@ func _validate_ui_components() -> void:
 		missing_components.append("ScopeOption")
 	if not preview_tree:
 		missing_components.append("PreviewTree")
-	if not preview_button:
-		missing_components.append("PreviewButton")
 	if not rename_button:
 		missing_components.append("RenameButton")
 	if not cancel_button:
@@ -93,9 +89,6 @@ func _connect_signals() -> void:
 	"""Connect button signals"""
 	var connected_count = 0
 	
-	if preview_button:
-		preview_button.pressed.connect(_on_preview_pressed)
-		connected_count += 1
 	if rename_button:
 		rename_button.pressed.connect(_on_rename_pressed)
 		connected_count += 1
@@ -117,6 +110,9 @@ func _connect_signals() -> void:
 	if preview_tree:
 		preview_tree.item_edited.connect(_on_tree_item_edited)
 		connected_count += 1
+	
+	if connected_count == 0:
+		push_warning("[Rename Dialog] No signals connected - UI components may not be properly initialized")
 	
 
 
@@ -151,7 +147,6 @@ func _are_ui_components_ready() -> bool:
 	return (new_name_edit != null and 
 			scope_option != null and 
 			preview_tree != null and 
-			preview_button != null and 
 			rename_button != null and 
 			cancel_button != null)
 
@@ -162,7 +157,6 @@ func _deferred_set_symbol(symbol: String) -> void:
 		print("[Rename Dialog] new_name_edit: ", new_name_edit)
 		print("[Rename Dialog] scope_option: ", scope_option) 
 		print("[Rename Dialog] preview_tree: ", preview_tree)
-		print("[Rename Dialog] preview_button: ", preview_button)
 		print("[Rename Dialog] rename_button: ", rename_button)
 		print("[Rename Dialog] cancel_button: ", cancel_button)
 		return
@@ -202,9 +196,16 @@ func _auto_preview() -> void:
 	if _rename_results.size() == 0:
 		print("[Rename Symbol] No occurrences found for symbol: '%s'" % _current_symbol)
 
-func _on_preview_pressed() -> void:
-	"""Preview all locations where the symbol will be renamed"""
-	if not new_name_edit:
+
+func _on_rename_pressed() -> void:
+	"""Perform the actual rename operation"""
+	# Comprehensive pre-flight checks
+	if _rename_results.is_empty():
+		_show_error("No preview results. Please click Preview first.")
+		return
+	
+	if not new_name_edit or not is_instance_valid(new_name_edit):
+		_show_error("Name input field not available")
 		return
 		
 	var new_name = new_name_edit.text.strip_edges()
@@ -216,30 +217,21 @@ func _on_preview_pressed() -> void:
 		_show_error("New name is the same as current symbol")
 		return
 	
-	# Clear previous results
-	_rename_results.clear()
-	
-	# Search for all occurrences
-	_search_symbol_occurrences()
-	
-	# Display results in tree
-	_display_preview_results()
-
-func _on_rename_pressed() -> void:
-	"""Perform the actual rename operation"""
-	if _rename_results.is_empty():
-		_show_error("No preview results. Please click Preview first.")
+	if _selected_items.is_empty():
+		_show_error("No items selected for rename")
 		return
 	
-	if not new_name_edit:
-		return
-		
-	var new_name = new_name_edit.text.strip_edges()
-	if new_name.is_empty():
-		return
+	# Disable the rename button to prevent double-clicks
+	if rename_button:
+		rename_button.disabled = true
 	
-	# Perform batch rename
+	# Perform batch rename with error handling
 	var success = _perform_batch_rename(new_name)
+	if not success:
+		_show_error("Rename operation failed")
+		if rename_button:
+			rename_button.disabled = false
+		return
 	
 	if success:
 		# Force Godot to refresh the file system
@@ -261,6 +253,10 @@ func _on_rename_pressed() -> void:
 	else:
 		# Complete operation failure
 		_show_error("Rename operation failed. Some files may have been modified.")
+	
+	# Re-enable the rename button
+	if rename_button:
+		rename_button.disabled = false
 
 func _on_cancel_pressed() -> void:
 	"""Cancel the rename operation"""
@@ -303,10 +299,6 @@ func _input(event: InputEvent) -> void:
 			KEY_ESCAPE:
 				# Escape key cancels
 				_on_cancel_pressed()
-				get_viewport().set_input_as_handled()
-			KEY_F5:
-				# F5 triggers manual preview
-				_on_preview_pressed()
 				get_viewport().set_input_as_handled()
 			KEY_A:
 				# Ctrl+A for select all
@@ -545,10 +537,19 @@ func _search_in_file(file_path: String) -> void:
 	"""Search for symbol occurrences in a single file"""
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if not file:
+		push_warning("[Rename Dialog] Cannot open file: %s" % file_path)
+		return
+	
+	# Safety check for file size to prevent memory issues
+	var file_size = file.get_length()
+	if file_size > 10 * 1024 * 1024:  # 10MB limit
+		push_warning("[Rename Dialog] Skipping large file: %s (%d bytes)" % [file_path, file_size])
+		file.close()
 		return
 	
 	var line_number = 1
-	while not file.eof_reached():
+	var max_lines = 10000  # Prevent infinite loops
+	while not file.eof_reached() and line_number <= max_lines:
 		var line = file.get_line()
 		var occurrences = _find_symbol_in_line(line, _current_symbol)
 		
@@ -566,6 +567,9 @@ func _search_in_file(file_path: String) -> void:
 		line_number += 1
 	
 	file.close()
+	
+	if line_number > max_lines:
+		push_warning("[Rename Dialog] File too long, search truncated: %s" % file_path)
 
 func _find_symbol_in_line(line: String, symbol: String) -> Array:
 	"""Find all occurrences of symbol in a line, ensuring word boundaries"""
@@ -832,9 +836,14 @@ func _refresh_file_system() -> void:
 	for i in _selected_items:
 		if i >= 0 and i < _rename_results.size():
 			var result = _rename_results[i]
-			var file_path = result["file_path"]
-			if file_path not in modified_files:
-				modified_files.append(file_path)
+			if result.has("file_path"):
+				var file_path = result["file_path"]
+				if file_path not in modified_files:
+					modified_files.append(file_path)
+	
+	# Limit the number of files to prevent system overload
+	if modified_files.size() > 100:
+		push_warning("[Rename Dialog] Large number of files to refresh: %d" % modified_files.size())
 	
 	# Force reload with direct source replacement
 	_force_reload(modified_files)
@@ -846,9 +855,11 @@ func _replace_src(path: String, new_text: String) -> void:
 	
 	# Check API availability
 	if not is_instance_valid(item_list) or not is_instance_valid(editor_container):
+		push_warning("[Rename Dialog] IDE components not available for source replacement")
 		return
 	
 	if item_list.item_count != editor_container.get_tab_count():
+		push_warning("[Rename Dialog] Script list and editor container count mismatch")
 		return
 	
 	# Find and update open file editors

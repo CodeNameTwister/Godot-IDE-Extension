@@ -2,17 +2,15 @@
 
 [ext_resource type="Script" uid="uid://b26eh3hs86gi4" path="res://addons/_Godot-IDE_/plugins/symbol_navigator/gui/rename_dialog.gd" id="1_rqbkt"]
 
-[node name="Window" type="Window" node_paths=PackedStringArray("new_name_edit", "scope_option", "preview_tree", "preview_button", "rename_button", "cancel_button", "select_all_button", "unselect_all_button", "selection_status")]
+[node name="Window" type="Window" node_paths=PackedStringArray("new_name_edit", "scope_option", "preview_tree", "rename_button", "cancel_button", "select_all_button", "unselect_all_button", "selection_status")]
 title = "Rename Symbol"
 position = Vector2i(0, 36)
 size = Vector2i(700, 500)
-visible = false
 exclusive = true
 script = ExtResource("1_rqbkt")
 new_name_edit = NodePath("MarginContainer/MainContainer/HeaderContainer/NewNameEdit")
 scope_option = NodePath("MarginContainer/MainContainer/HeaderContainer/ScopeOption")
 preview_tree = NodePath("MarginContainer/MainContainer/PreviewContainer/PreviewTree")
-preview_button = NodePath("MarginContainer/MainContainer/HBoxContainer/PreviewButton")
 rename_button = NodePath("MarginContainer/MainContainer/HBoxContainer/RenameButton")
 cancel_button = NodePath("MarginContainer/MainContainer/HBoxContainer/CancelButton")
 select_all_button = NodePath("MarginContainer/MainContainer/SelectionControls/SelectAllButton")
@@ -96,10 +94,6 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 10
 alignment = 2
-
-[node name="PreviewButton" type="Button" parent="MarginContainer/MainContainer/HBoxContainer"]
-layout_mode = 2
-text = "Preview"
 
 [node name="RenameButton" type="Button" parent="MarginContainer/MainContainer/HBoxContainer"]
 layout_mode = 2
