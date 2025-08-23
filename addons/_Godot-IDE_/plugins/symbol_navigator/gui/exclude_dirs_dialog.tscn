@@ -1,0 +1,100 @@
+[gd_scene load_steps=2 format=3 uid="uid://drnd7lnoqdl7n"]
+
+[ext_resource type="Script" uid="uid://cpsjg2ybiew8s" path="res://addons/_Godot-IDE_/plugins/symbol_navigator/gui/exclude_dirs_dialog.gd" id="1_exclude_script"]
+
+[node name="ExcludeDirsDialog" type="Window" node_paths=PackedStringArray("header_label", "directories_edit", "preset_container", "save_button", "cancel_button", "validation_label")]
+title = "Configure Excluded Directories"
+position = Vector2i(1470, 742)
+size = Vector2i(900, 675)
+exclusive = true
+script = ExtResource("1_exclude_script")
+header_label = NodePath("MarginContainer/MainContainer/HeaderLabel")
+directories_edit = NodePath("MarginContainer/MainContainer/DirectoriesEdit")
+preset_container = NodePath("MarginContainer/MainContainer/PresetContainer")
+save_button = NodePath("MarginContainer/MainContainer/ButtonContainer/SaveButton")
+cancel_button = NodePath("MarginContainer/MainContainer/ButtonContainer/CancelButton")
+validation_label = NodePath("MarginContainer/MainContainer/ValidationLabel")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="MainContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderLabel" type="Label" parent="MarginContainer/MainContainer"]
+layout_mode = 2
+text = "Enter directory names to exclude from search (one per line):"
+autowrap_mode = 3
+
+[node name="DirectoriesEdit" type="TextEdit" parent="MarginContainer/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Example:
+.godot
+.git
+.import
+exports
+.mono"
+wrap_mode = 1
+
+[node name="ValidationLabel" type="Label" parent="MarginContainer/MainContainer"]
+layout_mode = 2
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="PresetContainer" type="VBoxContainer" parent="MarginContainer/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="PresetLabel" type="Label" parent="MarginContainer/MainContainer/PresetContainer"]
+layout_mode = 2
+text = "Quick Add Common Directories:"
+
+[node name="PresetButtonsContainer" type="HBoxContainer" parent="MarginContainer/MainContainer/PresetContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="GodotButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+layout_mode = 2
+text = ".godot"
+
+[node name="GitButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+layout_mode = 2
+text = ".git"
+
+[node name="ImportButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+layout_mode = 2
+text = ".import"
+
+[node name="ExportsButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+layout_mode = 2
+text = "exports"
+
+[node name="MonoButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+layout_mode = 2
+text = ".mono"
+
+[node name="ButtonContainer" type="HBoxContainer" parent="MarginContainer/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="SaveButton" type="Button" parent="MarginContainer/MainContainer/ButtonContainer"]
+layout_mode = 2
+text = "Save"
+
+[node name="CancelButton" type="Button" parent="MarginContainer/MainContainer/ButtonContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]

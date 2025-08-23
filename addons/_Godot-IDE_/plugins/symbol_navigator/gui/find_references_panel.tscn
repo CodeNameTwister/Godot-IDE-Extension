@@ -19,7 +19,7 @@ code_header = NodePath("MainContainer/MainContent/RightPanel/CodeHeader")
 code_display = NodePath("MainContainer/MainContent/RightPanel/CodeDisplay")
 case_sensitive_check = NodePath("MainContainer/SearchSection/CaseSensitiveCheck")
 match_mode_option = NodePath("MainContainer/SearchSection/MatchModeOption")
-exclude_dirs_button = NodePath("MainContainer/SearchSection/SearchButton")
+exclude_dirs_button = NodePath("MainContainer/SearchSection/ExcludeDirsButton")
 highlight_style_option = NodePath("MainContainer/SearchSection/HighlightStyleOption")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
@@ -53,6 +53,11 @@ select_all_on_focus = true
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "Find"
+
+[node name="ExcludeDirsButton" type="Button" parent="MainContainer/SearchSection"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Exclude Dirs"
 
 [node name="CaseSensitiveCheck" type="CheckBox" parent="MainContainer/SearchSection"]
 layout_mode = 2

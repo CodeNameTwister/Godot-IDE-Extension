@@ -5,7 +5,7 @@
 [node name="Window" type="Window" node_paths=PackedStringArray("new_name_edit", "scope_option", "preview_tree", "rename_button", "cancel_button", "select_all_button", "unselect_all_button", "selection_status")]
 title = "Rename Symbol"
 position = Vector2i(0, 36)
-size = Vector2i(700, 500)
+size = Vector2i(800, 600)
 exclusive = true
 script = ExtResource("1_rqbkt")
 new_name_edit = NodePath("MarginContainer/MainContainer/HeaderContainer/NewNameEdit")
