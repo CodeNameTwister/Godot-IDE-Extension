@@ -16,6 +16,7 @@ extends Control
 @export var case_sensitive_check : CheckBox = null
 @export var match_mode_option : OptionButton = null
 @export var exclude_dirs_button : Button = null
+@export var highlight_style_option : OptionButton = null
 
 enum MatchMode {
 	WORD_BOUNDARY,    # Word boundary matching (default)
@@ -30,6 +31,9 @@ var _search_results : Array[Dictionary] = []
 var _case_sensitive : bool = false
 var _match_mode : MatchMode = MatchMode.WORD_BOUNDARY
 var _excluded_directories : Array[String] = []
+var _highlight_style : String = "dots"
+var _highlight_prefix : String = "·"
+var _highlight_suffix : String = "·"
 
 func _ready() -> void:
 	# Initialize components and connections
@@ -60,6 +64,9 @@ func _ready() -> void:
 		_setup_match_mode_options()
 	if exclude_dirs_button:
 		exclude_dirs_button.pressed.connect(_on_exclude_dirs_pressed)
+	if highlight_style_option:
+		highlight_style_option.item_selected.connect(_on_highlight_style_changed)
+		_setup_highlight_style_options()
 	
 	# Configure tree columns
 	if results_tree:
@@ -97,6 +104,13 @@ func _load_configuration() -> void:
 	var saved_excluded_dirs = IDE.get_config("symbol_navigator", "excluded_directories")
 	if null != saved_excluded_dirs:
 		_excluded_directories = saved_excluded_dirs
+	
+	# Load highlight style setting
+	var saved_highlight_style = IDE.get_config("symbol_navigator", "highlight_style")
+	_highlight_style = saved_highlight_style if saved_highlight_style else "dots"
+	_update_highlight_markers()
+	if highlight_style_option:
+		highlight_style_option.select(_get_style_index(_highlight_style))
 
 func _ensure_components_initialized() -> void:
 	"""Ensure all exported components are properly initialized"""
@@ -120,6 +134,8 @@ func _ensure_components_initialized() -> void:
 		match_mode_option = _find_component_robust("MatchModeOption", OptionButton)
 	if not exclude_dirs_button:
 		exclude_dirs_button = _find_component_robust("ExcludeDirsButton", Button)
+	if not highlight_style_option:
+		highlight_style_option = _find_component_robust("HighlightStyleOption", OptionButton)
 	
 	# Only log if critical components are missing
 	var missing_components = []
@@ -213,6 +229,8 @@ func _get_expected_paths(component_name: String) -> Array[String]:
 			paths.append("MainContainer/SearchSection/MatchModeOption")
 		"ExcludeDirsButton":
 			paths.append("MainContainer/SearchSection/ExcludeDirsButton")
+		"HighlightStyleOption":
+			paths.append("MainContainer/SearchSection/HighlightStyleOption")
 	
 	return paths
 
@@ -301,6 +319,48 @@ func _on_match_mode_changed(index: int) -> void:
 	if not _current_symbol.is_empty():
 		_perform_search()
 
+func _on_highlight_style_changed(index: int) -> void:
+	"""Handle highlight style option change"""
+	var style_names = ["dots", "brackets", "arrows", "quotes", "squares", "circles"]
+	_highlight_style = style_names[index]
+	_update_highlight_markers()
+	# Save setting
+	IDE.set_config("symbol_navigator", "highlight_style", _highlight_style)
+	# Automatically re-search if we have a current symbol
+	if not _current_symbol.is_empty():
+		_perform_search()
+
+func _update_highlight_markers() -> void:
+	"""Update highlight prefix and suffix based on current style"""
+	match _highlight_style:
+		"dots":
+			_highlight_prefix = "·"
+			_highlight_suffix = "·"
+		"brackets":
+			_highlight_prefix = "("
+			_highlight_suffix = ")"
+		"arrows":
+			_highlight_prefix = "→"
+			_highlight_suffix = "←"
+		"quotes":
+			_highlight_prefix = "「"
+			_highlight_suffix = "」"
+		"squares":
+			_highlight_prefix = "▪"
+			_highlight_suffix = "▪"
+		"circles":
+			_highlight_prefix = "○"
+			_highlight_suffix = "○"
+		_:
+			_highlight_prefix = "·"
+			_highlight_suffix = "·"
+
+func _get_style_index(style_name: String) -> int:
+	"""Get the index of a style name in the options"""
+	var style_names = ["dots", "brackets", "arrows", "quotes", "squares", "circles"]
+	var index = style_names.find(style_name)
+	return index if index != -1 else 0
+
 func _setup_match_mode_options() -> void:
 	if not match_mode_option:
 		return
@@ -312,6 +372,20 @@ func _setup_match_mode_options() -> void:
 	match_mode_option.add_item("Contains")
 	match_mode_option.add_item("Ends With")
 	match_mode_option.selected = _match_mode
+
+func _setup_highlight_style_options() -> void:
+	"""Setup the highlight style option button with available styles"""
+	if not highlight_style_option:
+		return
+	
+	highlight_style_option.clear()
+	highlight_style_option.add_item("Dots (·symbol·)")
+	highlight_style_option.add_item("Brackets ((symbol))")
+	highlight_style_option.add_item("Arrows (→symbol←)")
+	highlight_style_option.add_item("Quotes (「symbol」)")
+	highlight_style_option.add_item("Squares (▪symbol▪)")
+	highlight_style_option.add_item("Circles (○symbol○)")
+	highlight_style_option.selected = _get_style_index(_highlight_style)
 
 func _on_exclude_dirs_pressed() -> void:
 	"""Show dialog to configure excluded directories"""
@@ -650,7 +724,9 @@ func _display_results() -> void:
 			var ref_item = file_item.create_child()
 			var line_content = result.get("line_content", "")
 			var truncated_content = _truncate_line_content(line_content, 80)
-			ref_item.set_text(0, "  → Line %d: %s" % [result["line_number"], truncated_content])
+			# Apply symbol highlighting to the tree item text using simple text markers
+			var highlighted_content = _highlight_symbol_with_text_markers(truncated_content, _current_symbol)
+			ref_item.set_text(0, "  → Line %d: %s" % [result["line_number"], highlighted_content])
 			ref_item.set_text(1, str(result["line_number"]))
 			ref_item.set_metadata(0, result)
 			
@@ -790,6 +866,39 @@ func _truncate_line_content(line: String, max_length: int) -> String:
 	var truncated = line.substr(0, max_length - 3)
 	return truncated + "..."
 
+func _highlight_symbol_with_text_markers(line: String, symbol: String) -> String:
+	"""Highlight symbol in a line of code using simple text markers for Tree display"""
+	if symbol.is_empty():
+		return line
+	
+	# Apply case sensitivity for the display
+	var search_line = line if _case_sensitive else line.to_lower()
+	var search_symbol = symbol if _case_sensitive else symbol.to_lower()
+	
+	# Create regex pattern based on match mode
+	var regex = RegEx.new()
+	var pattern = _get_match_pattern(search_symbol)
+	if regex.compile(pattern) != OK:
+		return line
+	
+	# Apply highlighting using simple text markers
+	var highlighted = line
+	var results = regex.search_all(search_line)
+	
+	# Apply highlights from right to left to preserve positions
+	results.reverse()
+	for result in results:
+		var start_pos = result.get_start()
+		var end_pos = result.get_end()
+		var match_text = line.substr(start_pos, end_pos - start_pos)
+		
+		# Create highlighted version with configurable text markers
+		var highlight = "%s%s%s" % [_highlight_prefix, match_text, _highlight_suffix]
+		
+		highlighted = highlighted.substr(0, start_pos) + highlight + highlighted.substr(end_pos)
+	
+	return highlighted
+
 func _highlight_symbol_with_bbcode(line: String, symbol: String) -> String:
 	"""Highlight symbol in a line of code using BBCode formatting"""
 	if symbol.is_empty():
@@ -833,7 +942,7 @@ func _highlight_symbol_in_line(line: String, symbol: String) -> String:
 	var pattern = "\\b" + _escape_regex_string(symbol) + "\\b"
 	regex.compile(pattern)
 	
-	var highlighted = regex.sub(line, "►%s◄" % symbol, true)
+	var highlighted = regex.sub(line, "%s%s%s" % [_highlight_prefix, symbol, _highlight_suffix], true)
 	return highlighted
 
 func _on_item_activated() -> void:
