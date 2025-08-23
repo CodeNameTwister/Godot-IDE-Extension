@@ -421,7 +421,19 @@ func _show_exclude_dirs_dialog() -> void:
 	button_container.add_child(cancel_button)
 	
 	# Add dialog to scene tree
-	get_tree().current_scene.add_child(dialog)
+	var current_scene : Node = get_tree().current_scene
+	
+	if current_scene == null:
+		current_scene = Engine.get_main_loop().root
+	
+	if is_instance_valid(current_scene):
+		current_scene.add_child(dialog)
+	else:
+		if IDE.debug:
+			push_error("Can not get current scene for show symbol dialog")
+		dialog.queue_free()
+		return
+	
 	
 	# Connect signals
 	save_button.pressed.connect(func():
