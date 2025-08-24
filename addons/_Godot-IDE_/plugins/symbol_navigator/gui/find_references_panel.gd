@@ -392,7 +392,55 @@ func _on_exclude_dirs_pressed() -> void:
 	_show_exclude_dirs_dialog()
 
 func _show_exclude_dirs_dialog() -> void:
-	"""Show a simple dialog to configure excluded directories"""
+	"""Show dialog to configure excluded directories using dedicated scene"""
+	# Load the exclude directories dialog scene
+	var dialog_scene = load("res://addons/_Godot-IDE_/plugins/symbol_navigator/gui/exclude_dirs_dialog.tscn")
+	if not dialog_scene:
+		print("Error: Cannot load exclude_dirs_dialog.tscn")
+		_show_exclude_dirs_dialog_fallback()
+		return
+	
+	# Instantiate the dialog
+	var dialog = dialog_scene.instantiate()
+	if not dialog:
+		print("Error: Cannot instantiate exclude_dirs_dialog")
+		_show_exclude_dirs_dialog_fallback()
+		return
+	
+	# Set current excluded directories
+	dialog.set_excluded_directories(_excluded_directories)
+	
+	# Connect the save signal
+	dialog.directories_saved.connect(_on_directories_saved)
+	
+	# Add to editor interface (better than current_scene for editor plugins)
+	var editor_control = EditorInterface.get_base_control()
+	if editor_control:
+		editor_control.add_child(dialog)
+	else:
+		# Fallback to current scene
+		get_tree().current_scene.add_child(dialog)
+	
+	# Show the dialog
+	dialog.popup_centered()
+
+func _on_directories_saved(directories: Array[String]) -> void:
+	"""Handle directories saved from the exclude dialog"""
+	_excluded_directories = directories.duplicate()
+	
+	# Save to configuration
+	IDE.set_config("symbol_navigator", "excluded_directories", _excluded_directories)
+	
+	# Update status
+	var count = _excluded_directories.size()
+	_update_status("Updated excluded directories (%d configured)" % count)
+	
+	# Re-search if we have a current symbol
+	if not _current_symbol.is_empty():
+		_perform_search()
+
+func _show_exclude_dirs_dialog_fallback() -> void:
+	"""Fallback dialog implementation for when scene loading fails"""
 	var dialog = AcceptDialog.new()
 	dialog.title = "Configure Excluded Directories"
 	dialog.size = Vector2i(400, 300)
@@ -420,24 +468,16 @@ func _show_exclude_dirs_dialog() -> void:
 	cancel_button.text = "Cancel"
 	button_container.add_child(cancel_button)
 	
-	# Add dialog to scene tree
-	var current_scene : Node = get_tree().current_scene
-	
-	if current_scene == null:
-		current_scene = Engine.get_main_loop().root
-	
-	if is_instance_valid(current_scene):
-		current_scene.add_child(dialog)
+	# Add to editor interface (improved for editor plugins)
+	var editor_control = EditorInterface.get_base_control()
+	if editor_control:
+		editor_control.add_child(dialog)
 	else:
-		if IDE.debug:
-			push_error("Can not get current scene for show symbol dialog")
-		dialog.queue_free()
-		return
-	
+		get_tree().current_scene.add_child(dialog)
 	
 	# Connect signals
 	save_button.pressed.connect(func():
-		_save_excluded_directories(text_edit.text)
+		_save_excluded_directories_from_fallback(text_edit.text)
 		dialog.queue_free()
 	)
 	cancel_button.pressed.connect(func():
@@ -446,24 +486,17 @@ func _show_exclude_dirs_dialog() -> void:
 	
 	dialog.popup_centered()
 
-func _save_excluded_directories(text: String) -> void:
-	"""Save excluded directories from text input"""
-	_excluded_directories.clear()
+func _save_excluded_directories_from_fallback(text: String) -> void:
+	"""Save excluded directories from fallback dialog"""
+	var directories: Array[String] = []
 	var lines = text.split("\n")
 	for line in lines:
 		var trimmed = line.strip_edges()
 		if not trimmed.is_empty():
-			_excluded_directories.append(trimmed)
+			directories.append(trimmed)
 	
-	# Save to configuration
-	IDE.set_config("symbol_navigator", "excluded_directories", _excluded_directories)
-	
-	# Update status
-	_update_status("Updated excluded directories")
-	
-	# Re-search if we have a current symbol
-	if not _current_symbol.is_empty():
-		_perform_search()
+	# Use the same handler as the main dialog
+	_on_directories_saved(directories)
 
 func _perform_search() -> void:
 	if _current_symbol.is_empty():

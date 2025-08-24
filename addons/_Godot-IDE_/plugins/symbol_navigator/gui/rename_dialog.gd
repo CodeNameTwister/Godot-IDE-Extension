@@ -49,6 +49,9 @@ func _ready() -> void:
 	
 	# Setup tree
 	_setup_preview_tree()
+	
+	# Setup dialog display
+	_setup_dialog_display()
 
 func _find_ui_components() -> void:
 	"""Find and assign UI components"""
@@ -968,3 +971,57 @@ func _on_close_requested() -> void:
 
 func _on_focus_exited() -> void:
 	_on_cancel_pressed()
+
+
+func _setup_dialog_display() -> void:
+	"""Setup dialog size and position for proper display"""
+	# Get optimal size for dialog
+	var optimal_size = _get_optimal_dialog_size()
+	size = optimal_size
+	
+	# Center the dialog manually
+	_center_dialog()
+
+func _get_optimal_dialog_size() -> Vector2i:
+	"""Calculate optimal dialog size based on content and DPI"""
+	# Base size for rename dialog
+	var base_size = Vector2i(800, 600)
+	
+	# Get screen info for DPI awareness
+	var screen = DisplayServer.screen_get_size()
+	var dpi_scale = DisplayServer.screen_get_scale()
+	
+	# Apply DPI scaling if needed
+	if dpi_scale > 1.0:
+		base_size = Vector2i(
+			int(base_size.x * min(dpi_scale, 1.5)),
+			int(base_size.y * min(dpi_scale, 1.5))
+		)
+	
+	# Ensure minimum size for rename dialog with code preview
+	base_size.x = max(base_size.x, 700)
+	base_size.y = max(base_size.y, 500)
+	
+	# Ensure it fits on screen (leave 100px margin)
+	base_size.x = min(base_size.x, screen.x - 100)
+	base_size.y = min(base_size.y, screen.y - 100)
+	
+	return base_size
+
+func _center_dialog() -> void:
+	"""Manually center the dialog on screen"""
+	var screen_size = DisplayServer.screen_get_size()
+	var dialog_size = size
+	
+	# Calculate centered position
+	var centered_pos = Vector2i(
+		(screen_size.x - dialog_size.x) / 2,
+		(screen_size.y - dialog_size.y) / 2
+	)
+	
+	# Ensure dialog stays on screen
+	centered_pos.x = max(0, centered_pos.x)
+	centered_pos.y = max(0, centered_pos.y)
+	
+	# Set position
+	position = centered_pos
