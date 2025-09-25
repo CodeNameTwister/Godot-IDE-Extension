@@ -74,6 +74,7 @@ func _init_config(init : int) -> void:
 		if file:
 			file.store_string("IDE CONFIG")
 			file.close()
+			
 	if init == 1:
 		if FileAccess.file_exists(cfg_path):
 			var cfg : ConfigFile = ConfigFile.new()
@@ -87,6 +88,8 @@ func _init_config(init : int) -> void:
 		if cfg.save(cfg_path) != OK:
 			push_warning("Can not save plugin changes!")
 		
+	if Engine.get_version_info().minor > 4:
+		_enable_plugins["res://addons/_Godot-IDE_/plugins/script_spliter/plugin.gd"] = false
 	
 #region __PRX__
 func _apply_changes() -> void:
@@ -249,7 +252,6 @@ func _load_plugins(path : String) -> void:
 	
 		
 func _sugar_godot(dir : String, col : String = "blue") -> void:
-	const config_path : String = "res://project.godot"
 	if !ProjectSettings.has_setting("file_customization/folder_colors"):
 		ProjectSettings.set_setting("file_customization/folder_colors", {dir: col})
 	else:
