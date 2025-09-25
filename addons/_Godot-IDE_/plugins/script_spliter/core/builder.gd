@@ -238,6 +238,8 @@ func show_dd(root : Control) -> void:
 		var p : Node = _ddo.get_parent()
 		if p:
 			p.remove_child(_ddo)
+	if _ddo.get_parent() != null:
+		_ddo.get_parent().remove_child(_ddo)
 	dd.add_child(_ddo)
 	_ddo.visible = true
 
@@ -585,7 +587,10 @@ func init_0() -> void:
 
 func _clear() -> void:
 	for z : int in range(_code_editors.size() - 1, -1 , -1):
-		var x : Mickeytools = _code_editors[z]
+		var x : Variant = _code_editors[z]
+		if !is_instance_valid(x):
+			_code_editors.erase(z)
+			continue
 		var dirty : bool = false
 		for e : Node in _editor.get_children():
 			if x.is_equal(e):
@@ -620,7 +625,11 @@ func _clear() -> void:
 				y = y.get_container()
 			for z : Node in y.get_children():
 				var dirty : bool = false
-				for t : Mickeytools in _code_editors:
+				for e : int in range(_code_editors.size() - 1, -1, -1):
+					var t : Variant = _code_editors[e]
+					if !is_instance_valid(t):
+						_code_editors.remove_at(e)
+						continue
 					if t.get_control() == z:
 						dirty = true
 				if !dirty:
@@ -632,6 +641,7 @@ func _clear() -> void:
 						z.queue_free.call_deferred()
 					else:
 						y.remove_child(z)
+
 
 func get_editors() -> Array[Mickeytools]:
 	return _code_editors
@@ -915,7 +925,9 @@ class Mickeytools extends Object:
 
 	func _i_like_coffe() -> void:
 		focus.emit(self)
-		var tab : TabContainer = _root
+		var tab : Variant = _root
+		if !is_instance_valid(tab):
+			return
 
 		var parent : Node = tab.get_parent()
 		if parent and parent.has_method(&"show_splited_container"):
@@ -996,7 +1008,7 @@ class Mickeytools extends Object:
 		_reference = control
 		_control  = null
 		_gui = null
-
+		
 		if control is ScriptEditorBase:
 			_gui = control.get_base_editor()
 
@@ -1012,21 +1024,27 @@ class Mickeytools extends Object:
 							sc.goto_line(line)
 				if !_gui.symbol_lookup.is_connected(_on_symb):
 					_gui.symbol_lookup.connect(_on_symb.bind(_gui))
-			_control = _gui.get_parent()
-			var __parent : Node = _control.get_parent()
-			if __parent is VSplitContainer:
-				_index = _control.get_index()
-				_control = VSplitContainer.new()
-				_parent = __parent
+			
+			if is_instance_valid(_gui):
+				_control = _gui.get_parent()
+			else:
+				_control = control.get_parent()
 				
-				var childs : Array[Node] = __parent.get_children()
-				if __parent.is_inside_tree() and _control.is_inside_tree():
-					for x : Node in childs:
-						x.reparent(_control)
-				else:
-					for x : Node in childs:
-						_parent.remove_child(x)
-						_control.add_child(x)
+			if is_instance_valid(_control):
+				var __parent : Node = _control.get_parent()
+				if __parent is VSplitContainer:
+					_index = _control.get_index()
+					_control = VSplitContainer.new()
+					_parent = __parent
+					
+					var childs : Array[Node] = __parent.get_children()
+					if __parent.is_inside_tree() and _control.is_inside_tree():
+						for x : Node in childs:
+							x.reparent(_control)
+					else:
+						for x : Node in childs:
+							_parent.remove_child(x)
+							_control.add_child(x)
 		else:
 			for x : Node in control.get_children():
 				if x is RichTextLabel:
@@ -1076,6 +1094,8 @@ class Mickeytools extends Object:
 				else:
 					_control.reparent(_root)
 			else:
+				if _control.get_parent() != null:
+					_control.get_parent().remove_child(_control)
 				_root.add_child(_control)
 		if _gui:
 			var gui : Control = _gui
@@ -1178,10 +1198,7 @@ func grab_focus() -> void:
 					return
 
 func control_reparent(_index : int, _control : Variant, parent : Variant, _parent : Variant) -> void:
-	if !is_instance_valid(_control):
-		return
-		
-	if !is_instance_valid(_parent):
+	if !is_node_valid(_control) or !is_node_valid(_parent):
 		return
 	
 	if _parent != _control.get_parent():
@@ -1192,6 +1209,8 @@ func control_reparent(_index : int, _control : Variant, parent : Variant, _paren
 				parent.remove_child(_control)
 				_parent.add_child(_control)
 		else:
+			if _control.get_parent() != null:
+				_control.get_parent().remove_child(_control)
 			_parent.add_child(_control)
 		if _parent.is_inside_tree():
 			if _index > -1 and _index < _parent.get_child_count():
@@ -1239,7 +1258,7 @@ class ReTweener extends RefCounted:
 			_tween = null
 			if is_instance_valid(_ref):
 				_ref.modulate = Color.WHITE
-
+				
 func _set_focus(tool : Mickeytools, txt : String = "", items : PackedStringArray = [], refresh_history : bool = true) -> void:
 	if !is_instance_valid(tool):
 		return
@@ -1273,21 +1292,23 @@ func _set_focus(tool : Mickeytools, txt : String = "", items : PackedStringArray
 		
 	for x : Node in _editor.get_children():
 		if x == ref:
-			if index > -1 and is_instance_valid(_item_list):
+			if index > -1 and is_instance_valid(_item_list) and is_instance_valid(x) and !x.is_queued_for_deletion():
 				if _item_list.item_count > index:
+					_item_list.select(index)
 					_item_list.item_selected.emit(index)
 			break
-
-	if _SPLIT_USE_HIGHLIGHT_SELECTED and _code_editors.size() > 1:
-		var control : Node = _last_tool.get_gui()
-		if is_instance_valid(control) and control.is_inside_tree():
-			if _tweener == null:
-				_tweener = ReTweener.new()
-			_tweener.color = _SPLIT_HIGHLIGHT_COLOR
-			_tweener.create_tween(control)
 	
+	if _SPLIT_USE_HIGHLIGHT_SELECTED and _code_editors.size() > 1:
+		if is_instance_valid(_last_tool):
+			var control : Node = _last_tool.get_gui()
+			if is_instance_valid(control) and !control.is_queued_for_deletion() and control.is_inside_tree():
+				if _tweener == null:
+					_tweener = ReTweener.new()
+				_tweener.color = _SPLIT_HIGHLIGHT_COLOR
+				_tweener.create_tween(control)
+		
 	var gui : Node = _last_tool.get_gui()
-	if is_instance_valid(gui) and should_grab_focus():
+	if is_instance_valid(gui) and !gui.is_queued_for_deletion() and should_grab_focus():
 		if !_MINIMAP_4_UNFOCUS_WINDOW and _OUT_FOCUS_COLORED:
 			for x : Mickeytools in _code_editors:
 				if is_instance_valid(x):
@@ -1815,8 +1836,14 @@ func _create_by_last_used() -> void:
 							EditorInterface.edit_script.call_deferred(res)
 			
 func update() -> void:
+	await Engine.get_main_loop().process_frame
+	
+	if !is_instance_valid(_editor):
+		return
+		
 	if is_queued_for_deletion() or !_plugin.is_inside_tree():
 		return
+		
 	
 	_clear()
 	
@@ -1885,12 +1912,13 @@ func _on_update_tabs() -> void:
 			continue
 		var root : Node = x.get_root()
 		var other_color : Color = _LIST_VISIBLE_OTHERS_COLOR.darkened(0.6)
-		root = root.get_parent()
-		if root is DD:
-			if c_root == root:
-				root.update(_LIST_VISIBLE_SELECTED_COLOR)
-			else:
-				root.update(other_color)
+		if is_instance_valid(root):
+			root = root.get_parent()
+			if root is DD:
+				if c_root == root:
+					root.update(_LIST_VISIBLE_SELECTED_COLOR)
+				else:
+					root.update(other_color)
 	set_deferred(&"_updating_tabs", false)
 	
 func _clear_placeholder() -> void:				
@@ -1936,7 +1964,7 @@ func get_aviable() -> Node:
 	return null
 
 func is_node_valid(root : Node) -> bool:
-	return is_instance_valid(root) and root.is_inside_tree()
+	return is_instance_valid(root) and root.is_inside_tree() and !root.is_queued_for_deletion()
 
 func is_valid_code_editor(root : Node, editor : Node, fallback : bool = true) -> bool:
 	if !is_node_valid(root) or !is_node_valid(editor):
@@ -1950,11 +1978,15 @@ func is_valid_code_editor(root : Node, editor : Node, fallback : bool = true) ->
 	if editor.get_child_count() == 0:
 		if fallback and editor.is_inside_tree():
 			if index > -1 and _item.item_count > index:
+				if _item.get_item_tooltip(index).length() == 0:
+					return false
 				_item.item_selected.emit(index)
 				return is_valid_code_editor(root, editor, false)
 		return false
 		
 	if index > -1 and _item.item_count > index:
+		if _item.get_item_tooltip(index).length() == 0:
+			return false
 		return !_item.get_item_tooltip(index).is_empty()
 	
 	return false
@@ -1976,7 +2008,7 @@ func remove_tool(x : Mickeytools, with_signals : bool = true) -> void:
 	_code_editors.erase(x)
 	x.free() 
 
-func create_code_editor(root : Node, editor : Node) -> Mickeytools:
+func create_code_editor(root : Node, editor : Node) -> Mickeytools:	
 	if root is DD:
 		root = root.get_container()
 	
@@ -1996,7 +2028,7 @@ func create_code_editor(root : Node, editor : Node) -> Mickeytools:
 		for m : Mickeytools in _code_editors:
 			if m.get_reference() == editor:
 				var o : Node = m.get_control()
-				var __root : Control = m.get_root()
+				var __root : Variant = m.get_root()
 				if is_instance_valid(__root) and __root.get_child_count() > 1:
 					if __root and __root.current_tab != o.get_index():
 						tool = m
@@ -2165,6 +2197,8 @@ func build(editor : TabContainer, columns : int = 0, rows : int = 0) -> void:
 		if is_instance_valid(root):
 			root.remove_child(_container)
 		var index : int = _editor.get_index()
+		if _container.get_parent() != null:
+			_container.get_parent().remove_child(_container)
 		_root.add_child(_container)
 		_root.move_child(_container, index)
 
@@ -2339,7 +2373,10 @@ func add_split(control : Node) -> void:
 	if root == null:
 		var broot : Node = _main.make_split_container_item()
 		root = _get_container_edit()
-		broot.add_child(root)
+		if root:
+			if root.get_parent() != null:
+				root.get_parent().remove_child(root)
+			broot.add_child(root)
 		_main.add_child(broot)
 
 	if null == current_unused:
@@ -2384,7 +2421,10 @@ func update_build(columns : int, rows : int) -> void:
 	while _main.get_child_count() < totals:
 		var broot : Node = _main.make_split_container_item()
 		var root : Node = _get_container_edit()
-		broot.add_child(root)
+		if root:
+			if root.get_parent() != null:
+				root.get_parent().remove_child(root)
+			broot.add_child(root)
 		_main.add_child(broot)
 
 	var aviable : Node = get_aviable()

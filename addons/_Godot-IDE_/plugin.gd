@@ -88,9 +88,6 @@ func _init_config(init : int) -> void:
 		if cfg.save(cfg_path) != OK:
 			push_warning("Can not save plugin changes!")
 		
-	if Engine.get_version_info().minor > 4:
-		_enable_plugins["res://addons/_Godot-IDE_/plugins/script_spliter/plugin.gd"] = false
-	
 #region __PRX__
 func _apply_changes() -> void:
 	_callback(&"_apply_changes")
