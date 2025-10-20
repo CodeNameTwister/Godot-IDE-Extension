@@ -75,7 +75,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 ## How to use
 
 * Script Spliter:
-	* Use `Ctrl + num` to change the type of split. (Requires more than 1 script open)
+	* Use the new toolbar on the right to split/merge columns/rows.
   	* You can create/remove a split with the right mouse button context menu. (Depends on the number of opened scripts)
   	* You can also add popout windows from the same context menu
 
