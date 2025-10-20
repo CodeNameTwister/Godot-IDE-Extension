@@ -150,11 +150,19 @@ func toggle_position() -> void:
 				parent.move_child(container, 0)
 				parent.split_offset = -size
 				parent.clamp_split_offset.call_deferred()
+				
+				var settings : EditorSettings = EditorInterface.get_editor_settings()
+				if is_instance_valid(settings):
+					settings.set_setting("plugin/godot_ide/fancy_filter_script/script_list_and_filter_to_right", false)
 			else:
 				var size : float = (parent.get_child(1) as Control).size.x
 				parent.move_child(_container, parent.get_child_count() - 1)
 				parent.split_offset = size
 				parent.clamp_split_offset.call_deferred()
+				
+				var settings : EditorSettings = EditorInterface.get_editor_settings()
+				if is_instance_valid(settings):
+					settings.set_setting("plugin/godot_ide/fancy_filter_script/script_list_and_filter_to_right", true)
 
 func _exit_tree() -> void:
 	var container : VSplitContainer = IDE.get_script_list_container()
