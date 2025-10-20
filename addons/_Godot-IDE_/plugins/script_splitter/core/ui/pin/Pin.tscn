@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://cnbyjwmktxipx"]
+
+[ext_resource type="Script" uid="uid://w8t1dg3mooti" path="res://addons/script_spliter/core/ui/pin/control.gd" id="1_2gb5h"]
+[ext_resource type="Script" uid="uid://cl3i4qjav3ikw" path="res://addons/script_spliter/core/ui/pin/root.gd" id="1_e0xng"]
+[ext_resource type="Script" uid="uid://c34ix3uq8fdae" path="res://addons/script_spliter/core/ui/pin/pin.gd" id="1_ulj15"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_e0xng")
+
+[node name="Control" type="ScrollContainer" parent="."]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_right = -1152.0
+offset_bottom = 36.0
+grow_horizontal = 2
+rotation = 1.5707964
+pivot_offset = Vector2(12.06, 12.42)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+vertical_scroll_mode = 0
+script = ExtResource("1_2gb5h")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 2
+script = ExtResource("1_ulj15")

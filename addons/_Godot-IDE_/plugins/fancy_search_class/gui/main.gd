@@ -34,7 +34,7 @@ func _enter_tree() -> void:
 	else:
 		screen = screen * 0.6
 	
-	IDE.clamp_screen_size(screen, 0.3, 1.0)	
+	IDE.clamp_screen_size(screen, 0.3, 1.0)
 	
 	size = screen
 
@@ -281,7 +281,7 @@ func _update_recents() -> void:
 								type = fe.get_file_script_class_extends(f)
 							break
 					if type.is_empty():
-						type = fs.get_file_type(x)	
+						type = fs.get_file_type(x)
 				if !data.has(type):
 					var packed : PackedStringArray = []
 					data[type] = packed

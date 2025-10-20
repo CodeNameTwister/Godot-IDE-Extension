@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   sodipodi:docname="split_plus_tool.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="14.137143"
+     inkscape:cx="-0.38904608"
+     inkscape:cy="4.2087712"
+     inkscape:window-width="1803"
+     inkscape:window-height="1046"
+     inkscape:window-x="106"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="path1" /><defs
+     id="defs1" /><g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"><rect
+       style="fill:#bfbfbf;stroke:none;stroke-width:0.204805;stroke-linecap:square;stroke-miterlimit:222;paint-order:markers stroke fill;stroke-opacity:1;fill-opacity:1"
+       id="rect1"
+       width="15.858188"
+       height="1.7801051"
+       x="0.10240262"
+       y="7.1099482" /><g
+       id="path1"
+       style="stroke-width:1.0015748;stroke-dasharray:none"><path
+         d="M 7.5590551,5.5027554 V 3.1465628 H 8.3149606 V 5.5027554 Z M 7.1413247,2.8535038 H 6.2443238 L 7.9356569,0.80209075 9.6296919,2.8535038 H 8.7407963 L 7.9370079,1.8019398 Z"
+         id="text3"
+         style="font-size:10.6667px;font-family:'Witch Magic';-inkscape-font-specification:'Witch Magic';fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:1.0015748;stroke-linecap:square;stroke-miterlimit:222;stroke-opacity:1;paint-order:markers stroke fill;stroke-dasharray:none"
+         aria-label="-&gt;"
+         sodipodi:nodetypes="cccccccccccc" /><path
+         d="m 8.3785029,10.497244 v 2.356195 h -0.755905 v -2.356195 z m 0.417731,2.649254 H 9.6932348 L 8.0019019,15.19791 6.3078659,13.146498 h 0.888896 l 0.803789,1.051563 z"
+         id="text3-8"
+         style="font-size:10.6667px;font-family:'Witch Magic';-inkscape-font-specification:'Witch Magic';fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:1.00157;stroke-linecap:square;stroke-miterlimit:222;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+         aria-label="-&gt;"
+         sodipodi:nodetypes="cccccccccccc" /></g></g></svg>

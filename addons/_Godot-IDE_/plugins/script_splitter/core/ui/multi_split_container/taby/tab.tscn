@@ -1,0 +1,79 @@
+[gd_scene load_steps=7 format=3 uid="uid://bei2ybryufpnd"]
+
+[ext_resource type="Script" uid="uid://c3hg84uuly33f" path="res://addons/script_splitter/core/ui/multi_split_container/taby/container_button.gd" id="1_c6ml5"]
+[ext_resource type="Script" uid="uid://cf447gbwtnwsl" path="res://addons/script_splitter/core/ui/multi_split_container/taby/tab.gd" id="2_gel5x"]
+[ext_resource type="Script" uid="uid://bkj4lec06udg5" path="res://addons/script_splitter/core/ui/multi_split_container/taby/changes.gd" id="3_f5jk5"]
+[ext_resource type="Texture2D" uid="uid://7rel5pr2g7d2" path="res://addons/script_splitter/assets/pin.svg" id="3_y1lda"]
+[ext_resource type="Texture2D" uid="uid://4juherhkw8hp" path="res://addons/script_splitter/assets/Close.svg" id="4_b84sh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hvct0"]
+
+[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("color_rect", "button_main", "button_close", "button_pin", "changes")]
+offset_right = 49.0
+offset_bottom = 33.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hvct0")
+script = ExtResource("1_c6ml5")
+color_rect = NodePath("VBoxContainer/Selected")
+button_main = NodePath("VBoxContainer/ButtonContainer/PanelContainer")
+button_close = NodePath("VBoxContainer/ButtonContainer/Close")
+button_pin = NodePath("VBoxContainer/ButtonContainer/Pin")
+changes = NodePath("VBoxContainer/ButtonContainer/Changes")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Selected" type="ColorRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+mouse_filter = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="PanelContainer" type="Button" parent="VBoxContainer/ButtonContainer"]
+auto_translate_mode = 2
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 1
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+button_mask = 3
+shortcut_feedback = false
+shortcut_in_tooltip = false
+flat = true
+script = ExtResource("2_gel5x")
+
+[node name="Changes" type="Label" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+mouse_filter = 1
+text = "*"
+script = ExtResource("3_f5jk5")
+
+[node name="Pin" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 1
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 0.25)
+shortcut_feedback = false
+shortcut_in_tooltip = false
+icon = ExtResource("3_y1lda")
+flat = true
+icon_alignment = 1
+
+[node name="Close" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 1
+theme_override_colors/font_color = Color(1, 1, 1, 0.25)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 0.25)
+shortcut_feedback = false
+shortcut_in_tooltip = false
+icon = ExtResource("4_b84sh")
+flat = true
+
+[connection signal="pressed" from="VBoxContainer/ButtonContainer/Pin" to="." method="_on_pin_pressed"]

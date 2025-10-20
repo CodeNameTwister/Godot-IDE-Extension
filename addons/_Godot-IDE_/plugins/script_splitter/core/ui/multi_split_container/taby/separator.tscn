@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://dwe7jhlq2p40h"]
+
+[ext_resource type="Script" uid="uid://d05p8nj7f18s0" path="res://addons/script_splitter/core/ui/multi_split_container/taby/separator.gd" id="1_byjdv"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_ksadu"]
+color = Color(0.4, 0.4, 1, 1)
+grow_begin = 4.0
+grow_end = 4.0
+thickness = 38
+
+[node name="HSeparator" type="VSeparator"]
+visible = false
+z_index = 4095
+z_as_relative = false
+offset_right = 4.0
+offset_bottom = 4.0
+mouse_filter = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_ksadu")
+script = ExtResource("1_byjdv")

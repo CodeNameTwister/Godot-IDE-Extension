@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Expand icon by Arthur Shlain from Usefulicons.com -->
+
+<svg
+   xml:space="preserve"
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 16 16"
+   width="16"
+   height="16"
+   id="svg4"
+   sodipodi:docname="fill_expand.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs4" /><sodipodi:namedview
+     id="namedview4"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="16"
+     inkscape:cx="7.84375"
+     inkscape:cy="21.71875"
+     inkscape:window-width="1803"
+     inkscape:window-height="1046"
+     inkscape:window-x="106"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" /><g
+     style="fill:#bfbfbf;fill-opacity:1"
+     id="g4"
+     transform="matrix(0.2,0,0,0.2,-2,-2)"><path
+       d="M 10,40 H 25 V 25 H 40 V 10 H 10 Z"
+       stroke="none"
+       id="path1"
+       style="fill:#bfbfbf;fill-opacity:1" /><path
+       d="M 60,10 V 25 H 75 V 40 H 90 V 10 Z"
+       stroke="none"
+       id="path2"
+       style="fill:#bfbfbf;fill-opacity:1" /><path
+       d="M 75,75 H 60 V 90 H 90 V 57.5 H 75 Z"
+       stroke="none"
+       id="path3"
+       style="fill:#bfbfbf;fill-opacity:1" /><path
+       d="M 25,60 H 10 V 90 H 40 V 75 H 25 Z"
+       stroke="none"
+       id="path4"
+       style="fill:#bfbfbf;fill-opacity:1" /></g></svg>

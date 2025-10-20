@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://c86tj28gq8d6t"]
+
+[ext_resource type="Script" uid="uid://cnubduf2plac4" path="res://addons/script_splitter/core/ui/multi_split_container/taby/container.gd" id="1_fdccq"]
+
+[node name="Container" type="PanelContainer" node_paths=PackedStringArray("container")]
+z_index = 10
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+script = ExtResource("1_fdccq")
+container = NodePath("Container")
+
+[node name="Container" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 1
