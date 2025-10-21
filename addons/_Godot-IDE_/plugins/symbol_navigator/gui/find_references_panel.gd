@@ -985,7 +985,8 @@ func _highlight_symbol_in_line(line: String, symbol: String) -> String:
 	# Use word boundary matching for better accuracy
 	var regex = RegEx.new()
 	var pattern = "\\b" + _escape_regex_string(symbol) + "\\b"
-	regex.compile(pattern)
+	if regex.compile(pattern) != OK:
+		return ""
 	
 	var highlighted = regex.sub(line, "%s%s%s" % [_highlight_prefix, symbol, _highlight_suffix], true)
 	return highlighted

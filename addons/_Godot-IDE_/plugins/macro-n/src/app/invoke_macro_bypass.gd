@@ -27,6 +27,9 @@ func execute(txt : String) -> String:
 		var _rgx : RegEx = null
 		_rgx = RegEx.create_from_string(str("\\s*",rgx.sub(val, "(.*?)", true, 0, -1),"\\s*"))
 		
+		if !is_instance_valid(_rgx) or !_rgx.is_valid():
+			continue
+		
 		if null != _rgx.search(txt):
 			var input : Array = []
 			var out : Dictionary = {}

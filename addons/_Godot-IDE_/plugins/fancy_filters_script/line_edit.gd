@@ -19,7 +19,7 @@ func _exit_tree() -> void:
 	if is_in_group(&"UPDATE_ON_SAVE"):
 		remove_from_group(&"UPDATE_ON_SAVE")
 	
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	set_process(false)
 	if text.is_empty():
 		return
@@ -56,6 +56,11 @@ func sxrch(txt : String) -> void:
 		var rgx1 : RegEx = RegEx.create_from_string("(?i).*{0}.*".format([txt]))
 		var d0 : Array[TreeItem] = []
 		var d1 : Array[TreeItem] = []
+		
+		for x : RegEx in [rgx0, rgx1]:
+			if !is_instance_valid(x) or !x.is_valid():
+				return
+				
 		_sxrch(root, rgx0, rgx1, d0, d1)
 		root.visible = true
 		

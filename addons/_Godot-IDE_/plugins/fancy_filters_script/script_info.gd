@@ -16,8 +16,6 @@ const EXPORT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resourc
 const OVERRIDED_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/MethodOverride.svg")
 const CHECKED_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/check.svg")
 
-var DOTS_ICON : Texture2D = null
-
 const SCRIPT_TOOL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/Tools.svg")
 const SCRIPT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/Script.svg")
 const SCRIPT_EXTEND_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/ScriptExtend.svg")
@@ -44,6 +42,8 @@ enum SORT_NAME_TYPE{
 @export var button_container : Control = null
 @export var tree_container : Tree = null
 
+var DOTS_ICON : Texture2D = null
+
 #region CONFIG
 var use_colors_in_tittles : bool = false
 var use_dots_as_item_icons : bool = false
@@ -57,20 +57,22 @@ var show_native_class : bool = false
 var show_functions : bool = true
 var show_inheritance : bool = false
 
-var show_properties_color : Color = Color.ORANGE
-var show_signals_color : Color = Color.GREEN
-var show_constants_color : Color = Color.CYAN
-var show_parent_class_color : Color = Color.WHITE
-var show_native_class_color : Color = Color.WHITE
-var show_function_color : Color = Color.YELLOW
+var flat_mode : bool = false
 
-var properties_color_item : Color = Color.WHITE
-var signals_color_item : Color = Color.WHITE
-var constants_color_item : Color = Color.WHITE
-#var parent_class_color_item : Color = Color.WHITE
-#var native_class_color_item : Color = Color.WHITE
-var function_color_item : Color = Color.WHITE
-var inheritance_color_item : Color = Color.CYAN
+var show_properties_color : Color = Color("bce0ff")
+var show_signals_color : Color = Color("e5d1ff")
+var show_constants_color : Color = Color("00ffff")
+var show_parent_class_color : Color = Color("76cfb5")
+var show_native_class_color : Color = Color("76cfb5")
+var show_function_color : Color = Color("66e6ff")
+
+var properties_color_item : Color = Color("bce0ff")
+var signals_color_item : Color = Color("e5d1ff")
+var constants_color_item : Color = Color("64ffff")
+#var parent_class_color_item : Color = show_native_class_color
+#var native_class_color_item : Color = show_native_class_color
+var function_color_item : Color = Color("66e6ff")
+var inheritance_color_item : Color = Color("76cfb5")
 
 	
 #var accessibility_order_by : Array[int] = [0,1,2,3,4,5]
@@ -126,6 +128,7 @@ func _setup(changes : PackedStringArray = []) -> void:
 		#,"accessibility_order_by"
 		,"members_order_by"
 		,"name_order_by"
+		,"flat_mode"
 		]:
 		if changes.size() == 0 or _is_in_change(PLUGIN, x, changes):
 			var value : Variant = get(x)
@@ -230,7 +233,7 @@ func _on_activate() -> void:
 			var item : TreeItem = tree_container.get_selected()
 			if !item:
 				return
-			var symbol_name : String = item.get_text(0).split(" ", false, 1)[0]
+			var symbol_name : String = item.get_text(1).strip_edges().split(" ", false, 1)[0]
 			while true:
 				var st : String = current.resource_path
 				if !FileAccess.file_exists(st):
@@ -241,11 +244,12 @@ func _on_activate() -> void:
 				var line_number : int = -1
 
 				var pattern : RegEx = RegEx.create_from_string("[\\s]*var[\\n\\t\\s]+\\b" + symbol_name + "\\b.*|\\s*const[\\n\\t\\s]+\\b" + symbol_name + "\\b.*|\\s*func[\\n\\t\\s]+\\b" + symbol_name + "|\\s*signal[\\n\\t\\s]+\\b" + symbol_name)
-				for x : int in range(lines.size()):
-					var line : String = lines[x]
-					if pattern.search(line):
-						line_number = x
-						break
+				if is_instance_valid(pattern) and pattern.is_valid():
+					for x : int in range(lines.size()):
+						var line : String = lines[x]
+						if pattern.search(line):
+							line_number = x
+							break
 						
 				if line_number > -1:
 					var sce: ScriptEditor = EditorInterface.get_script_editor()
@@ -265,6 +269,8 @@ func _on_activate() -> void:
 				if ClassDB.class_exists(type):
 					var symbol : String = item.get_tooltip_text(0)
 					var prefx : String = ""
+					if symbol.is_empty():
+						symbol = item.get_tooltip_text(1)
 					if type == "GraphNode":
 						prefx = "class_theme_item"
 					if symbol.begins_with("@"):
@@ -297,7 +303,7 @@ func _on_activate() -> void:
 	
 func _copy(fnc : String,data : String, type : int) -> void:
 	if type == 1:
-		data = (data.trim_prefix("func ").split(")", false, 1)[0] + ")").replace(" : ", "__")
+		data = (data.trim_prefix("func ").split(")", false, 1)[0] + ")").replace(" : ", "_")
 	elif type == 2:
 		var packed : PackedStringArray = data.trim_prefix("func ").split("(", false, 1)
 		data = packed[0] + ".emit("
@@ -333,7 +339,7 @@ func _on_pop_selection(option : StringName, item : TreeItem) -> void:
 				if editor:
 					var sc : Script = editor.get_current_script()
 					if sc:
-						var func_ : StringName = item.get_text(0).get_slice(" ", 0)
+						var func_ : StringName = item.get_text(1).strip_edges().get_slice(" ", 0)
 						if itype == 3:
 							_copy(func_, func_, itype)
 							return
@@ -463,7 +469,8 @@ func _on_change_script(script : Script) -> void:
 	tree_container.columns = 1#3
 	var path : String = script.resource_path
 	if !path.is_empty():
-		root.set_text(0, "* {0}  [{1}]".format([path.get_file(),path]))
+		root.set_text(0, "[{0}]".format([path.get_file()]))
+		root.set_tooltip_text(0, path)
 	else:
 		root.set_text(0, "Info")
 					
@@ -483,11 +490,18 @@ func _on_change_script(script : Script) -> void:
 	
 	var private_methods : String = IDE.PRIVATE_METHODS
 	var protected_methods : String = IDE.VIRTUAL_METHODS
-	
+	tree_container.columns = 2
 	tree_container.set_column_expand(0, true)
-	tree_container.set_column_custom_minimum_width(0, 200)
+	tree_container.set_column_expand(1, true)
+	tree_container.set_column_custom_minimum_width(0, 0)
+	tree_container.set_column_clip_content(0, false)
+	tree_container.set_column_expand_ratio(0, 0)
+	tree_container.set_column_custom_minimum_width(1, 200)
 	root.set_expand_right(0, true)
 	root.set_selectable(0, false)
+	root.set_expand_right(1, true)
+	root.set_selectable(1, false)
+	root.disable_folding = true
 	
 	var BASE_COLOR : Color = root.get_custom_color(0)
 	if BASE_COLOR == Color.BLACK:
@@ -524,62 +538,85 @@ func _on_change_script(script : Script) -> void:
 			elif !native and !show_parent_class:
 				continue
 		
-		var tree_item : TreeItem = root.create_child()
-		var meta : String = str("C", index)
-		tree_item.set_text(0, sc["name"])
-		tree_item.set_tooltip_text(0, sc["path"])
-		tree_item.set_metadata(0, meta)
-		tree_item.set_custom_color(0, BASE_COLOR)
-		tree_item.set_icon_modulate(0, Color.WHITE)
-		if _buffer.has(meta):
-			tree_item.collapsed = _buffer[meta]
-		if sc["tool"]:
-			tree_item.set_icon(0, SCRIPT_TOOL_ICON)
-			tree_item.set_icon_modulate(0, Color.DEEP_SKY_BLUE)
-			if index > 0:
-				tree_item.set_icon_overlay(0, OVERRIDED_ICON)
-		elif sc["abstract"]:
-			tree_item.set_icon(0, SCRIPT_ABSTRACT_ICON)
-			if index > 0:
-				tree_item.set_icon_overlay(0, OVERRIDED_ICON)
-		elif sc["path"] == "NativeScript":
-			tree_item.set_icon(0, SCRIPT_NATIVE_ICON)
+		var tree_item : TreeItem = null
+		var meta : String = ""
+		if flat_mode:
+			tree_item = root
 		else:
-			if index > 0:
-				tree_item.set_icon(0, SCRIPT_EXTEND_ICON)
+			tree_item = root.create_child()
+			meta = str("C", index)
+			tree_item.set_text(0, str(" ",sc["name"]))
+			tree_item.set_tooltip_text(1, sc["path"])
+			tree_item.set_metadata(0, meta)
+			tree_item.set_custom_color(0, BASE_COLOR)
+			tree_item.set_icon_modulate(0, Color.WHITE)
+			tree_item.set_expand_right(0, true)
+			#tree_item.set_text_alignment(0, HORIZONTAL_ALIGNMENT_CENTER)
+			if _buffer.has(meta):
+				tree_item.collapsed = _buffer[meta]
+			if sc["tool"]:
+				tree_item.set_icon(0, SCRIPT_TOOL_ICON)
+				tree_item.set_icon_modulate(0, Color.DEEP_SKY_BLUE)
+				if index > 0:
+					tree_item.set_icon_overlay(0, OVERRIDED_ICON)
+			elif sc["abstract"]:
+				tree_item.set_icon(0, SCRIPT_ABSTRACT_ICON)
+				if index > 0:
+					tree_item.set_icon_overlay(0, OVERRIDED_ICON)
+			elif sc["path"] == "NativeScript":
+				tree_item.set_icon(0, SCRIPT_NATIVE_ICON)
 			else:
-				tree_item.set_icon(0, SCRIPT_ICON)
-		tree_item.set_selectable(0, false)
+				if index > 0:
+					tree_item.set_icon(0, SCRIPT_EXTEND_ICON)
+				else:
+					tree_item.set_icon(0, SCRIPT_ICON)
+			tree_item.set_selectable(0, false)
+			tree_item.set_selectable(1, false)
 		
 		var sc_data : Dictionary = {}
 		for order : int in members_order_by:
 			if order == 0 and show_properties:
 				sc_data = sc["properties"]
 				if sc_data.size() > 0:
-					#accessibility.reset()
-					var mthds : TreeItem = tree_item.create_child()
+					var mthds : TreeItem = null
 					var item_color : Color = SECONDARY_COLOR
 					var override_item_color : Color = inheritance_color_item
+					
 					if properties_color_item != Color.WHITE:
 						item_color = properties_color_item
-					mthds.set_text(0, "Properties")
-					mthds.set_selectable(0, false)
-					mthds.set_icon(0, MEMBER_PROPERTY_ICON)
-					if use_background_color_in_script_info:
-						var c : Color = show_properties_color
-						c.a = 0.15
-						mthds.set_custom_bg_color(0, c)
-					if use_colors_in_tittles:
-						mthds.set_custom_color(0, show_properties_color)
+							
+					if flat_mode:
+						mthds = tree_item
 					else:
-						mthds.set_custom_color(0, PRIMARY_COLOR)
-					meta = str("P", index)
-					mthds.set_metadata(0, meta)
-					mthds.set_icon_modulate(0, show_properties_color)
-					if _buffer.has(meta):
-						mthds.collapsed = _buffer[meta]
-					else:
-						mthds.collapsed = true	
+						mthds = tree_item.create_child()
+					
+						mthds.set_text(0, " Properties")
+						mthds.set_selectable(0, false)
+						mthds.set_selectable(1, false)
+						mthds.set_expand_right(0, true)
+						mthds.set_icon(0, MEMBER_PROPERTY_ICON)
+						
+						if use_background_color_in_script_info:
+							var c : Color = show_properties_color
+							c.a = 0.15
+							mthds.set_custom_bg_color(0, c)
+							mthds.set_custom_bg_color(1, c)
+						if use_colors_in_tittles:
+							mthds.set_custom_color(0, show_properties_color)
+						else:
+							mthds.set_custom_color(0, PRIMARY_COLOR)
+						meta = str("P", index)
+						mthds.set_metadata(0, meta)
+						mthds.set_icon_modulate(0, show_properties_color)
+						if _buffer.has(meta):
+							mthds.collapsed = _buffer[meta]
+						else:
+							mthds.collapsed = true	
+					
+					var TRANSPARENT : Color = show_constants_color
+					if !flat_mode:
+						TRANSPARENT.a = 0.4
+					
 					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
 						var override : bool = false
@@ -588,69 +625,88 @@ func _on_change_script(script : Script) -> void:
 								continue
 							override = true
 						var _item : TreeItem = mthds.create_child()
-						var text : String = "{0} : {1}".format([packed[0], packed[1]])
-						_item.set_text(0, text)
+						var text : String = " {0} : {1}".format([packed[0], packed[1]])
+						_item.set_text(1, text)
+						_item.set_icon(0, MEMBER_PROPERTY_ICON)
+						_item.set_icon_modulate(0, TRANSPARENT)
+						_item.set_selectable(0, false)
+						
 						if "export" in packed:
-							_item.set_icon(0, EXPORT_ICON)
-							_item.set_tooltip_text(0, str("@export var ", text))
+							_item.set_icon(1, EXPORT_ICON)
+							_item.set_tooltip_text(1, str("@export var ", text))
 							#accessibility.add(0, fnc)
 						elif "static" in packed:
-							_item.set_icon(0, STATIC_ICON)
-							_item.set_tooltip_text(0, str("static var ", text))
+							_item.set_icon(1, STATIC_ICON)
+							_item.set_tooltip_text(1, str("static var ", text))
 							#accessibility.add(1, fnc)
 						elif "const" in packed:
-							_item.set_icon(0, CONST_ICON)
-							_item.set_tooltip_text(0, str("const ", text))
+							_item.set_icon(1, CONST_ICON)
+							_item.set_tooltip_text(1, str("const ", text))
 							#accessibility.add(2, fnc)
 						elif fnc.begins_with(private_methods):
-							_item.set_icon(0, private_icon)
-							_item.set_icon_modulate(0, private_icon_modulate)
+							_item.set_icon(1, private_icon)
+							_item.set_icon_modulate(1, private_icon_modulate)
 							#accessibility.add(3, fnc)
 						elif fnc.begins_with(protected_methods):
-							_item.set_icon(0, virtual_icon)
-							_item.set_icon_modulate(0, virtual_icon_modulate)
+							_item.set_icon(1, virtual_icon)
+							_item.set_icon_modulate(1, virtual_icon_modulate)
 							#accessibility.add(4, fnc)
 						else:
-							_item.set_icon(0, public_icon)
-							_item.set_icon_modulate(0, public_icon_modulate)
+							_item.set_icon(1, public_icon)
+							_item.set_icon_modulate(1, public_icon_modulate)
 							#accessibility.add(5, fnc)
 						if override:
 							#accessibility.add_overrided(fnc)
-							_item.set_icon_overlay(0, OVERRIDED_ICON)
-							_item.set_custom_color(0, override_item_color)
+							_item.set_icon_overlay(1, OVERRIDED_ICON)
+							_item.set_custom_color(1, override_item_color)
 						else:
-							_item.set_custom_color(0, item_color)
+							_item.set_custom_color(1, item_color)
 						if use_background_color_in_script_info:
 							var c : Color = show_properties_color
 							c.a = 0.05
 							_item.set_custom_bg_color(0, c)
+							_item.set_custom_bg_color(1, c)
 			
 			elif order == 1 and show_functions:
 				sc_data = sc["functions"]
 				if sc_data.size() > 0:
-					var mthds : TreeItem = tree_item.create_child()
+					var mthds : TreeItem = null
 					var item_color : Color = SECONDARY_COLOR
 					var override_item_color : Color = inheritance_color_item
+					
 					if function_color_item != Color.WHITE:
 						item_color = function_color_item
-					mthds.set_text(0, "Methods")
-					mthds.set_selectable(0, false)
-					mthds.set_icon(0, MEMBER_METHOD_ICON)
-					if use_background_color_in_script_info:
-						var c : Color = show_function_color
-						c.a = 0.15
-						mthds.set_custom_bg_color(0, c)
-					if use_colors_in_tittles:
-						mthds.set_custom_color(0, show_function_color)
+							
+					if flat_mode:
+						mthds = tree_item
 					else:
-						mthds.set_custom_color(0, PRIMARY_COLOR)
-					meta = str("F", index)
-					mthds.set_metadata(0, meta)
-					mthds.set_icon_modulate(0, show_function_color)
-					if _buffer.has(meta):
-						mthds.collapsed = _buffer[meta]
-					else:
-						mthds.collapsed = true	
+						mthds = tree_item.create_child()
+						
+						mthds.set_text(0, " Methods")
+						mthds.set_selectable(0, false)
+						mthds.set_selectable(1, false)
+						mthds.set_expand_right(0, true)
+						mthds.set_icon(0, MEMBER_METHOD_ICON)
+						if use_background_color_in_script_info:
+							var c : Color = show_function_color
+							c.a = 0.15
+							mthds.set_custom_bg_color(0, c)
+							mthds.set_custom_bg_color(1, c)
+						if use_colors_in_tittles:
+							mthds.set_custom_color(0, show_function_color)
+						else:
+							mthds.set_custom_color(0, PRIMARY_COLOR)
+						meta = str("F", index)
+						mthds.set_metadata(0, meta)
+						mthds.set_icon_modulate(0, show_function_color)
+						if _buffer.has(meta):
+							mthds.collapsed = _buffer[meta]
+						else:
+							mthds.collapsed = true	
+					
+					var TRANSPARENT : Color = show_function_color
+					if !flat_mode:
+						TRANSPARENT.a = 0.4
 					
 					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
@@ -661,68 +717,90 @@ func _on_change_script(script : Script) -> void:
 									continue
 							else:
 								if !show_inheritance:
-									if null == RegEx.create_from_string("func[\\s\\t\\n]*\\b{0}[\\s\\t\\n]*\\(".format([fnc])).search(src):
-										continue
+									var rgx : RegEx =  RegEx.create_from_string("func[\\s\\t\\n]*\\b{0}[\\s\\t\\n]*\\(".format([fnc]))
+									if is_instance_valid(rgx) and rgx.is_valid():
+										if null == rgx.search(src):
+											continue
 								track_override[fnc] = true
 							override = show_inheritance
 							
 						var _item : TreeItem = mthds.create_child()
-						var text : String = "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]])
+						var text : String = " {0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]])
+						
+						_item.set_icon(0, MEMBER_METHOD_ICON)
+						_item.set_icon_modulate(0, TRANSPARENT)
+						_item.set_selectable(0, false)
+						
 						if "static" in packed:
-							_item.set_icon(0, STATIC_ICON)
-							_item.set_tooltip_text(0, str("static var ", text))
+							_item.set_icon(1, STATIC_ICON)
+							_item.set_tooltip_text(1, str("static var ", text))
 						elif "const" in packed:
-							_item.set_icon(0, CONST_ICON)
-							_item.set_tooltip_text(0, str("const ", text))
+							_item.set_icon(1, CONST_ICON)
+							_item.set_tooltip_text(1, str("const ", text))
 						elif fnc.begins_with(private_methods):
-							_item.set_icon(0, private_icon)
-							_item.set_icon_modulate(0, private_icon_modulate)
+							_item.set_icon(1, private_icon)
+							_item.set_icon_modulate(1, private_icon_modulate)
 						elif fnc.begins_with(protected_methods):
-							_item.set_icon(0, virtual_icon)
-							_item.set_icon_modulate(0, virtual_icon_modulate)
+							_item.set_icon(1, virtual_icon)
+							_item.set_icon_modulate(1, virtual_icon_modulate)
 						else:
-							_item.set_icon(0, public_icon)
-							_item.set_icon_modulate(0, public_icon_modulate)
+							_item.set_icon(1, public_icon)
+							_item.set_icon_modulate(1, public_icon_modulate)
 						if override:
-							_item.set_icon_overlay(0, OVERRIDED_ICON)
-							_item.set_custom_color(0, override_item_color)
+							_item.set_icon_overlay(1, OVERRIDED_ICON)
+							_item.set_custom_color(1, override_item_color)
 						else:
-							_item.set_custom_color(0, item_color)
+							_item.set_custom_color(1, item_color)
 						if index > 0:
 							if track_override.has(fnc):
-								_item.set_icon_overlay(0, CHECKED_ICON)
-						_item.set_text(0, text)
+								_item.set_icon_overlay(1, CHECKED_ICON)
+						_item.set_text(1, text)
 						if use_background_color_in_script_info:
 							var c : Color = show_function_color
 							c.a = 0.05
 							_item.set_custom_bg_color(0, c)
+							_item.set_custom_bg_color(1, c)
 											
 			elif order == 2 and show_signals:
 				sc_data = sc["signals"]
 				if sc_data.size() > 0:
-					var mthds : TreeItem = tree_item.create_child()
+					var mthds : TreeItem = null
 					var item_color : Color = SECONDARY_COLOR
 					var override_item_color : Color = inheritance_color_item
+					
 					if signals_color_item != Color.WHITE:
 						item_color = signals_color_item
-					mthds.set_text(0, "Signals")
-					mthds.set_selectable(0, false)
-					mthds.set_icon(0, MEMBER_SIGNAL_ICON)
-					if use_background_color_in_script_info:
-						var c : Color = show_signals_color
-						c.a = 0.15
-						mthds.set_custom_bg_color(0, c)
-					if use_colors_in_tittles:
-						mthds.set_custom_color(0, show_signals_color)
+							
+					if flat_mode:
+						mthds = tree_item
 					else:
-						mthds.set_custom_color(0, PRIMARY_COLOR)
-					meta = str("S", index)
-					mthds.set_metadata(0, meta)
-					mthds.set_icon_modulate(0, show_signals_color)
-					if _buffer.has(meta):
-						mthds.collapsed = _buffer[meta]
-					else:
-						mthds.collapsed = true	
+						mthds = tree_item.create_child()
+					
+						mthds.set_text(0, " Signals")
+						mthds.set_selectable(0, false)
+						mthds.set_selectable(1, false)
+						mthds.set_expand_right(0, true)
+						mthds.set_icon(0, MEMBER_SIGNAL_ICON)
+						if use_background_color_in_script_info:
+							var c : Color = show_signals_color
+							c.a = 0.15
+							mthds.set_custom_bg_color(0, c)
+							mthds.set_custom_bg_color(1, c)
+						if use_colors_in_tittles:
+							mthds.set_custom_color(0, show_signals_color)
+						else:
+							mthds.set_custom_color(0, PRIMARY_COLOR)
+						meta = str("S", index)
+						mthds.set_metadata(0, meta)
+						mthds.set_icon_modulate(0, show_signals_color)
+						if _buffer.has(meta):
+							mthds.collapsed = _buffer[meta]
+						else:
+							mthds.collapsed = true	
+							
+					var TRANSPARENT : Color = show_signals_color
+					if !flat_mode:
+						TRANSPARENT.a = 0.4
 					
 					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
@@ -732,45 +810,65 @@ func _on_change_script(script : Script) -> void:
 								continue
 							override = true
 						var _item : TreeItem = mthds.create_child()
-						_item.set_text(0, "{0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]]))
+						_item.set_text(1, " {0} ( {1} ) -> {2}".format([packed[0], packed[1], packed[2]]))
 						
 						_item.set_icon(0, MEMBER_SIGNAL_ICON)
+						_item.set_icon_modulate(0, TRANSPARENT)
+						_item.set_selectable(0, false)
+						
 						if override:
-							_item.set_icon_overlay(0, OVERRIDED_ICON)
-							_item.set_custom_color(0, override_item_color)
+							_item.set_icon_overlay(1, OVERRIDED_ICON)
+							_item.set_custom_color(1, override_item_color)
 						else:
-							_item.set_custom_color(0, item_color)
+							_item.set_custom_color(1, item_color)
 						if use_background_color_in_script_info:
 							var c : Color = show_signals_color
 							c.a = 0.05
 							_item.set_custom_bg_color(0, c)
+							_item.set_custom_bg_color(1, c)
 							
 			elif order == 3 and show_constants:
 				sc_data = sc["constants"]
 				if sc_data.size() > 0:
-					var mthds : TreeItem = tree_item.create_child()
+					var mthds : TreeItem = null
 					var item_color : Color = SECONDARY_COLOR
 					var override_item_color : Color = inheritance_color_item
+				
 					if constants_color_item != Color.WHITE:
 						item_color = constants_color_item
-					mthds.set_text(0, "Constant")
-					mthds.set_selectable(0, false)
-					mthds.set_icon(0, MEMBER_CONSTANT_ICON)
-					if use_background_color_in_script_info:
-						var c : Color = show_constants_color
-						c.a = 0.15
-						mthds.set_custom_bg_color(0, c)
-					if use_colors_in_tittles:
-						mthds.set_custom_color(0, show_constants_color)
+					
+					if flat_mode:
+						mthds = tree_item
 					else:
-						mthds.set_custom_color(0, PRIMARY_COLOR)
-					meta = str("I", index)
-					mthds.set_metadata(0, meta)
-					mthds.set_icon_modulate(0, show_constants_color)
-					if _buffer.has(meta):
-						mthds.collapsed = _buffer[meta]
-					else:
-						mthds.collapsed = true	
+						mthds = tree_item.create_child()
+					
+						mthds.set_text(0, " Constant")
+						mthds.set_selectable(0, false)
+						mthds.set_selectable(1, false)
+						mthds.set_expand_right(0, true)
+						mthds.set_icon(0, MEMBER_CONSTANT_ICON)
+						if use_background_color_in_script_info:
+							var c : Color = show_constants_color
+							c.a = 0.15
+							mthds.set_custom_bg_color(0, c)
+							mthds.set_custom_bg_color(1, c)
+						if use_colors_in_tittles:
+							mthds.set_custom_color(0, show_constants_color)
+						else:
+							mthds.set_custom_color(0, PRIMARY_COLOR)
+						meta = str("I", index)
+						mthds.set_metadata(0, meta)
+						mthds.set_icon_modulate(0, show_constants_color)
+						if _buffer.has(meta):
+							mthds.collapsed = _buffer[meta]
+						else:
+					
+							mthds.collapsed = true	
+							
+					var TRANSPARENT : Color = show_constants_color
+					if !flat_mode:
+						TRANSPARENT.a = 0.4
+							
 					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
 						var override : bool = false
@@ -779,17 +877,22 @@ func _on_change_script(script : Script) -> void:
 								continue
 							override = true
 						var _item : TreeItem = mthds.create_child()
-						_item.set_text(0, "{0} : {1}".format([packed[0], packed[1]]))
+						_item.set_text(1, " {0} : {1}".format([packed[0], packed[1]]))
+						
 						_item.set_icon(0, MEMBER_CONSTANT_ICON)
+						_item.set_icon_modulate(0, TRANSPARENT)
+						_item.set_selectable(0, false)
+						
 						if override:
-							_item.set_icon_overlay(0, OVERRIDED_ICON)
-							_item.set_custom_color(0, override_item_color)
+							_item.set_icon_overlay(1, OVERRIDED_ICON)
+							_item.set_custom_color(1, override_item_color)
 						else:
-							_item.set_custom_color(0, item_color)
+							_item.set_custom_color(1, item_color)
 						if use_background_color_in_script_info:
 							var c : Color = show_constants_color
 							c.a = 0.05
 							_item.set_custom_bg_color(0, c)
+							_item.set_custom_bg_color(1, c)
 							
 					
 func _ready() -> void:

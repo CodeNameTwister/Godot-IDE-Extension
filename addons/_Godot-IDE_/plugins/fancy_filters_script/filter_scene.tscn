@@ -79,7 +79,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_properties" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(1, 0.647059, 0, 1)
+modulate = Color(0.7372549, 0.8784314, 1, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show Properties"
@@ -90,7 +90,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_signals" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
-modulate = Color(0, 1, 0, 1)
+modulate = Color(0.89998645, 0.817927, 1, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show Signals"
@@ -112,6 +112,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_parent_class" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
+modulate = Color(0.4627451, 0.8117647, 0.70980394, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show parent classes"
@@ -122,6 +123,7 @@ icon_alignment = 1
 script = ExtResource("2_djmkv")
 
 [node name="show_native_class" type="Button" parent="Script Info/VContainer/SContainer/SHContainer"]
+modulate = Color(0.4627451, 0.8117647, 0.70980394, 1)
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 tooltip_text = "Show native classes"
@@ -148,6 +150,9 @@ auto_translate_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/h_separation = 0
+theme_override_constants/item_margin = 6
+columns = 2
 allow_rmb_select = true
 
 [node name="Settings" type="VBoxContainer" parent="." node_paths=PackedStringArray("container")]

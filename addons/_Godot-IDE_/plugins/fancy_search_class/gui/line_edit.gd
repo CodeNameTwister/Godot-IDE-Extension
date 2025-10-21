@@ -37,6 +37,11 @@ func sxrch(txt : String) -> void:
 		var rgx1 : RegEx = RegEx.create_from_string("(?i).*{0}.*".format([txt]))
 		var d0 : Array[TreeItem] = []
 		var d1 : Array[TreeItem] = []
+		
+		for x : RegEx in [rgx0, rgx1]:
+			if !is_instance_valid(x) or !x.is_valid():
+				return
+				
 		_sxrch(root, rgx0, rgx1, d0, d1)
 		root.visible = true
 		

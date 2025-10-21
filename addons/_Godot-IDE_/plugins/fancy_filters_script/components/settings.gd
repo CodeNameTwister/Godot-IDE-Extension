@@ -16,6 +16,8 @@ extends Control
 
 @export var background_color : Button
 @export var use_dots : Button
+@export var flat_mode_button : Button
+@export var separate_script_list_button : Button
 
 const NORMAL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/up.svg")
 const INVERT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/down.svg")
@@ -35,12 +37,23 @@ func use_background_color_in_script_info() -> void:
 	
 func use_dots_as_item_icons() -> void:
 	IDE.set_config("fancy_filters_script", "use_dots_as_item_icons", use_dots.button_pressed)
+		
+func flat_mode() -> void:
+	IDE.set_config("fancy_filters_script", "flat_mode", flat_mode_button.button_pressed)
+	
+func separate_script_list() -> void:
+	IDE.set_config("fancy_filters_script", "separate_container_list", separate_script_list_button.button_pressed)
 	
 func update_settings() -> void:
 	var order : Variant = IDE.get_config("fancy_filters_script", "members_order_by")
 	var name_type : Variant = IDE.get_config("fancy_filters_script", "name_order_by")
 	var background_pressed : Variant = IDE.get_config("fancy_filters_script", "use_background_color_in_script_info")
 	var use_dots_pressed: Variant = IDE.get_config("fancy_filters_script", "use_dots_as_item_icons")
+	var flat_mode_pressed : Variant = IDE.get_config("fancy_filters_script", "flat_mode")
+	var separate_script_list_pressed : Variant = IDE.get_config("fancy_filters_script", "separate_container_list")
+	
+	if !(separate_script_list_pressed is bool):
+		separate_script_list_pressed = false
 	if !(order is Array):
 		order = []
 	if !(name_type is int):
@@ -49,8 +62,13 @@ func update_settings() -> void:
 		background_pressed = false
 	if !(use_dots_pressed is bool):
 		use_dots_pressed = false
+	if !(flat_mode_pressed is bool):
+		flat_mode_pressed = false
+		
 	use_dots.button_pressed = use_dots_pressed
 	background_color.button_pressed = background_pressed
+	flat_mode_button.button_pressed = flat_mode_pressed
+	separate_script_list_button.button_pressed = separate_script_list_pressed
 	
 	name_order = name_type
 	
