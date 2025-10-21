@@ -193,6 +193,8 @@ func enable_filter(filter_name : StringName, value : bool) -> void:
 					node.button_pressed = val
 					if get(node.name) != null:
 						set(node.name, value)
+					if node.has_method(&"visual"):
+						node.call(&"visual")
 	else:
 		if get(filter_name) != null:
 			set(filter_name, value)
@@ -204,6 +206,8 @@ func enable_filter(filter_name : StringName, value : bool) -> void:
 				if node.button_pressed == false and node != all:
 					all.button_pressed = false
 					break
+		if all.has_method(&"visual"):
+			all.call(&"visual")
 	force_update()
 	
 func _on_collapsed(item : TreeItem) -> void:

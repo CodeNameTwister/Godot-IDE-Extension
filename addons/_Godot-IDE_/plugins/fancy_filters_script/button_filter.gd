@@ -12,9 +12,7 @@ func update_settings() -> void:
 	if variant is bool:
 		button_pressed = variant
 		
-	var value : Variant = owner.get(str(name, "_color"))
-	if value is Color:
-		modulate = value
+	visual()
 	
 
 func _ready() -> void:
@@ -23,3 +21,15 @@ func _ready() -> void:
 func _pressed() -> void:
 	if owner.has_method(&"enable_filter"):
 		owner.call(&"enable_filter", name, button_pressed)
+		visual()
+
+func visual() -> void:
+	if button_pressed:
+		var value : Variant = owner.get(str(name, "_color"))
+		if value is Color:
+			modulate = value
+		else:
+			modulate = Color.WHITE
+	else:	
+		modulate = Color.DARK_GRAY
+		modulate.a = 0.7
