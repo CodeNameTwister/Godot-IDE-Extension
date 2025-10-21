@@ -425,7 +425,7 @@ func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
 								_pop = res.instantiate()
 								add_child(_pop)
 							_pop.callback = _on_pop_selection.bind(item)
-							_pop.enable_copy_override((!is_first or flat_mode) and MEMBER_METHOD_ICON == icon)
+							_pop.enable_copy_override(MEMBER_METHOD_ICON == icon and (!is_first or flat_mode))
 							
 							var os_name : String = OS.get_name()
 							match  os_name:
@@ -795,38 +795,37 @@ func _on_change_script(script : Script) -> void:
 			
 			var tree_item : TreeItem = null
 			var meta : String = ""
-			if flat_mode:
-				tree_item = root
+			
+				
+			tree_item = root.create_child()
+			meta = str("C", index)
+			tree_item.set_text(0, str(" ",sc["name"]))
+			tree_item.set_tooltip_text(1, sc["path"])
+			tree_item.set_metadata(0, meta)
+			tree_item.set_custom_color(0, BASE_COLOR)
+			tree_item.set_icon_modulate(0, Color.WHITE)
+			tree_item.set_expand_right(0, true)
+			#tree_item.set_text_alignment(0, HORIZONTAL_ALIGNMENT_CENTER)
+			if _buffer.has(meta):
+				tree_item.collapsed = _buffer[meta]
+			if sc["tool"]:
+				tree_item.set_icon(0, SCRIPT_TOOL_ICON)
+				tree_item.set_icon_modulate(0, Color.DEEP_SKY_BLUE)
+				if index > 0:
+					tree_item.set_icon_overlay(0, OVERRIDED_ICON)
+			elif sc["abstract"]:
+				tree_item.set_icon(0, SCRIPT_ABSTRACT_ICON)
+				if index > 0:
+					tree_item.set_icon_overlay(0, OVERRIDED_ICON)
+			elif sc["path"] == "NativeScript":
+				tree_item.set_icon(0, SCRIPT_NATIVE_ICON)
 			else:
-				tree_item = root.create_child()
-				meta = str("C", index)
-				tree_item.set_text(0, str(" ",sc["name"]))
-				tree_item.set_tooltip_text(1, sc["path"])
-				tree_item.set_metadata(0, meta)
-				tree_item.set_custom_color(0, BASE_COLOR)
-				tree_item.set_icon_modulate(0, Color.WHITE)
-				tree_item.set_expand_right(0, true)
-				#tree_item.set_text_alignment(0, HORIZONTAL_ALIGNMENT_CENTER)
-				if _buffer.has(meta):
-					tree_item.collapsed = _buffer[meta]
-				if sc["tool"]:
-					tree_item.set_icon(0, SCRIPT_TOOL_ICON)
-					tree_item.set_icon_modulate(0, Color.DEEP_SKY_BLUE)
-					if index > 0:
-						tree_item.set_icon_overlay(0, OVERRIDED_ICON)
-				elif sc["abstract"]:
-					tree_item.set_icon(0, SCRIPT_ABSTRACT_ICON)
-					if index > 0:
-						tree_item.set_icon_overlay(0, OVERRIDED_ICON)
-				elif sc["path"] == "NativeScript":
-					tree_item.set_icon(0, SCRIPT_NATIVE_ICON)
+				if index > 0:
+					tree_item.set_icon(0, SCRIPT_EXTEND_ICON)
 				else:
-					if index > 0:
-						tree_item.set_icon(0, SCRIPT_EXTEND_ICON)
-					else:
-						tree_item.set_icon(0, SCRIPT_ICON)
-				tree_item.set_selectable(0, false)
-				tree_item.set_selectable(1, false)
+					tree_item.set_icon(0, SCRIPT_ICON)
+			tree_item.set_selectable(0, false)
+			tree_item.set_selectable(1, false)
 			
 			var sc_data : Dictionary = {}
 			for order : int in members_order_by:
