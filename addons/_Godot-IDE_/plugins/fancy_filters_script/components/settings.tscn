@@ -148,7 +148,6 @@ script = ExtResource("4_f6f5j")
 [node name="flat_mode" type="CheckBox" parent="."]
 layout_mode = 2
 size_flags_horizontal = 0
-button_pressed = true
 text = "Flat Mode"
 script = ExtResource("4_f6f5j")
 

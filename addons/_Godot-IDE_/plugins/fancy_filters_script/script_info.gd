@@ -326,6 +326,8 @@ func _on_pop_selection(option : StringName, item : TreeItem) -> void:
 			elif option == &"copy" or option == &"override_copy":
 				var icon : Texture2D = parent.get_icon(0)
 				if icon == null:
+					icon = item.get_icon(0)
+				if !is_instance_valid(icon):
 					return
 				var itype : int = 3
 				if icon == MEMBER_METHOD_ICON:
@@ -404,6 +406,8 @@ func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
 			if parent:
 				var icon : Texture2D = parent.get_icon(0)
 				if icon == null:
+					icon = item.get_icon(0)
+				if !is_instance_valid(icon):
 					return
 				for x : Texture2D in [
 					MEMBER_CONSTANT_ICON,
@@ -421,7 +425,7 @@ func _on_mouse(_mouse_position: Vector2, mouse_button_index: int) -> void:
 								_pop = res.instantiate()
 								add_child(_pop)
 							_pop.callback = _on_pop_selection.bind(item)
-							_pop.enable_copy_override(!is_first and MEMBER_METHOD_ICON == icon)
+							_pop.enable_copy_override((!is_first or flat_mode) and MEMBER_METHOD_ICON == icon)
 							
 							var os_name : String = OS.get_name()
 							match  os_name:
