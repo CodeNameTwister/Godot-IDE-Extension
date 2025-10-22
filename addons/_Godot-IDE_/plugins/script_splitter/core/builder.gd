@@ -126,6 +126,14 @@ func init_0() -> void:
 		_editor_manager.reset()
 	_editor_manager = null
 	
+	var editor : ScriptEditor = EditorInterface.get_script_editor()
+	if editor:
+		if editor.editor_script_changed.is_connected(_on_change):
+			editor.editor_script_changed.disconnect(_on_change)
+	
+func _on_change(__ : Variant = null) -> void:
+	_queue_update()
+	
 func connect_callbacks(
 	on_column : Signal, 
 	on_row : Signal, 
@@ -224,6 +232,11 @@ func init_1(plugin : EditorPlugin, tab_container : TabContainer, item_list : Ite
 	
 	_editor_manager = EditorManager.new(BaseContainer.new(tab_container), BaseList.new(item_list))
 	_editor_manager.update_request.connect(_queue_update)
+	
+	var editor : ScriptEditor = EditorInterface.get_script_editor()
+	if editor:
+		if !editor.editor_script_changed.is_connected(_on_change):
+			editor.editor_script_changed.connect(_on_change)
 	
 func _queue_update() -> void:
 	_plugin.set_process(true)

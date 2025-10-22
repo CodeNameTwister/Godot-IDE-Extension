@@ -55,7 +55,7 @@ var show_constants : bool = true
 var show_parent_class : bool = true
 var show_native_class : bool = false
 var show_functions : bool = true
-var show_inheritance : bool = false
+var show_inheritance : bool = true
 
 var flat_mode : bool = false
 
@@ -596,7 +596,7 @@ func _on_change_script(script : Script) -> void:
 						item_color = properties_color_item
 							
 					mthds = tree_item
-					var TRANSPARENT : Color = show_constants_color
+					var TRANSPARENT : Color = show_properties_color
 					
 					for fnc : StringName in _order_name(sc_data.keys()):
 						var packed : PackedStringArray = sc_data[fnc].split("||")
@@ -868,7 +868,7 @@ func _on_change_script(script : Script) -> void:
 						else:
 							mthds.collapsed = true	
 						
-						var TRANSPARENT : Color = show_constants_color
+						var TRANSPARENT : Color = show_properties_color
 						TRANSPARENT.a = 0.4
 						
 						for fnc : StringName in _order_name(sc_data.keys()):

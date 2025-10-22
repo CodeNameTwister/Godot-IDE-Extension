@@ -4,18 +4,19 @@
 [ext_resource type="Script" uid="uid://b1v225muollg5" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/button.gd" id="2_l7727"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l7727"]
-content_margin_left = 3.0
-content_margin_top = 3.0
-content_margin_right = 3.0
-content_margin_bottom = 3.0
-bg_color = Color(0.1155, 0.132, 0.1595, 1)
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.115499996, 0.132, 0.15949999, 1)
 corner_detail = 1
 anti_aliasing = false
 
 [node name="PopTree" type="Popup" node_paths=PackedStringArray("override_copy_button")]
+oversampling_override = 1.0
 title = "Member Selected"
 position = Vector2i(496, 231)
-size = Vector2i(160, 185)
+size = Vector2i(161, 189)
 visible = true
 content_scale_aspect = 4
 script = ExtResource("1_x40uf")
