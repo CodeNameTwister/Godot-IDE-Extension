@@ -144,7 +144,6 @@ This section lists users who have contributed to improving the quality of this p
 - [@kyrosle](https://github.com/kyrosle)
 - [@nathan-coleman](https://github.com/nathan-coleman)
 - [@sam-online](https://github.com/sam-online)
-- [@sam-online](https://github.com/sam-online)
 - [@WILSON](https://github.com/WlLSON)
 
 ##
