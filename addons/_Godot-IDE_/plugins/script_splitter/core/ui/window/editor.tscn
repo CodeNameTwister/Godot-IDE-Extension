@@ -15,7 +15,7 @@ auto_translate_mode = 2
 oversampling_override = 1.0
 title = "Script Splitter: Pop Script"
 initial_position = 4
-size = Vector2i(512, 512)
+size = Vector2i(1351, 784)
 script = ExtResource("1_7ydjp")
 _root = NodePath("PanelContainer/VBoxContainer/MarginContainer")
 _search = NodePath("PanelContainer/VBoxContainer/CodeSearch")
@@ -43,6 +43,7 @@ script = ExtResource("4_4imua")
 
 [node name="always_top" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+toggle_mode = true
 text = "Always Top"
 icon = ExtResource("3_qfcg7")
 flat = true

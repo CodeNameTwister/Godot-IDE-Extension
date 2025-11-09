@@ -42,10 +42,14 @@ func _enter_tree() -> void:
 	if !focus_entered.is_connected(_on_focus):
 		focus_entered.connect(_on_focus)
 		
+	if !focus_exited.is_connected(_out_focus):
+		focus_exited.connect(_out_focus)
+		
 	if !tree_exiting.is_connected(_on_close):
 		tree_exiting.connect(_on_close)
 		
-		
+func _out_focus() -> void:
+	always_on_top = $PanelContainer/VBoxContainer/HBoxContainer/always_top.button_pressed
 		
 func setup() -> void:
 	if _root:
@@ -53,6 +57,7 @@ func setup() -> void:
 		x.child_exiting_tree.connect(update)
 		
 func _on_focus(__ : Variant = null) -> void:
+	always_on_top = false
 	_search.code_edit = null
 	_focus(_root)
 	_search.visible = _search.visible and null != _search.code_edit
@@ -126,6 +131,4 @@ func center() -> void:
 	move_to_center()
 	
 func always_top() -> void:
-	always_on_top = !always_on_top
-	
-	$PanelContainer/VBoxContainer/HBoxContainer/always_top.button_pressed = always_on_top
+	pass
