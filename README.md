@@ -97,7 +97,9 @@ Each feature is described more fully in it's own repository, as well as down bel
 * Fancy Filters Script
 	* In the script editor two new tabs have been added to the left panel: Settings and Script Info. The Script Info tab gives you an overview of the current script and also allows you to view the properties of all classes which the current script inherits from. The Settings tab lets you configure the Script Info tab to your liking.
  	* Use `Ctrl + T` for show/hide the panel.
-  	* Use `Ctrl + G` to switch between **script info** and the **script list** panels.
+  	* Use `Ctrl + G` to switch between **script info** and the **script list** panels. (Only if separate script list is enabled)
+  	* Flat mode in the settings tab allows a simple display of files/class members.
+ 
 * Macro-N
 	* Create Macro with `Context Menu (RMB)` (Show only to create Macro-N if you have text selected)
 	* With selected text use `Ctrl + E` for Invoke Macro.
@@ -142,6 +144,7 @@ This section lists users who have contributed to improving the quality of this p
 - [@kyrosle](https://github.com/kyrosle)
 - [@nathan-coleman](https://github.com/nathan-coleman)
 - [@sam-online](https://github.com/sam-online)
+- [@WILSON](https://github.com/WlLSON)
 
 ##
 > I hope this is helpful. Personally, I've decided to do everything in gdscript for compatibility reasons, but I might create a C++ extension if a future feature requires it, as in cases I've had for generations or using recursive functions that still offer poor performance.
