@@ -29,6 +29,31 @@ func _ready() -> void:
 		button_pin.set(&"theme_override_colors/icon_normal_color", c)
 	_on_exit()
 	
+	var settings : EditorSettings = EditorInterface.get_editor_settings()
+	
+	if settings:
+		if !settings.settings_changed.is_connected(_on_change):
+			settings.settings_changed.connect(_on_change)
+		
+		if settings.has_setting("plugin/script_splitter/editor/tabs/close_button_visible"):
+			button_close.visible = settings.get_setting("plugin/script_splitter/editor/tabs/close_button_visible")	
+		else:
+			settings.set_setting("plugin/script_splitter/editor/tabs/close_button_visible", true)
+		
+		if settings.has_setting("plugin/script_splitter/editor/tabs/pin_button_visible"):
+			button_pin.visible = settings.get_setting("plugin/script_splitter/editor/tabs/pin_button_visible")	
+		else:
+			settings.set_setting("plugin/script_splitter/editor/tabs/pin_button_visible", true)
+	
+func _on_change() -> void:
+	var settings : EditorSettings = EditorInterface.get_editor_settings()
+	if settings:
+		var st : PackedStringArray = settings.get_changed_settings()
+		if "plugin/script_splitter/editor/tabs/close_button_visible" in st:
+			button_close.visible = settings.get_setting("plugin/script_splitter/editor/tabs/close_button_visible")
+		if "plugin/script_splitter/editor/tabs/pin_button_visible" in st:
+			button_pin.visible = settings.get_setting("plugin/script_splitter/editor/tabs/pin_button_visible")
+	
 func _on_enter() -> void:
 	add_to_group(&"__SPLITER_BUTTON_TAB__")
 

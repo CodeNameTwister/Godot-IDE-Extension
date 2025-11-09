@@ -8,6 +8,7 @@ extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/app.gd"
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 const BaseList = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/base/list.gd")
+const EDITOR = preload("uid://c1ou1s1ynw4nq")
 
 var expanded : bool = false
 var _updating : bool = false
@@ -45,6 +46,7 @@ func _update() -> void:
 		var can_merge_column : bool = _can_merge_column(base)
 		var can_merge_row : bool = _can_merge_row(base)
 		var can_sub_split : int = _sub()
+		var can_make_float : bool = (container.get_parent() is VBoxContainer)
 		
 		for x : Node in (Engine.get_main_loop()).get_nodes_in_group(&"__script_splitter__IO__"):
 			x.enable(&"SPLIT_COLUMN",can_split)
@@ -53,6 +55,7 @@ func _update() -> void:
 			x.enable(&"MERGE_ROW",can_merge_row)
 			x.enable(&"SPLIT_SUB", can_sub_split == 0)
 			x.enable(&"MERGE_SPLIT_SUB", can_sub_split == 1)
+			x.enable(&"MAKE_FLOATING", can_make_float)
 
 	_updating = false
 	
@@ -216,4 +219,22 @@ func execute(value : Variant = null) -> bool:
 					for x : Node in Engine.get_main_loop().get_nodes_in_group(&"__SCRIPT_SPLITTER__"):
 						x.script_merge()
 						break
+			&"MAKE_FLOATING":
+				if (container.get_parent() is VBoxContainer):
+					for x : ToolDB.MickeyTool in _tool_db.get_tools():
+						if x.has(container):
+							var y : Node = (_manager._base_container._editor_container.get_parent())
+							var new_window : Window = EDITOR.instantiate()
+							y.add_child(new_window)
+							
+							
+							
+							var root : Node = new_window.call(&"get_root")
+							root.initialize(null, _manager.get_base_container())
+							root.initialize_editor_contianer()
+							x.ochorus(root.call(&"get_current_editor"))
+							
+							new_window.setup()
+							new_window.update()
+							return false
 	return false

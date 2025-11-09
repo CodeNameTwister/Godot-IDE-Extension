@@ -7,7 +7,7 @@ extends Control
 # Addon for Godot
 # =============================================================================	
 @export var _type_members : TabContainer
-@export var _accessibility : TabContainer
+#@export var _accessibility : TabContainer
 
 @export var sorty_name_enabled : CheckBox
 
@@ -18,10 +18,12 @@ extends Control
 @export var use_dots : Button
 @export var flat_mode_button : Button
 @export var separate_script_list_button : Button
+@export var script_info_on_top_button : Button
 
 const NORMAL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/up.svg")
 const INVERT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/down.svg")
 
+@warning_ignore("unused_signal")
 signal on_update_order(data : Dictionary)
 
 enum TYPE_ORDER{
@@ -43,6 +45,9 @@ func flat_mode() -> void:
 	
 func separate_script_list() -> void:
 	IDE.set_config("fancy_filters_script", "separate_container_list", separate_script_list_button.button_pressed)
+		
+func script_info_on_top() -> void:
+	IDE.set_config("fancy_filters_script", "script_info_on_top", script_info_on_top_button.button_pressed)
 	
 func update_settings() -> void:
 	var order : Variant = IDE.get_config("fancy_filters_script", "members_order_by")
@@ -51,6 +56,7 @@ func update_settings() -> void:
 	var use_dots_pressed: Variant = IDE.get_config("fancy_filters_script", "use_dots_as_item_icons")
 	var flat_mode_pressed : Variant = IDE.get_config("fancy_filters_script", "flat_mode")
 	var separate_script_list_pressed : Variant = IDE.get_config("fancy_filters_script", "separate_container_list")
+	var script_info_on_top_pressed: Variant = IDE.get_config("fancy_filters_script", "script_info_on_top")
 	
 	if !(separate_script_list_pressed is bool):
 		separate_script_list_pressed = false
@@ -64,11 +70,14 @@ func update_settings() -> void:
 		use_dots_pressed = false
 	if !(flat_mode_pressed is bool):
 		flat_mode_pressed = false
+	if !(script_info_on_top_pressed is bool):
+		script_info_on_top_pressed = true
 		
 	use_dots.button_pressed = use_dots_pressed
 	background_color.button_pressed = background_pressed
 	flat_mode_button.button_pressed = flat_mode_pressed
 	separate_script_list_button.button_pressed = separate_script_list_pressed
+	script_info_on_top_button.button_pressed = script_info_on_top_pressed
 	
 	name_order = name_type
 	

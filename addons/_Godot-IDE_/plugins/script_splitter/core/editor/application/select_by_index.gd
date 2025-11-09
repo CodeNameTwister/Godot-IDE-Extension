@@ -18,6 +18,8 @@ func execute(value : Variant = null) -> bool:
 				var root : Variant = x.get_root()
 				if is_instance_valid(root):
 					if root is TabContainer:
+						if !(root.get_window().has_focus()):
+							root.get_window().grab_focus()
 						var index : int = x.get_control().get_index()
 						if root.current_tab != index and index > -1 and root.get_tab_count() > index:
 							if root.has_method(&"set_tab"):

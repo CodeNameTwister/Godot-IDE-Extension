@@ -25,6 +25,7 @@ var item_list : Node = null:
 			item_list = IDE.get_script_list()
 		return item_list
 		
+		
 func find(root : Node, pattern : String, type : String) -> Node:
 	var e : Array[Node] = root.find_children(pattern, type, true, false)
 	if e.size() > 0:
@@ -64,6 +65,9 @@ func _ready() -> void:
 	
 func _save_external_data() -> void:
 	builder.refresh_warnings()
+	
+func remove_from_control(control : Node) -> void:
+	builder.reset_by_control(control)
 
 func _exit_tree() -> void:
 	remove_from_group(&"__SCRIPT_SPLITTER__")

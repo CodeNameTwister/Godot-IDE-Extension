@@ -172,9 +172,6 @@ func _on_update_list_search(txt : String) -> void:
 	
 	var rgx : RegEx = RegEx.create_from_string("(?i).*{0}.*".format([txt]))
 	
-	if !is_instance_valid(rgx) or !rgx.is_valid():
-		return
-	
 	var item_list : ItemList = _editor_list
 	for x : int in item_list.item_count:
 		var _txt : String = item_list.get_item_text(x)

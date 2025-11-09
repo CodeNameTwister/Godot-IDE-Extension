@@ -32,7 +32,9 @@ func get_root() -> SplitterRoot:
 	return _root_container
 
 func get_base_editors() -> Array[Node]:
-	return _base_container.get_children()
+	if is_instance_valid(_base_container):
+		return _base_container.get_children()
+	return []
 	
 func initialize(container : TabContainer, handler_container : HandlerContainer) -> void:
 	_setup()
@@ -52,9 +54,10 @@ func initialize(container : TabContainer, handler_container : HandlerContainer) 
 	credits.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
 	credits.modulate.a = 0.25
 	
-	var root : Node = _base_container.get_parent()
-	root.add_child(_root)
-	root.move_child(_root, mini(_base_container.get_index(), 0))
+	if is_instance_valid(_base_container):
+		var root : Node = _base_container.get_parent()
+		root.add_child(_root)
+		root.move_child(_root, mini(_base_container.get_index(), 0))
 	
 	#_root.add_child(_root_container)
 	
@@ -71,8 +74,12 @@ func initialize(container : TabContainer, handler_container : HandlerContainer) 
 	base.max_columns = 1
 	_root_container = base
 	
-	
-	vspl.add_child(_handler_container.get_io_bar())
+	var io : Node = _handler_container.get_io_bar()
+	if io.get_parent() == null:
+		vspl.add_child(_handler_container.get_io_bar())
+	else:
+		#vspl.add_child(io.duplicate())
+		pass
 	initialize_editor_contianer()
 	
 	_overlay = Overlay.new()
@@ -191,15 +198,16 @@ func _exit_tree() -> void:
 
 	
 func dragged(tab : TabBar, is_drag : bool) -> void:
-	if is_drag:
-		_overlay.start(tab)
-	else:
-		if _overlay.stop(tab):
-			var container : Node = _overlay.get_container()
-			var from : Container = tab.get_parent()
-			if is_instance_valid(container) and is_instance_valid(from):
-				if from != container:
-					_handler_container.swap_tab.emit(from, tab.current_tab, container)
+	if is_instance_valid(_overlay):
+		if is_drag:
+			_overlay.start(tab)
+		else:
+			if _overlay.stop(tab):
+				var container : Node = _overlay.get_container()
+				var from : Container = tab.get_parent()
+				if is_instance_valid(container) and is_instance_valid(from):
+					if from != container:
+						_handler_container.swap_tab.emit(from, tab.current_tab, container)
 			
 func create_new_column() -> SplitterEditorContainer.Editor:
 	var item : BaseContainerItem = get_base_container_item(_last_editor_container)
@@ -281,12 +289,13 @@ func get_current_editor() -> SplitterEditorContainer.Editor:
 
 func reset() -> void:
 	_root.queue_free()
-	_base_container.visible = true
+	if is_instance_valid(_base_container):
+		_base_container.visible = true
 	
 	var settings : EditorSettings = EditorInterface.get_editor_settings()
 	if settings.settings_changed.is_connected(_on_change):
 		settings.settings_changed.disconnect(_on_change)
 
 func notify_creation() -> void:
-	if _base_container.visible:
+	if is_instance_valid(_base_container) and  _base_container.visible:
 		_base_container.visible = false

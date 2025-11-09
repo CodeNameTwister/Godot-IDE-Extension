@@ -1,0 +1,62 @@
+[gd_scene load_steps=8 format=3 uid="uid://c1ou1s1ynw4nq"]
+
+[ext_resource type="Script" uid="uid://b18w1ib1rv47t" path="res://addons/script_splitter/core/ui/window/editor.gd" id="1_7ydjp"]
+[ext_resource type="Script" uid="uid://dyo7c2g4uwn0g" path="res://addons/script_splitter/core/ui/splitter/splitter_container.gd" id="2_l3fsh"]
+[ext_resource type="Texture2D" uid="uid://cejhhnje48450" path="res://addons/script_splitter/assets/fill_expand.svg" id="2_y3itc"]
+[ext_resource type="PackedScene" uid="uid://bomtra3fmv57j" path="res://addons/script_splitter/core/ui/window/code_search.tscn" id="3_j866e"]
+[ext_resource type="Texture2D" uid="uid://r6u1jtnbr4eg" path="res://addons/script_splitter/assets/atop.png" id="3_qfcg7"]
+[ext_resource type="Script" uid="uid://d64ag8slx57b" path="res://addons/script_splitter/core/ui/window/button.gd" id="4_4imua"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j866e"]
+bg_color = Color(0.21176471, 0.23921569, 0.2901961, 1)
+
+[node name="Editor" type="Window" node_paths=PackedStringArray("_root", "_search")]
+auto_translate_mode = 2
+oversampling_override = 1.0
+title = "Script Splitter: Pop Script"
+initial_position = 4
+size = Vector2i(512, 512)
+script = ExtResource("1_7ydjp")
+_root = NodePath("PanelContainer/VBoxContainer/MarginContainer")
+_search = NodePath("PanelContainer/VBoxContainer/CodeSearch")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_j866e")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="center" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Center"
+icon = ExtResource("2_y3itc")
+flat = true
+script = ExtResource("4_4imua")
+
+[node name="always_top" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Always Top"
+icon = ExtResource("3_qfcg7")
+flat = true
+script = ExtResource("4_4imua")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+script = ExtResource("2_l3fsh")
+
+[node name="CodeSearch" parent="PanelContainer/VBoxContainer" instance=ExtResource("3_j866e")]
+visible = false
+layout_mode = 2

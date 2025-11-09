@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://drngb2pss3dtj" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/components/tab_container.gd" id="3_g0drt"]
 [ext_resource type="Script" uid="uid://b1v225muollg5" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/button.gd" id="4_f6f5j"]
 
-[node name="Settings" type="VBoxContainer" node_paths=PackedStringArray("_type_members", "_accessibility", "sorty_name_enabled", "order_name_check", "order_name_button", "background_color", "use_dots", "flat_mode_button", "separate_script_list_button")]
+[node name="Settings" type="VBoxContainer" node_paths=PackedStringArray("_type_members", "sorty_name_enabled", "order_name_check", "order_name_button", "background_color", "use_dots", "flat_mode_button", "separate_script_list_button", "script_info_on_top_button")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -14,7 +14,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8gu0h")
 _type_members = NodePath("Type")
-_accessibility = NodePath("Accessibility")
 sorty_name_enabled = NodePath("order_name_check_button")
 order_name_check = NodePath("order_name_check_button")
 order_name_button = NodePath("order_name")
@@ -22,11 +21,11 @@ background_color = NodePath("use_background_color_in_script_info")
 use_dots = NodePath("use_dots_as_item_icons")
 flat_mode_button = NodePath("flat_mode")
 separate_script_list_button = NodePath("separate_script_list")
+script_info_on_top_button = NodePath("script_info_on_top")
 
 [node name="order_name_check_button" type="CheckBox" parent="."]
 layout_mode = 2
 size_flags_horizontal = 0
-button_pressed = true
 text = "Enable Order By Name"
 script = ExtResource("4_f6f5j")
 
@@ -35,6 +34,7 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Make sorty by using the name member."
+disabled = true
 text = "Sort Name"
 icon = ExtResource("3_f6f5j")
 icon_alignment = 2
@@ -155,4 +155,12 @@ script = ExtResource("4_f6f5j")
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Separate Script List"
+script = ExtResource("4_f6f5j")
+
+[node name="script_info_on_top" type="CheckBox" parent="."]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Script Info on top (Only if script list is embedded)"
 script = ExtResource("4_f6f5j")

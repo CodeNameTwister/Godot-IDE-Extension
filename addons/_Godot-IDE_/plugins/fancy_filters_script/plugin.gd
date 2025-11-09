@@ -22,25 +22,38 @@ var _c_input_show_hide : InputEventKey = null
 var _c_input_switch_panels : InputEventKey = null
 
 var _as_separate_container : bool = false
+var _as_info_top : bool = true
 
 var _input_defined : bool = false
 
 func _on_changes() -> void:
 	var settings : EditorSettings = EditorInterface.get_editor_settings()
 	if settings:
-		for x : String in settings.get_changed_settings():
+		var changes : PackedStringArray = settings.get_changed_settings()
+		var rst : bool = false
+		
+		for x : String in changes:
 			if "separate_container_list" in x:
 				var value : Variant = IDE.get_config("fancy_filters_script", "separate_container_list")
 				if value is bool and value != _as_separate_container:
 					_as_separate_container = value
-					_exit_tree()
-					_enter_tree()
-				break
+					rst = true
+				
+			elif "script_info_on_top" in x:
+				var value : Variant = IDE.get_config("fancy_filters_script", "script_info_on_top")
+				if value is bool and value != _as_info_top:
+					_as_info_top = value
+					rst = true
+			
+		if rst:
+			_exit_tree()
+			_enter_tree()
 			
 func _init() -> void:
 	var input0 : Variant = IDE.get_config("fancy_filters_script", "show_hide")
 	var input1 : Variant = IDE.get_config("fancy_filters_script", "switch_panels")
 	var as_separate_container : Variant = IDE.get_config("fancy_filters_script", "separate_container_list")
+	var as_info_top : Variant = IDE.get_config("fancy_filters_script", "script_info_on_top")
 	
 	var settings : EditorSettings = EditorInterface.get_editor_settings()
 	if settings:
@@ -56,6 +69,11 @@ func _init() -> void:
 		_as_separate_container = _as_separate_container
 	else:
 		IDE.set_config("fancy_filters_script", "separate_container_list", _as_separate_container)
+	
+	if as_info_top is bool:
+		_as_info_top = as_info_top
+	else:
+		IDE.set_config("fancy_filters_script", "script_info_on_top", _as_info_top)
 	
 	if input0 is InputEventKey:
 		_c_input_show_hide = input0
@@ -130,7 +148,8 @@ func _enter_tree() -> void:
 						_placeholder.visible = false
 						cntl.reparent(_placeholder)
 					
-				container.add_child(_container)
+				container.add_child(_container) 
+				#if _as_info_top:
 				container.move_child(_container, 0)
 				container.split_offset = 100
 				container.clamp_split_offset()

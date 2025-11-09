@@ -166,6 +166,16 @@ func get_current_total_splitters(current : Node) -> int:
 func clear() -> void:
 	_tool_db.clear()
 	
+func reset_by_control(control : Node) -> void:	
+	var tls : Array[ToolDB.MickeyTool] = []
+	for x : ToolDB.MickeyTool in _tool_db.get_tools():
+		if x.is_valid():
+			if control.find_child(x.get_control().name, true, false):
+				tls.append(x)
+			
+	for t : ToolDB.MickeyTool in tls:
+		t.reset()
+	
 func reset() -> void:	
 	_tool_db.clear()
 	

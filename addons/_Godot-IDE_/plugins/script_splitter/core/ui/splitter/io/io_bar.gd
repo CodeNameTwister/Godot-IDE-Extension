@@ -15,6 +15,8 @@ const SPLIT_PLUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitte
 const SPLIT_RMINUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_rminus_tool.svg")
 const SPLIT_RPLUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_rplus_tool.svg")
 const SPLIT_CMINUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_cminus_tool.svg")
+const ATOP = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/atop.png")
+
 
 const PAD : float = 12.0
 
@@ -58,6 +60,7 @@ func _setup() -> void:
 	make_function(&"MERGE_ROW", SPLIT_RMINUS_TOOL, _tr("Merge current row"))
 	make_function(&"SPLIT_SUB", SPLIT_PLUS_TOOL, _tr("Sub Split current editor"))
 	make_function(&"MERGE_SPLIT_SUB", SPLIT_MINUS_TOOL, _tr("Merge sub split of current editor"))
+	make_function(&"MAKE_FLOATING", ATOP, _tr("Make separate window"))
 	
 func enable(id : StringName, e : bool) -> void:
 	for x : Node in _root.get_children():
