@@ -7,8 +7,9 @@ extends PanelContainer
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
 const TAB = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/multi_split_container/taby/tab.tscn")
+
+const MAX_COLLAPSED : int = 6
 
 @export var container : Control = null
 var _dlt : float = 0.0
@@ -28,6 +29,10 @@ var _select_color : Color = Color.CADET_BLUE:
 var _updating : bool = false
 
 var style : StyleBox = null
+
+var _behaviour_collapsed : int = MAX_COLLAPSED:
+	set(e):
+		_behaviour_collapsed = mini(maxi(1, e), MAX_COLLAPSED)
 
 func _enter_tree() -> void:
 	modulate.a = 0.0
@@ -222,6 +227,7 @@ func update(fllbck : bool = true) -> void:
 		var _container : Control = buttons[x]
 		var btn : Button = _container.get_button()
 		var pin : Button = _container.get_button_pin()
+		_container.visible = true
 		btn.tooltip_text = tab.get_tab_tooltip(x)
 		_container.set_text(tab.get_tab_title(x))
 		btn.icon = tab.get_tab_icon(x)
@@ -243,7 +249,6 @@ func update(fllbck : bool = true) -> void:
 		_container.color_rect.visible = false
 		_container.modulate.a = 0.85
 		
-		
 	if tab.current_tab > -1 and tab.current_tab < buttons.size():
 		var _container : Control = buttons[tab.current_tab]
 		var btn : Button = _container.get_button()
@@ -254,6 +259,15 @@ func update(fllbck : bool = true) -> void:
 		var c : ColorRect = _container.color_rect
 		c.visible = true
 		c.color = _select_color
+		
+	
+		if _behaviour_collapsed < MAX_COLLAPSED:
+			var iminor : int = tab.current_tab - _behaviour_collapsed
+			var isup : int = tab.current_tab + _behaviour_collapsed
+			for x : int in range(tab.tab_count):
+				if x < iminor or x > isup:
+					var _btn : Control = buttons[x]
+					_btn.visible = false
 		
 	_on_rect_change()
 	
@@ -269,12 +283,30 @@ func _on_close(btn : Button) -> void:
 				_reference.tab_close_pressed.emit(x)
 				break
 
+func _on_gui(event : InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.pressed:
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				#TODO
+				if _behaviour_collapsed < MAX_COLLAPSED:
+					_behaviour_collapsed += 1
+					update()
+				get_viewport().set_input_as_handled()
+			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				#TODO
+				if _behaviour_collapsed > 1:
+					_behaviour_collapsed -= 1
+					update()
+				get_viewport().set_input_as_handled()
+
 func _ready() -> void:
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_FILL
 	
 	item_rect_changed.connect(_on_rect_change)	
 	
+	if !gui_input.is_connected(_on_gui):
+		gui_input.connect(_on_gui)
 	
 	var bd : Control = EditorInterface.get_base_control()
 	if bd:
@@ -349,5 +381,3 @@ func _physics_process(delta: float) -> void:
 			_try = 0
 			set_physics_process(true)
 			custom_minimum_size.y = min_size
-		
-		
