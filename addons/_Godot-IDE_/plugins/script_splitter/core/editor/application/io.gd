@@ -227,14 +227,29 @@ func execute(value : Variant = null) -> bool:
 							var new_window : Window = EDITOR.instantiate()
 							y.add_child(new_window)
 							
-							
-							
 							var root : Node = new_window.call(&"get_root")
 							root.initialize(null, _manager.get_base_container())
 							root.initialize_editor_contianer()
+							var _root : Node = x.get_root()
+							
 							x.ochorus(root.call(&"get_current_editor"))
+
+							if _root.get_child_count() < 1:
+								var item : Node = _manager.get_base_container().get_container_item(_root)	
+								if item.get_child_count() == 1:
+									var cont : Node = _manager.get_base_container().get_container(_root)
+									if cont.get_child_count() == 1:
+										cont.queue_free()
+									else:
+										item.queue_free()
+								else:
+									if _root.get_parent() is VBoxContainer:
+										_root.get_parent().queue_free()
+									else:
+										_root.queue_free()
 							
 							new_window.setup()
 							new_window.update()
+							_manager.update()
 							return false
 	return false

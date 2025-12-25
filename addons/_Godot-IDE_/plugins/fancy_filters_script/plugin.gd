@@ -255,14 +255,18 @@ func toggle_position() -> void:
 					settings.set_setting("plugin/godot_ide/fancy_filters_script/script_list_and_filter_to_right", true)
 
 func _offset(node : SplitContainer, size : float) -> void:
-	if is_instance_valid(node):
-		if !node.is_node_ready():
-			await node.ready
+	if !is_instance_valid(node):
+		return
+		
+	if !node.is_node_ready():
+		await node.ready
+		
+		if !is_instance_valid(node):
+			return
 			
-		if is_instance_valid(node):
-			if node.get_child_count() > 1:
-				node.set_deferred("split_offset", size)
-				node.clamp_split_offset.call_deferred()
+	if node.get_child_count() > 1:
+		node.set_deferred("split_offset", size)
+		node.clamp_split_offset.call_deferred()
 
 func _exit_tree() -> void:
 	var container : VSplitContainer = IDE.get_script_list_container()

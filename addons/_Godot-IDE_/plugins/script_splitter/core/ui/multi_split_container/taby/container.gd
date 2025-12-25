@@ -287,13 +287,11 @@ func _on_gui(event : InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.pressed:
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-				#TODO
 				if _behaviour_collapsed < MAX_COLLAPSED:
 					_behaviour_collapsed += 1
 					update()
 				get_viewport().set_input_as_handled()
 			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-				#TODO
 				if _behaviour_collapsed > 1:
 					_behaviour_collapsed -= 1
 					update()
