@@ -32,7 +32,7 @@ var style : StyleBox = null
 
 var _behaviour_collapsed : int = MAX_COLLAPSED:
 	set(e):
-		_behaviour_collapsed = mini(maxi(1, e), MAX_COLLAPSED)
+		_behaviour_collapsed = mini(maxi(0, e), MAX_COLLAPSED)
 
 func _enter_tree() -> void:
 	modulate.a = 0.0
@@ -286,13 +286,13 @@ func _on_close(btn : Button) -> void:
 func _on_gui(event : InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.pressed:
-			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 				if _behaviour_collapsed < MAX_COLLAPSED:
 					_behaviour_collapsed += 1
 					update()
 				get_viewport().set_input_as_handled()
-			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-				if _behaviour_collapsed > 1:
+			elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				if _behaviour_collapsed > 0:
 					_behaviour_collapsed -= 1
 					update()
 				get_viewport().set_input_as_handled()
