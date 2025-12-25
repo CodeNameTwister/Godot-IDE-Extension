@@ -121,7 +121,21 @@ func _apply_changes() -> void:
 			_container.call_deferred(&"force_update")
 	get_tree().call_group(&"UPDATE_ON_SAVE", &"update")
 
+func _await() -> bool:
+	for __ : int in range(30):
+		var scene : SceneTree = get_tree()
+		if !is_instance_valid(scene):
+			return false
+		await scene.process_frame
+	return true
+
 func _enter_tree() -> void:
+	if !is_node_ready():
+		await ready
+		
+		if !(await _await()):
+			return
+	
 	var container : VSplitContainer = IDE.get_script_list_container()
 	if container:
 		var variant : Variant = IDE.get_config("fancy_filters_script", "script_list_and_filter_to_right")
@@ -151,8 +165,7 @@ func _enter_tree() -> void:
 				container.add_child(_container) 
 				#if _as_info_top:
 				container.move_child(_container, 0)
-				container.split_offset = 100
-				container.clamp_split_offset()
+				_offset.call_deferred(container, 100)
 			else:	
 				container.add_child(_container)
 		else:
@@ -208,15 +221,6 @@ func _add_input(pop : PopupMenu, msg : String, input : InputEventKey) -> void:
 	else:
 		pop.add_item(msg, -1, input.keycode) #, KEY_MASK_CTRL | KEY_NOT_DEFINED_YET) #, KEY_MASK_CTRL | KEY_NOT_DEFINED_YET
 		
-func _ready() -> void:
-	if !Engine.get_main_loop().root.is_node_ready():
-		await Engine.get_main_loop().root.ready
-	for __ : int in range(30):
-		var scene : SceneTree = get_tree()
-		if !is_instance_valid(scene):
-			return
-		await scene.process_frame
-		
 func _input(event: InputEvent) -> void:
 	if event.is_pressed() and event.is_match(_c_input_switch_panels):
 		_on_pop_pressed(_id_switch_panels)
@@ -236,8 +240,7 @@ func toggle_position() -> void:
 			if container.get_index() != 0:
 				var size : float = (parent.get_child(0) as Control).size.x
 				parent.move_child(container, 0)
-				parent.split_offset = -size
-				parent.clamp_split_offset.call_deferred()
+				_offset.call_deferred(parent, -size)
 				
 				var settings : EditorSettings = EditorInterface.get_editor_settings()
 				if is_instance_valid(settings):
@@ -245,12 +248,21 @@ func toggle_position() -> void:
 			else:
 				var size : float = (parent.get_child(1) as Control).size.x
 				parent.move_child(container, parent.get_child_count() - 1)
-				parent.split_offset = size
-				parent.clamp_split_offset.call_deferred()
+				_offset.call_deferred(parent, size)
 				
 				var settings : EditorSettings = EditorInterface.get_editor_settings()
 				if is_instance_valid(settings):
 					settings.set_setting("plugin/godot_ide/fancy_filters_script/script_list_and_filter_to_right", true)
+
+func _offset(node : SplitContainer, size : float) -> void:
+	if is_instance_valid(node):
+		if !node.is_node_ready():
+			await node.ready
+			
+		if is_instance_valid(node):
+			if node.get_child_count() > 1:
+				node.set_deferred("split_offset", size)
+				node.clamp_split_offset.call_deferred()
 
 func _exit_tree() -> void:
 	var container : VSplitContainer = IDE.get_script_list_container()
@@ -285,7 +297,6 @@ func _exit_tree() -> void:
 			if container.get_index() != 0:
 				var size : float = (parent.get_child(1) as Control).size.x
 				parent.move_child(container, 0)
-				parent.split_offset = -size
-				parent.clamp_split_offset.call_deferred()
+				_offset.call_deferred(parent, -size)
 			
 	#TODO: Remove new menu buttons	
