@@ -7,18 +7,25 @@ extends ScrollContainer
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const PIN = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/pin.svg")
-const FILL_EXPAND = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/fill_expand.svg")
-const SPLIT_CPLUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_cplus_tool.svg")
-const SPLIT_MINUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_minus_tool.svg")
-const SPLIT_PLUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_plus_tool.svg")
-const SPLIT_RMINUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_rminus_tool.svg")
-const SPLIT_RPLUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_rplus_tool.svg")
-const SPLIT_CMINUS_TOOL = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_cminus_tool.svg")
-const ATOP = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/atop.png")
+const PIN = preload("./../../../../assets/pin.svg")
+const FILL_EXPAND = preload("./../../../../assets/fill_expand.svg")
+const SPLIT_CPLUS_TOOL = preload("./../../../../assets/split_cplus_tool.svg")
+const SPLIT_MINUS_TOOL = preload("./../../../../assets/split_minus_tool.svg")
+const SPLIT_PLUS_TOOL = preload("./../../../../assets/split_plus_tool.svg")
+const SPLIT_RMINUS_TOOL = preload("./../../../../assets/split_rminus_tool.svg")
+const SPLIT_RPLUS_TOOL = preload("./../../../../assets/split_rplus_tool.svg")
+const SPLIT_CMINUS_TOOL = preload("./../../../../assets/split_cminus_tool.svg")
+const ATOP = preload("./../../../../assets/atop.png")
 
 
 const PAD : float = 12.0
+
+#CFG
+var enable_expand : bool = true
+var enable_horizontal_split : bool = true
+var enable_vertical_split : bool = true
+var enable_pop_script : bool = true
+var enable_sub_split : bool = true
 
 var _root : VBoxContainer = null
 var _min_size : float = 0.0
@@ -27,11 +34,13 @@ var _min_size : float = 0.0
 var _pin_root : Control = null
 
 func _ready() -> void:
-	_root = VBoxContainer.new()
-	_root.alignment = BoxContainer.ALIGNMENT_BEGIN
-	_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_root.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	add_child(_root)
+	if _root == null:
+		_root = VBoxContainer.new()
+		_root.alignment = BoxContainer.ALIGNMENT_BEGIN
+		_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_root.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		add_child(_root)
+	clear()
 	_setup()
 	
 	custom_minimum_size.x = _min_size + PAD
@@ -51,16 +60,37 @@ func _exit_tree() -> void:
 func _tr(st : String) -> String:
 	# ...
 	return st.capitalize()
+	
+func clear() -> void:
+	if _root:
+		if is_inside_tree():
+			for x : Node in _root.get_children():
+				x.queue_free()
+		else:
+			for x : Node in _root.get_children():
+				x.free()
+	
+
+func setup() -> void:
+	clear()
+	_setup()
 
 func _setup() -> void:
-	make_function(&"EXPAND", FILL_EXPAND, _tr("Expand/Unexpand current tab container"))
-	make_function(&"SPLIT_COLUMN", SPLIT_CPLUS_TOOL, _tr("Split to new column"))
-	make_function(&"MERGE_COLUMN", SPLIT_CMINUS_TOOL, _tr("Merge current column"))
-	make_function(&"SPLIT_ROW", SPLIT_RPLUS_TOOL, _tr("Split to new row"))
-	make_function(&"MERGE_ROW", SPLIT_RMINUS_TOOL, _tr("Merge current row"))
-	make_function(&"SPLIT_SUB", SPLIT_PLUS_TOOL, _tr("Sub Split current editor"))
-	make_function(&"MERGE_SPLIT_SUB", SPLIT_MINUS_TOOL, _tr("Merge sub split of current editor"))
-	make_function(&"MAKE_FLOATING", ATOP, _tr("Make separate window"))
+	if !_root:
+		return
+	if enable_expand:
+		make_function(&"EXPAND", FILL_EXPAND, _tr("Expand/Unexpand current tab container"))
+	if enable_horizontal_split:
+		make_function(&"SPLIT_COLUMN", SPLIT_CPLUS_TOOL, _tr("Split to new column"))
+		make_function(&"MERGE_COLUMN", SPLIT_CMINUS_TOOL, _tr("Merge current column"))
+	if enable_vertical_split:
+		make_function(&"SPLIT_ROW", SPLIT_RPLUS_TOOL, _tr("Split to new row"))
+		make_function(&"MERGE_ROW", SPLIT_RMINUS_TOOL, _tr("Merge current row"))
+	if enable_sub_split:
+		make_function(&"SPLIT_SUB", SPLIT_PLUS_TOOL, _tr("Sub Split current editor"))
+		make_function(&"MERGE_SPLIT_SUB", SPLIT_MINUS_TOOL, _tr("Merge sub split of current editor"))
+	if enable_pop_script:
+		make_function(&"MAKE_FLOATING", ATOP, _tr("Make separate window"))
 	
 func enable(id : StringName, e : bool) -> void:
 	for x : Node in _root.get_children():

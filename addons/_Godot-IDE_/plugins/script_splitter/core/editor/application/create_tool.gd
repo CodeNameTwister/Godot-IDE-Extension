@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/app.gd"
+extends "./../../../core/editor/app.gd"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Script Splitter
 #	https://github.com/CodeNameTwister/Script-Splitter
@@ -8,11 +8,11 @@ extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/app.gd"
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-const EditorTool = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/tools/editor_tool.gd")
+const EditorTool = preload("./../../../core/editor/tools/editor_tool.gd")
 
-const HelperEditorTool = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/tools/helper_editor_tool.gd")
-const ScriptEditorTool = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/tools/script_editor_tool.gd")
-const TextEditorTool = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/tools/text_editor_tool.gd")
+const HelperEditorTool = preload("./../../../core/editor/tools/helper_editor_tool.gd")
+const ScriptEditorTool = preload("./../../../core/editor/tools/script_editor_tool.gd")
+const TextEditorTool = preload("./../../../core/editor/tools/text_editor_tool.gd")
 		
 var _tools : Array[EditorTool] = [
 	ScriptEditorTool.new(),

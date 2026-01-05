@@ -7,7 +7,7 @@ extends RefCounted
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const Notfy = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/util/control.gd")
+const Notfy = preload("./../../../../core/util/control.gd")
 
 signal focus(_tool : Object)
 signal new_symbol(symbol : String)

@@ -7,10 +7,10 @@ extends ColorRect
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const FILE_IN = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/file_in.png")
+const FILE_IN = preload("./../../../../assets/file_in.png")
+const SPLIT_SELECTION = preload("./../../../../core/ui/splitter/taby/split_selection/SplitSelection.tscn")
 
-
-const NORMAL : float = 0.0
+const NORMAL : float = 0.4
 const FILL : float = 0.65
 
 var _dt : float = 0.0
@@ -19,8 +19,11 @@ var _ec : float = 1.0
 
 var _ref : TabBar = null
 var _container : Control = null
+var _target : Control = null
 
-var txt : TextureRect = null
+var _split_selection : Control = null
+
+static var _busy : bool = false
 
 func _init() -> void:
 	visible = false
@@ -34,6 +37,7 @@ func start(ref : TabBar) -> void:
 	_dt = 0.0
 	_ref = ref
 	modulate.a = _fc
+	_target = null
 	
 	if is_instance_valid(ref):
 		_container = ref.get_parent()
@@ -43,18 +47,40 @@ func start(ref : TabBar) -> void:
 	_update()
 	set_process(true)
 	
+func _reset() -> void:
+	for x : Node in Engine.get_main_loop().get_nodes_in_group(&"__SCRIPT_SPLITTER__"):
+		if get_parent() != x:
+			reparent(x)
+			break
+			
+static func _free() -> void:
+	var sc : SceneTree = Engine.get_main_loop()
+	if sc:
+		for __ : int in range(0, 5, 1):
+			await sc.process_frame
+			if !is_instance_valid(sc):
+				return
+		_busy = false
+	
 func stop(tab : TabBar = null) -> bool:
 	set_process(false)
 	visible = false
-	if is_instance_valid(tab) and tab == _ref:
-		var container : Node = _ref.get_parent()
-		if is_instance_valid(_container) and _container == container:
-			return get_global_rect().has_point(get_global_mouse_position())
-	return false
+	var out : bool = false
+	if !_busy and mouse_over(_target):
+		set_physics_process(true)
+		_busy = true
+		_free.call_deferred()
+		if is_instance_valid(tab) and tab == _ref:
+			var container : Node = _ref.get_parent()
+			if is_instance_valid(_container) and _container == container:
+				out = get_global_rect().has_point(get_global_mouse_position())
+	_container = null
+	_target = null
+	return out
 	
-func get_container() -> Node:
+func get_container(ignore_self : bool = true) -> Node:
 	for x : Node in get_tree().get_nodes_in_group(&"__SC_SPLITTER__"):
-		if x == _container:
+		if ignore_self and x == _container:
 			continue
 		var root : Node = x.get_parent()
 		if root is Control:
@@ -67,36 +93,75 @@ func _ready() -> void:
 	color = Color.DARK_GREEN
 	
 	set_process(false)
+	set_physics_process(false)
 	visible = false
 	
-	txt = TextureRect.new()
+	set_anchors_preset(Control.PRESET_FULL_RECT)
 	
-	add_child(txt)
+	var cnt : Control = SPLIT_SELECTION.instantiate()
 	
-	txt.texture = FILE_IN
-	txt.expand_mode = TextureRect.EXPAND_KEEP_SIZE
-	txt.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	add_child(cnt)
+	
+	cnt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cnt.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	cnt.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	_split_selection = cnt
 
+func mouse_over(control: Control) -> bool:
+	if null == control or !control.is_visible_in_tree():
+		return false
+	
+	var control_window : Window = control.get_window()
+	
+	if control_window.get_window_id() != get_window().get_window_id():
+		return false
+	
+	var mp : Vector2i = DisplayServer.mouse_get_position()
+	var mouse_window_id = DisplayServer.get_window_at_screen_position(mp)
+	
+	if  mouse_window_id != control_window.get_window_id():
+		return false
+		
+	return control.get_global_rect().has_point(control.get_global_mouse_position())#mp)
+	
 func _update() -> void:
 	if is_instance_valid(_container):
-		for x : Node in get_tree().get_nodes_in_group(&"__SC_SPLITTER__"):
-			if x == _container:
-				continue
-			var root : Node = x.get_parent()
-			if root is Control:
-				var rect : Rect2 = root.get_global_rect()
-				if rect.has_point(get_global_mouse_position()):
-					size = root.size
-					global_position = root.global_position
-					txt.global_position = get_global_rect().get_center() - (txt.texture.get_size() * 0.5)
+		var sc : SceneTree = Engine.get_main_loop()
+		if sc:
+			for x : Node in sc.get_nodes_in_group(&"__SC_SPLITTER__"):
+				if x is Control and mouse_over(x):
+					var same : bool = x == _container
+					
+					# TODO: 0.5-DEV-3.0.0
+					if same:continue
+					
 					if !visible:
+						modulate.a = 0.0
+						_fc = NORMAL
+						_ec = FILL
+						_dt = 0.0
 						visible = true
+						
+					size = x.size
+					global_position = x.global_position
+						
+					
+					for y : Control in _split_selection.get_buttons():
+						y.visible = same
+					
+					if _split_selection.file_texture:
+						_split_selection.file_texture.modulate.a = float(!same)
+					
+					_target = x
+					
 					return
 		
 		_fc = NORMAL
 		_ec = FILL
 		_dt = 0.0
 		modulate.a = _fc
+		_target = null
 		visible = false
 
 func _process(delta: float) -> void:
@@ -118,3 +183,12 @@ func _process(delta: float) -> void:
 		return
 	modulate.a = lerpf(_fc, _ec, _dt)
 	
+func resize() -> void:
+	if !is_inside_tree():
+		await tree_entered
+		
+	position = Vector2.ZERO
+	reset_size()
+	size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	size_flags_vertical = Control.SIZE_EXPAND_FILL
+	#set_anchors_preset(Control.PRESET_FULL_RECT)

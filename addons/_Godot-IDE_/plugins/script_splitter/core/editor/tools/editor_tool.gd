@@ -8,8 +8,8 @@ extends RefCounted
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-const MickeyTool = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/tools/magic/mickey_tool.gd")
-const MickeyToolRoute = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/tools/magic/mickey_tool_route.gd")
+const MickeyTool = preload("./../../../core/editor/tools/magic/mickey_tool.gd")
+const MickeyToolRoute = preload("./../../../core/editor/tools/magic/mickey_tool_route.gd")
 
 func build(control : Node) -> MickeyTool:
 	return _build_tool(control)

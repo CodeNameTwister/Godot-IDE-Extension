@@ -7,8 +7,8 @@ extends TabContainer
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const Dottab = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/splitter/taby/dottab.gd")
-const CLOSE = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/Close.svg")
+const Dottab = preload("./../../../core/ui/splitter/taby/dottab.gd")
+const CLOSE = preload("./../../../assets/Close.svg")
 
 const GLOBALS : PackedStringArray = ["_GlobalScope", "_GDScript"]
 
@@ -18,6 +18,7 @@ signal remove(o : TabContainer, index : int)
 	
 var _new_tab_settings : bool = false
 var _tab_queue : int = -1
+var _last_selected : int = -1
 
 func _enter_tree() -> void:	
 	add_to_group(&"__SC_SPLITTER__")
@@ -44,12 +45,26 @@ func _ready() -> void:
 	var tab : TabBar = get_tab_bar()
 	tab.set_script(Dottab)
 	tab.tab_selected.connect(_on_selected)
+	tab.active_tab_rearranged.connect(_on_rearranged)
 	
 	tab.tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ACTIVE_ONLY
 	tab.tab_close_pressed.connect(_on_remove)
 	tab.select_with_rmb = true
 	tab.on_start_drag.connect(on_drag)
 	tab.on_stop_drag.connect(out_drag)
+	
+func _on_rearranged(t : int) -> void:
+	if _last_selected == t or t < 0:
+		return
+		
+	for x : int in [_last_selected, t]:
+		if x < 0 or x >= get_tab_count():
+			return
+	
+	var sc : SceneTree = Engine.get_main_loop()
+	if sc:
+		for x : Node in sc.get_nodes_in_group(&"__SCRIPT_SPLITTER__"):
+			x.call(&"move_item_container", self, _last_selected, t)
 	
 func _set_tab() -> void:
 	if current_tab != _tab_queue and _tab_queue > -1 and _tab_queue < get_tab_count():
@@ -80,6 +95,7 @@ func _on_remove(index : int) -> void:
 	remove.emit(self, index)
 	
 func _on_selected(value : int) -> void:
+	_last_selected = value
 	focus.emit(self, value)
 
 func get_root() -> Node:

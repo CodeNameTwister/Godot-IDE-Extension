@@ -8,9 +8,9 @@ extends EditorContextMenuPlugin
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-const PLUS_SPLIT = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/plus_row.svg")
-const MINUS_SPLIT = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/minus_row.svg")
-const SspEditor = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/splitter/editor/ssp_editor.gd")
+const PLUS_SPLIT = preload("./../../assets/plus_row.svg")
+const MINUS_SPLIT = preload("./../../assets/minus_row.svg")
+const SspEditor = preload("./../../core/ui/splitter/editor/ssp_editor.gd")
 
 var _vsplits : Array[VSplitContainer] = []
 

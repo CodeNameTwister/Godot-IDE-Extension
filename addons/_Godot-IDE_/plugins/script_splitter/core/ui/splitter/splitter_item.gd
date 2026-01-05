@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/multi_split_container/split_container_item.gd"
+extends "./../../../core/ui/multi_split_container/split_container_item.gd"
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Script Splitter

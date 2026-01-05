@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/app.gd"
+extends "./../../../core/editor/app.gd"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Script Splitter
 #	https://github.com/CodeNameTwister/Script-Splitter
@@ -7,8 +7,8 @@ extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/app.gd"
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const BaseList = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/base/list.gd")
-const EDITOR = preload("uid://c1ou1s1ynw4nq")
+const BaseList = preload("./../../../core/base/list.gd")
+const EDITOR = preload("./../../../core/ui/window/editor.tscn")
 
 var expanded : bool = false
 var _updating : bool = false
@@ -230,10 +230,11 @@ func execute(value : Variant = null) -> bool:
 							var root : Node = new_window.call(&"get_root")
 							root.initialize(null, _manager.get_base_container())
 							root.initialize_editor_contianer()
+							
 							var _root : Node = x.get_root()
 							
 							x.ochorus(root.call(&"get_current_editor"))
-
+							
 							if _root.get_child_count() < 1:
 								var item : Node = _manager.get_base_container().get_container_item(_root)	
 								if item.get_child_count() == 1:
@@ -247,7 +248,7 @@ func execute(value : Variant = null) -> bool:
 										_root.get_parent().queue_free()
 									else:
 										_root.queue_free()
-							
+								
 							new_window.setup()
 							new_window.update()
 							_manager.update()

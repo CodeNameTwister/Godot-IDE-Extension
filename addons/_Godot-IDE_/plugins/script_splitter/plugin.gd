@@ -9,8 +9,8 @@ extends EditorPlugin
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-const InputTool = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/Input.gd")
-const TWISTER_script_splitter = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/builder.gd")
+const InputTool = preload("core/Input.gd")
+const TWISTER_script_splitter = preload("core/builder.gd")
 var builder : TWISTER_script_splitter = null
 var handler : InputTool = null
 		
@@ -24,7 +24,6 @@ var item_list : Node = null:
 		if !is_instance_valid(item_list):
 			item_list = IDE.get_script_list()
 		return item_list
-		
 		
 func find(root : Node, pattern : String, type : String) -> Node:
 	var e : Array[Node] = root.find_children(pattern, type, true, false)
@@ -87,3 +86,6 @@ func _input(event: InputEvent) -> void:
 
 func _io_call(id : StringName) -> void:
 	builder.handle(id)
+
+func move_item_container(container : TabContainer, from : int, to : int) -> void:
+	builder.get_editor_manager().move_item_container(container, from, to)

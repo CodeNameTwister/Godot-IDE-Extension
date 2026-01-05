@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/multi_split_container/multi_split_container.gd"
+extends "./../../../core/ui/multi_split_container/multi_split_container.gd"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Script Splitter
 #	https://github.com/CodeNameTwister/Script-Splitter
@@ -7,7 +7,7 @@ extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/multi_split_co
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const EXPAND = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/expand.svg")
+const EXPAND = preload("./../../../assets/expand.svg")
 
 var __setup : bool = false
 var _delta : float = 0.0

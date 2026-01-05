@@ -7,7 +7,8 @@ extends PanelContainer
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const TAB = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/multi_split_container/taby/tab.tscn")
+const TAB = preload("./../../../../core/ui/multi_split_container/taby/tab.tscn")
+const TIME_WAIT : float = 0.35
 
 const MAX_COLLAPSED : int = 6
 
@@ -326,7 +327,7 @@ func _ready() -> void:
 func _on_rect_change() -> void:
 	if !_enable_update:
 		return
-	_dlt = 0.0
+	_dlt = TIME_WAIT - 0.005
 	_try = 0
 	set_physics_process(true)
 	
@@ -335,13 +336,10 @@ func get_reference() -> TabBar:
 	
 func _physics_process(delta: float) -> void:
 	_dlt += delta
-	if _dlt < 0.005:
+	if _dlt < TIME_WAIT:
 		return
 	_dlt = 0.0
-	_try += 1
-	if _try % 2 == 0:
-		return
-	set_physics_process(_try < 30)
+		
 	var rsize : Vector2 = get_parent().get_parent().size
 	if rsize.x > 10.0:
 		for x : Node in container.get_children():
@@ -379,3 +377,8 @@ func _physics_process(delta: float) -> void:
 			_try = 0
 			set_physics_process(true)
 			custom_minimum_size.y = min_size
+			return
+	
+	_try += 1
+	if _try % 5 == 0:
+		set_physics_process(false)

@@ -8,9 +8,9 @@ extends RefCounted
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-const EditorManager = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/godot/manager.gd")
-const BaseContainer = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/base/container.gd")
-const BaseList = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/base/list.gd")
+const EditorManager = preload("./../core/editor/godot/manager.gd")
+const BaseContainer = preload("./../core/base/container.gd")
+const BaseList = preload("./../core/base/list.gd")
 
 var _plugin : EditorPlugin = null
 var _editor_manager : EditorManager = null
@@ -28,6 +28,9 @@ var _item_list : ItemList = null:
 				push_warning("[Script-Splitter] Can not find item list!")
 		return _item_list
 #endregion
+
+func get_editor_manager() -> EditorManager:
+	return _editor_manager
 
 func handle(id : StringName) -> void:
 	_editor_manager.io.execute(id)

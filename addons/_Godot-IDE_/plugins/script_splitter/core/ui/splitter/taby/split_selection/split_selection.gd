@@ -7,8 +7,11 @@ extends Control
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+@export var file_texture : TextureRect = null
+var _btns : Array[Button] = []
 
-func _draw() -> void:
-	pivot_offset.x = size.y * 0.335
-	pivot_offset.y = size.y * 0.345
-	size.x = get_child(0).size.x
+func get_buttons() -> Array[Button]:
+	return _btns
+
+func add_button(b : Button) -> void:
+	_btns.append(b)

@@ -1,11 +1,11 @@
 [gd_scene load_steps=8 format=3 uid="uid://c1ou1s1ynw4nq"]
 
-[ext_resource type="Script" uid="uid://b18w1ib1rv47t" path="res://addons/script_splitter/core/ui/window/editor.gd" id="1_7ydjp"]
-[ext_resource type="Script" uid="uid://dyo7c2g4uwn0g" path="res://addons/script_splitter/core/ui/splitter/splitter_container.gd" id="2_l3fsh"]
-[ext_resource type="Texture2D" uid="uid://cejhhnje48450" path="res://addons/script_splitter/assets/fill_expand.svg" id="2_y3itc"]
-[ext_resource type="PackedScene" uid="uid://bomtra3fmv57j" path="res://addons/script_splitter/core/ui/window/code_search.tscn" id="3_j866e"]
-[ext_resource type="Texture2D" uid="uid://r6u1jtnbr4eg" path="res://addons/script_splitter/assets/atop.png" id="3_qfcg7"]
-[ext_resource type="Script" uid="uid://d64ag8slx57b" path="res://addons/script_splitter/core/ui/window/button.gd" id="4_4imua"]
+[ext_resource type="Script" uid="uid://b18w1ib1rv47t" path="res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/window/editor.gd" id="1_7ydjp"]
+[ext_resource type="Script" uid="uid://dyo7c2g4uwn0g" path="res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/splitter/splitter_container.gd" id="2_l3fsh"]
+[ext_resource type="Texture2D" uid="uid://cejhhnje48450" path="res://addons/_Godot-IDE_/plugins/script_splitter/assets/fill_expand.svg" id="2_y3itc"]
+[ext_resource type="PackedScene" uid="uid://bomtra3fmv57j" path="res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/window/code_search.tscn" id="3_j866e"]
+[ext_resource type="Texture2D" uid="uid://r6u1jtnbr4eg" path="res://addons/_Godot-IDE_/plugins/script_splitter/assets/atop.png" id="3_qfcg7"]
+[ext_resource type="Script" uid="uid://d64ag8slx57b" path="res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/window/button.gd" id="4_4imua"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j866e"]
 bg_color = Color(0.21176471, 0.23921569, 0.2901961, 1)
@@ -15,7 +15,7 @@ auto_translate_mode = 2
 oversampling_override = 1.0
 title = "Script Splitter: Pop Script"
 initial_position = 4
-size = Vector2i(1351, 784)
+size = Vector2i(968, 558)
 script = ExtResource("1_7ydjp")
 _root = NodePath("PanelContainer/VBoxContainer/MarginContainer")
 _search = NodePath("PanelContainer/VBoxContainer/CodeSearch")

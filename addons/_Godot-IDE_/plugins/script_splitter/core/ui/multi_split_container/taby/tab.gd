@@ -8,11 +8,13 @@ extends Button
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-const SEPARATOR = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/multi_split_container/taby/separator.tscn")
+const SEPARATOR = preload("./../../../../core/ui/multi_split_container/taby/separator.tscn")
+const DRAG_TIME : float = 0.15
 static var line : VSeparator = null
 
 
 var _delta : float = 0.0
+var _last_control : Control = null
 
 var is_drag : bool = false:
 	set(e):
@@ -48,10 +50,14 @@ func out_drag() -> void:
 				x.call(&"dragged", tab, false)
 
 func _get_drag_data(__ : Vector2) -> Variant:
+	if !button_pressed:
+		pressed.emit()
+		
 	var c : Control = duplicate(0)
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.z_index = RenderingServer.CANVAS_ITEM_Z_MAX - 2
 	set_drag_preview(c)
-	pressed.emit()
+	
 	return self
 	
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
@@ -61,16 +67,16 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 		if data == self:
 			return
 		elif data.is_in_group(&"SP_TAB_BUTTON"):
-			line.update(self)
+			if is_instance_valid(line):
+				line.update(self)
 			var node : Node = owner
 			if node:
 				var idx : int = node.get_index()
 				if idx >= 0:
 					var _node : Node = data.owner
 					var lft : bool = false
-					if get_global_mouse_position().x <= get_global_rect().get_center().x:
+					if owner.get_global_mouse_position().x <= owner.get_global_rect().get_center().x:
 						lft = true
-					
 					var root : Node = _node
 					for __ : int in range(3):
 						root = root.get_parent()
@@ -90,11 +96,12 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 							
 					out_drag()
 	
-func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if data is Node:
 		if data == self:
 			return false
 		elif data.is_in_group(&"SP_TAB_BUTTON"):
+			_last_control = data
 			_delta = 0.0
 			if !is_instance_valid(line):
 				line = SEPARATOR.instantiate()
@@ -104,14 +111,14 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 			if line:
 				var rct : Rect2 = owner.get_global_rect()
 				line.update(self)
-				if at_position.x <= size.x * 0.5:
+				if owner.get_global_mouse_position().x <= owner.get_global_rect().get_center().x:
 					line.global_position = rct.position
 				else:
-					line.global_position = Vector2(rct.end.x, rct.position.y)
+					line.global_position = Vector2(rct.end.x, rct.position.y) - Vector2(line.size.x * 1.5, 0.0)
 				
 				var style : StyleBoxLine = line.get(&"theme_override_styles/separator")
 				style.set(&"thickness",size.y)
-				style.set(&"color",owner.color_rect.color)
+				style.set(&"color",data.get_selected_color())
 			return true
 	return false
 
@@ -133,13 +140,7 @@ func reset() -> void:
 					if x is TabContainer:
 						parent.emit_signal(&"out_dragging",x.get_tab_bar())
 						return
-				
-			
-
-func _init() -> void:
-	if is_node_ready():
-		_ready()
-	
+							
 func _enter_tree() -> void:
 	if !is_in_group(&"__SPLITER_TAB__"):
 		add_to_group(&"__SPLITER_TAB__")
@@ -154,7 +155,7 @@ func _exit_tree() -> void:
 
 func _process(delta: float) -> void:
 	_fms += delta
-	if _fms > 0.24:
+	if _fms > DRAG_TIME:
 		if is_drag:
 			if !Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				set_process(false)
@@ -205,7 +206,7 @@ func _on_input(e : InputEvent) -> void:
 				set_process(true)
 			else:
 				set_process(false)
-				if _fms >= 0.24:
+				if _fms >= DRAG_TIME:
 					var parent : Node = self
 					for __ : int in range(10):
 						parent = parent.get_parent()
@@ -220,3 +221,6 @@ func _on_input(e : InputEvent) -> void:
 								return
 		#elif e.button_index == MOUSE_BUTTON_RIGHT:
 			#pressed.emit()
+
+func get_selected_color() -> Color:
+	return owner.get_selected_color()

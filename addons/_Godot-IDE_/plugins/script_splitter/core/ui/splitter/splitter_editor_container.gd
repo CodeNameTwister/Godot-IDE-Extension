@@ -1,3 +1,4 @@
+@tool
 extends VBoxContainer
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Script Splitter
@@ -6,8 +7,8 @@ extends VBoxContainer
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const Editor = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/splitter/editor_container.gd")
-const CONTAINER = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/multi_split_container/taby/container.tscn")
+const Editor = preload("./../../../core/ui/splitter/editor_container.gd")
+const CONTAINER = preload("./../../../core/ui/multi_split_container/taby/container.tscn")
 
 var _editor : Editor = null
 var _tab_old_behaviour : bool = false:
@@ -47,7 +48,8 @@ func _setup() -> void:
 func _ready() -> void:
 	_editor = Editor.new()
 	
-	set(&"theme_override_constants/separation", -12)
+	var iscale : int = -8
+	set(&"theme_override_constants/separation", iscale)
 	
 	tab = CONTAINER.instantiate()
 	tab.set_ref(_editor.get_tab_bar())

@@ -1,5 +1,5 @@
 @tool
-extends HBoxContainer
+extends Button
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Script Splitter
 #	https://github.com/CodeNameTwister/Script-Splitter
@@ -8,8 +8,5 @@ extends HBoxContainer
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-func _enter_tree() -> void:
-	add_to_group(&"__SP_PIN_ROOT__")
-	
-func _exit_tree() -> void:
-	remove_from_group(&"__SP_PIN_ROOT__")
+func _ready() -> void:
+	owner.add_button(self)

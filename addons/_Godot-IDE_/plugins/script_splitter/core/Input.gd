@@ -9,9 +9,9 @@ extends RefCounted
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-const Builder = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/builder.gd")
-const Context = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/contex/window.gd")
-const SSPContext = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/contex/ssp_window.gd")
+const Builder = preload("./../core/builder.gd")
+const Context = preload("./../core/contex/window.gd")
+const SSPContext = preload("./../core/contex/ssp_window.gd")
 
 var _plugin : EditorPlugin = null
 var _builder : Builder = null
@@ -25,14 +25,14 @@ signal left_tab_close(value : Resource)
 signal right_tab_close(value : Resource)
 signal others_tab_close(value : Resource)
 	
-const ICON_ADD_COLUMN : Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_cplus.svg")
-const ICON_ADD_ROW : Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_rplus.svg")
-const ICON_REMOVE_COLUMN : Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_cminus.svg")
-const ICON_REMOVE_ROW : Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_rminus.svg")
+const ICON_ADD_COLUMN : Texture2D = preload("./../assets/split_cplus.svg")
+const ICON_ADD_ROW : Texture2D = preload("./../assets/split_rplus.svg")
+const ICON_REMOVE_COLUMN : Texture2D = preload("./../assets/split_cminus.svg")
+const ICON_REMOVE_ROW : Texture2D = preload("./../assets/split_rminus.svg")
 	
-const L_TAB_BAR : Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/LTabBar.svg")
-const R_TAB_BAR : Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/RTabBar.svg")
-const TAB_BAR: Texture2D = preload("res://addons/_Godot-IDE_/plugins/script_splitter/assets/TabBar.svg")
+const L_TAB_BAR : Texture2D = preload("./../assets/LTabBar.svg")
+const R_TAB_BAR : Texture2D = preload("./../assets/RTabBar.svg")
+const TAB_BAR: Texture2D = preload("./../assets/TabBar.svg")
 	
 	
 var _context_add_split_column : Context = null

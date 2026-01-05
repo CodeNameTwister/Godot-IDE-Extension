@@ -1,16 +1,9 @@
 @tool
-extends Label
+extends Control
 
 func _ready() -> void:
 	add_to_group(&"SP_TAB_BUTTON")
 
-func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if event.is_pressed() and event.button_index == MOUSE_BUTTON_LEFT:
-			var btn : Node = get_parent().get_child(0)
-			if btn is Button:
-				btn.pressed.emit()
-				
 func _get_drag_data(__ : Vector2) -> Variant:
 	return owner.button_main._get_drag_data(__)
 	

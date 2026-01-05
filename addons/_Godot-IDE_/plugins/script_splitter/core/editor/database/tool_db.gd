@@ -7,7 +7,7 @@ extends RefCounted
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const MickeyTool = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/tools/magic/mickey_tool.gd")
+const MickeyTool = preload("./../../../core/editor/tools/magic/mickey_tool.gd")
 
 var _tools : Array[MickeyTool] = []
 

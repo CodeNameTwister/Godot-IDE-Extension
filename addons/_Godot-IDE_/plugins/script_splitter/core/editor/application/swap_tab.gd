@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/app.gd"
+extends "./../../../core/editor/app.gd"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Script Splitter
 #	https://github.com/CodeNameTwister/Script-Splitter
@@ -7,8 +7,9 @@ extends "res://addons/_Godot-IDE_/plugins/script_splitter/core/editor/app.gd"
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const BaseContainer = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/base/container.gd")
+const BaseContainer = preload("./../../../core/base/container.gd")
 
+var _last_tool : MickeyTool = null
 
 func execute(value : Variant = null) -> bool:
 	if value is Array:
@@ -25,8 +26,12 @@ func execute(value : Variant = null) -> bool:
 					for x : MickeyTool in _tool_db.get_tools():
 						if x.is_valid():
 							if x.get_root() == from and x.get_control().get_index() == index:
+								if _last_tool == x:
+									return false
+								_last_tool = x
 								x.ochorus(to)
 								_manager.clear_editors()
+								set_deferred(&"_last_tool", null)
 								return true
 			else:
 				if value[0] is String and value[1] is String and value[2] is bool:
@@ -50,11 +55,14 @@ func execute(value : Variant = null) -> bool:
 						var froot : Node = fm.get_root()
 						var troot : Node = tm.get_root()
 						if froot == troot:
-							var tidx : int = tm.get_control().get_index()
 							if left:
-								froot.move_child(fm.get_control(), maxi(tidx - 1,0))
+								if froot is TabContainer:
+									_manager.move_item_container(froot, fm.get_index(), maxi(tm.get_index() - 1, 0))
+								froot.move_child(fm.get_control(), maxi(tm.get_control().get_index() - 1,0))
 							else:
-								froot.move_child(fm.get_control(), tidx)
+								if froot is TabContainer:
+									_manager.move_item_container(froot, fm.get_index(), tm.get_index())
+								froot.move_child(fm.get_control(), tm.get_control().get_index())
 						else:
 							if froot.get_child_count() == 1:
 								

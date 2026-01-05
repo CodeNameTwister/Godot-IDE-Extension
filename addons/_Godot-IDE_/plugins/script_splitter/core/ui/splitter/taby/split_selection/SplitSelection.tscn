@@ -1,0 +1,82 @@
+[gd_scene load_steps=10 format=3 uid="uid://8468n431hc6u"]
+
+[ext_resource type="Texture2D" uid="uid://cffqinddvan8k" path="res://addons/script_splitter/assets/sep_up.svg" id="1_jygbp"]
+[ext_resource type="Script" uid="uid://bcf6213bhffkm" path="res://addons/script_splitter/core/ui/splitter/taby/split_selection/split_selection.gd" id="1_tifrm"]
+[ext_resource type="Script" uid="uid://b2jjpfip8pcsf" path="res://addons/script_splitter/core/ui/splitter/taby/split_selection/btn.gd" id="2_tifrm"]
+[ext_resource type="Texture2D" uid="uid://wp32fwv4flno" path="res://addons/script_splitter/assets/sep_left.svg" id="2_ttdhj"]
+[ext_resource type="Texture2D" uid="uid://cxds5tr6aq5v3" path="res://addons/script_splitter/assets/file_in.png" id="2_w45p2"]
+[ext_resource type="Texture2D" uid="uid://d1ee2fk3y8n83" path="res://addons/script_splitter/assets/sep_right.svg" id="3_tifrm"]
+[ext_resource type="Texture2D" uid="uid://dt830c42xmul5" path="res://addons/script_splitter/assets/sep_bottom.svg" id="4_jevbt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jygbp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w45p2"]
+
+[node name="SplitSelection" type="PanelContainer" node_paths=PackedStringArray("file_texture")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -102.0
+offset_top = -65.5
+offset_right = 102.0
+offset_bottom = 65.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_jygbp")
+script = ExtResource("1_tifrm")
+file_texture = NodePath("VB/HB/TextureRect")
+
+[node name="VB" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="TOP" type="Button" parent="VB"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_w45p2")
+icon = ExtResource("1_jygbp")
+icon_alignment = 1
+script = ExtResource("2_tifrm")
+
+[node name="HB" type="HBoxContainer" parent="VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LEFT" type="Button" parent="VB/HB"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_w45p2")
+icon = ExtResource("2_ttdhj")
+icon_alignment = 1
+script = ExtResource("2_tifrm")
+
+[node name="TextureRect" type="TextureRect" parent="VB/HB"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("2_w45p2")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="RIGHT" type="Button" parent="VB/HB"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_w45p2")
+icon = ExtResource("3_tifrm")
+icon_alignment = 1
+script = ExtResource("2_tifrm")
+
+[node name="BOTTOM" type="Button" parent="VB"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_w45p2")
+icon = ExtResource("4_jevbt")
+icon_alignment = 1
+script = ExtResource("2_tifrm")

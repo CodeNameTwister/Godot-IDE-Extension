@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://d05p8nj7f18s0" path="res://addons/script_splitter/core/ui/multi_split_container/taby/separator.gd" id="1_byjdv"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_ksadu"]
-color = Color(0.4, 0.4, 1, 1)
+color = Color(0.62352943, 0.77176476, 0.7764706, 1)
 grow_begin = 4.0
 grow_end = 4.0
-thickness = 38
+thickness = 24
 
 [node name="HSeparator" type="VSeparator"]
 visible = false

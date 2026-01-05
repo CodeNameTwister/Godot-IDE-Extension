@@ -19,6 +19,7 @@ signal on_pin(button : Object)
 var is_pinned : bool = false
 
 func _ready() -> void:
+	add_to_group(&"SP_TAB_BUTTON")
 	mouse_entered.connect(_on_enter)
 	mouse_exited.connect(_on_exit)
 	
@@ -92,3 +93,15 @@ func get_button() -> Button:
 
 func get_button_close() -> Button:
 	return button_close
+
+func _get_drag_data(__ : Vector2) -> Variant:
+	return button_main._get_drag_data(__)
+	
+func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	button_main._drop_data(_at_position, data)
+	
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	return button_main._can_drop_data(at_position, data)
+
+func get_selected_color() -> Color:
+	return color_rect.color

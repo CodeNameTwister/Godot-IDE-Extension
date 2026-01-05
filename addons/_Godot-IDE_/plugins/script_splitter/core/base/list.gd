@@ -7,9 +7,10 @@ extends RefCounted
 #	Script Splitter addon for godot 4
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const SplitterList = preload("res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/splitter/splitter_list.gd")
+const SplitterList = preload("./../../core/ui/splitter/splitter_list.gd")
 
 signal item_selected(item : int)
+signal move_item(from : int, to : int)
 signal updated()
 
 var _editor_list : ItemList = null
@@ -100,6 +101,9 @@ func _init(list : ItemList) -> void:
 	_script_list.item_selected.connect(_on_sc_item_selected)
 	_script_list.item_activated.connect(_on_sc_item_activate)
 	_script_list.item_clicked.connect(_on_sc_item_clicked)
+	
+	if _script_list.has_signal(&"move_item_by_index"):
+		_script_list.connect(&"move_item_by_index", _on_move_item_by_index)
 	#_editor_list.draw.connect(_on_update_list)
 	
 	_script_list.add_to_group(&"__SP_LT__")
@@ -275,3 +279,33 @@ func reset() -> void:
 	
 	if is_instance_valid(_script_list):
 		_script_list.queue_free()
+
+func _on_move_item_by_index(from : int, to : int) -> void:
+	if from == to:
+		return
+		
+	for x : ItemList in [_script_list, _editor_list]:
+		if !is_instance_valid(x):
+			return
+		for y : int in [from, to]:
+			if x.item_count <= y or y < 0:
+				return
+	
+	var values : Array[int] = [from, to]
+	
+	for v : int in range(0, values.size(), 1):
+		if _script_list.get_item_tooltip(v) != _editor_list.get_item_tooltip(v):
+			var value = -1
+			var st : String = _script_list.get_item_tooltip(from)
+			
+			for x : int in _editor_list.item_count:
+				if st == _editor_list.get_item_tooltip(x):
+					value = x
+					break
+			
+			if value == -1:
+				return
+				
+			values[v] = value
+			
+	move_item.emit(values[0], values[1])
