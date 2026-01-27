@@ -73,6 +73,15 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 		drag_preview.add_child(label)
 		
 		set_drag_preview(drag_preview)
+		var tp : String = get_item_tooltip(item_index)
+		
+		for x : Node in Engine.get_main_loop().get_nodes_in_group(&"SP_TAB_BUTTON"):
+			if x is Control:
+				if tp == x.tooltip_text and x.has_method(&"_on_input"):
+					var ip : InputEventMouseButton = InputEventMouseButton.new()
+					ip.button_index = MOUSE_BUTTON_LEFT
+					ip.pressed = true
+					x.call(&"_on_input", ip)
 		
 		return item_index
 	return null

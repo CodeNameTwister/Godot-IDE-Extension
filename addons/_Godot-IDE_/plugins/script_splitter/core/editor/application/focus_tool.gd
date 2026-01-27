@@ -9,7 +9,6 @@ extends "./../../../core/editor/app.gd"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 const BaseList = preload("./../../../core/base/list.gd")
 
-
 var unfocus_enabled : bool = true
 var unfocus_color : Color = Color.DARK_GRAY
 

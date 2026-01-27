@@ -170,7 +170,8 @@ func swap_by_src(from : String, to : String, as_left : bool) -> void:
 	_editor_manager.swap_tab.execute([from, to, as_left])
 	
 func reset_by_control(control : Node) -> void:
-	_editor_manager.reset_by_control(control)
+	if _editor_manager:
+		_editor_manager.reset_by_control(control)
 	
 func _clean_settings() -> void:
 	var e : EditorSettings = EditorInterface.get_editor_settings()

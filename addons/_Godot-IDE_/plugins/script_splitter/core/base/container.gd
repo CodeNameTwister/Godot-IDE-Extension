@@ -24,6 +24,8 @@ signal rmb_click(index : int, TabContainer)
 
 @warning_ignore("unused_signal")
 signal swap_tab(from : Container, index : int, to : Container)
+@warning_ignore("unused_signal")
+signal same_swap_tab(from : Container, index : int, type : StringName)
 
 var _editor_container : TabContainer = null
 var _editor_splitter_container : SplitterContainer = null

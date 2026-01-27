@@ -210,6 +210,10 @@ func dragged(tab : TabBar, is_drag : bool) -> void:
 				if is_instance_valid(container) and is_instance_valid(from):
 					if from != container:
 						_handler_container.swap_tab.emit(from, tab.current_tab, container)
+					else:
+						var type : StringName = _overlay.get_type_split()
+						if !type.is_empty():
+							_handler_container.same_swap_tab.emit(from, tab.current_tab, type)
 			
 func create_new_column() -> SplitterEditorContainer.Editor:
 	var item : BaseContainerItem = get_base_container_item(_last_editor_container)

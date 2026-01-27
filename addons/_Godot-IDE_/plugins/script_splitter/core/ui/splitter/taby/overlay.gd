@@ -23,7 +23,12 @@ var _target : Control = null
 
 var _split_selection : Control = null
 
+var _type_split : StringName = &""
+
 static var _busy : bool = false
+
+func get_type_split() -> StringName:
+	return _type_split
 
 func _init() -> void:
 	visible = false
@@ -64,16 +69,26 @@ static func _free() -> void:
 	
 func stop(tab : TabBar = null) -> bool:
 	set_process(false)
-	visible = false
 	var out : bool = false
 	if !_busy and mouse_over(_target):
 		set_physics_process(true)
 		_busy = true
+		_type_split = &""
 		_free.call_deferred()
 		if is_instance_valid(tab) and tab == _ref:
 			var container : Node = _ref.get_parent()
 			if is_instance_valid(_container) and _container == container:
 				out = get_global_rect().has_point(get_global_mouse_position())
+				
+			for b : Node in _split_selection.get_buttons():
+				if b is Control:
+					if !b.visible:
+						continue
+					if b.get_global_rect().has_point(get_global_mouse_position()):
+						_type_split = b.name
+						break
+				
+	visible = false
 	_container = null
 	_target = null
 	return out
@@ -133,8 +148,8 @@ func _update() -> void:
 				if x is Control and mouse_over(x):
 					var same : bool = x == _container
 					
-					# TODO: 0.5-DEV-3.0.0
-					if same:continue
+					if same and (!(x is TabContainer) or x.get_child_count() < 2):
+						continue
 					
 					if !visible:
 						modulate.a = 0.0
@@ -154,7 +169,6 @@ func _update() -> void:
 						_split_selection.file_texture.modulate.a = float(!same)
 					
 					_target = x
-					
 					return
 		
 		_fc = NORMAL

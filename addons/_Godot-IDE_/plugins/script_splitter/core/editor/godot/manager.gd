@@ -24,6 +24,7 @@ const SwapTab = preload("./../../../core/editor/application/swap_tab.gd")
 const RmbMenu = preload("./../../../core/editor/application/rmb_menu.gd")
 const UserTabClose = preload("./../../../core/editor/application/user_tab_close.gd")
 const Io = preload("./../../../core/editor/application/io.gd")
+const CustomSplit = preload("./../../../core/editor/application/custom_split.gd")
 
 const ToolDB = preload("./../../../core/editor/database/tool_db.gd")
 const Task = preload("./../../../core/editor/coroutine/task.gd")
@@ -51,6 +52,8 @@ var _reparent_tool : ReparentTool = null
 var _update_list_selection : UpdateListSelection = null
 var _rmb_menu : RmbMenu = null
 var _user_tab_close : UserTabClose = null
+var _custom_split : CustomSplit = null
+
 var io : Io = null
 var swap_tab : SwapTab = null
 
@@ -78,6 +81,8 @@ func _app_setup() -> void:
 	swap_tab = SwapTab.new(self, _tool_db)
 	_rmb_menu = RmbMenu.new(self, _tool_db)
 	_user_tab_close = UserTabClose.new(self, _tool_db)
+	_custom_split = CustomSplit.new(self, _tool_db)
+	
 	io = Io.new(self, _tool_db)
 	
 	split_column = SplitColumn.new(self, _tool_db)
@@ -108,6 +113,7 @@ func _init(base_container : BaseContainer, base_list : BaseList) -> void:
 	_base_container.remove_by_tab.connect(_on_remove_tab)
 	
 	_base_container.swap_tab.connect(_onswap_tab)
+	_base_container.same_swap_tab.connect(_on_same_swap_tab)
 	_base_container.change_container.connect(update_list)
 
 	_base_container.rmb_click.connect(_on_tab_rmb)
@@ -184,6 +190,9 @@ func reset() -> void:
 	
 func _onswap_tab(from : Container, index : int, to : Container) -> void:
 	swap_tab.execute([from, index, to])
+	
+func _on_same_swap_tab(from : Container, index : int, type : StringName) -> void:
+	_custom_split.execute([from, index, type])
 	
 func _on_focus_tab(tab : TabContainer, index : int) -> void:
 	_focus_by_tab.execute([tab, index])
