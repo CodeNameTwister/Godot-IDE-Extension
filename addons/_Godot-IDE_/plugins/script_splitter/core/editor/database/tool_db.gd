@@ -60,5 +60,8 @@ func clear() -> void:
 func get_by_reference(control : Node) -> MickeyTool:
 	for x : MickeyTool in _tools:
 		if x.has(control):
+			if control.has_method(&"get_current_tab_control"):
+				if control.call(&"get_current_tab_control") != x.get_control():
+					continue
 			return x
 	return null

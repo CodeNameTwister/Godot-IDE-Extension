@@ -41,6 +41,8 @@ func execute(value : Variant = null) -> bool:
 		if idx > -1 and _manager.get_editor_list().item_count() > idx:
 			_manager.move_tool(_manager.get_base_container().new_column(), idx)
 			_manager.io.update()
+			
+			_manager.queue_focus(_tool)					
 			return true
 			
 	return false

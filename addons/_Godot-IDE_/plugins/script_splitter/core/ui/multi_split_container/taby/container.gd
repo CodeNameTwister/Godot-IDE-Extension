@@ -37,7 +37,7 @@ var _behaviour_collapsed : int = MAX_COLLAPSED:
 
 func _enter_tree() -> void:
 	modulate.a = 0.0
-	z_index = 10
+	z_index = 0
 	get_tree().create_tween().tween_property(self, "modulate:a", 1.0, 0.3)
 
 	_setup()
@@ -357,6 +357,8 @@ func _physics_process(delta: float) -> void:
 		var min_size : float = 0.0
 		var btn_size : float = 0.0
 		for x : Control in buttons:
+			if !x.visible:
+				continue
 			var bsize : float = x.get_rect().size.x
 			if current == null or (bsize > 0.0 and rsize.x < current.get_minimum_size().x + bsize + 12):
 				if hbox.size() > index:

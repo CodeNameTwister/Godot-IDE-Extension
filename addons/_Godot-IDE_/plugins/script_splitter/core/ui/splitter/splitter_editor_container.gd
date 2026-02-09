@@ -45,10 +45,13 @@ func _setup() -> void:
 		else:
 			settings.set_setting(x[1], get(x[0]))
 
+func _get_iscale() -> int:
+	return int(-6.0 * EditorInterface.get_editor_scale())
+
 func _ready() -> void:
 	_editor = Editor.new()
 	
-	var iscale : int = -8
+	var iscale : int = _get_iscale()
 	set(&"theme_override_constants/separation", iscale)
 	
 	tab = CONTAINER.instantiate()

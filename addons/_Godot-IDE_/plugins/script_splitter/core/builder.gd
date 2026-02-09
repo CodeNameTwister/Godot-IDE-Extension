@@ -175,6 +175,13 @@ func reset_by_control(control : Node) -> void:
 	
 func _clean_settings() -> void:
 	var e : EditorSettings = EditorInterface.get_editor_settings()
+	
+	if !e:
+		return
+	
+	if !e.has_setting("plugin/script_splitter/editor/document_helper_unwrapped"):
+		e.set_setting("plugin/script_splitter/editor/document_helper_unwrapped", false)
+	
 	if e.has_setting("plugin/script_spliter/rows"):
 		_nws()
 		e.set_setting("plugin/script_spliter/rows", null)

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di3qxejijgp0e"
-path="res://.godot/imported/RTabBar.svg-9a0f50b61d7ac6a2c158eb70fd4d9a6f.ctex"
+path="res://.godot/imported/RTabBar.svg-1cf63dac5b4ec3a67a7cdab390c157d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/_Godot-IDE_/plugins/script_splitter/assets/RTabBar.svg"
-dest_files=["res://.godot/imported/RTabBar.svg-9a0f50b61d7ac6a2c158eb70fd4d9a6f.ctex"]
+source_file="res://addons/script_splitter/assets/RTabBar.svg"
+dest_files=["res://.godot/imported/RTabBar.svg-1cf63dac5b4ec3a67a7cdab390c157d7.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://r6u1jtnbr4eg"
-path="res://.godot/imported/atop.png-e7eeb8db1372f6d12e66a684718d9524.ctex"
+path="res://.godot/imported/atop.png-fdfd8a2738a7960f4b5badd36ef62418.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/_Godot-IDE_/plugins/script_splitter/assets/atop.png"
-dest_files=["res://.godot/imported/atop.png-e7eeb8db1372f6d12e66a684718d9524.ctex"]
+source_file="res://addons/script_splitter/assets/atop.png"
+dest_files=["res://.godot/imported/atop.png-fdfd8a2738a7960f4b5badd36ef62418.ctex"]
 
 [params]
 

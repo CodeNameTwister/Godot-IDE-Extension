@@ -35,11 +35,12 @@ func _get_tool(value : Variant) -> MickeyTool:
 func execute(value : Variant = null) -> bool:
 	if value is Array:
 		var mk : MickeyTool = _get_tool(value[0])
-		
 		if is_instance_valid(mk) and value[1] is bool:
+			_manager.recover_focus.call_deferred()
 			if mk and mk.is_valid():
 				var root : Node = mk.get_root()
 				var control : Node = root
+					
 				if control.is_in_group(&"__SC_SPLITTER__"):
 					var cbase : Manager.BaseContainer = _manager.get_base_container()
 					if value[1]:
@@ -86,6 +87,4 @@ func execute(value : Variant = null) -> bool:
 								if nodes.size() > 1:
 									base.set_current_container(nodes[z - 1])
 						return true
-					#if control.get_child_count() == 0 or root.get_child_count() == 0:
-						#control.queue_free()
 	return false

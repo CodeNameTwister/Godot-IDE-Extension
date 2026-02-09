@@ -52,7 +52,7 @@ func execute(value : Variant = null) -> bool:
 				if mt != null:
 					break
 		
-		if mt != null:
+		if is_instance_valid(mt):
 			mt.focus.connect(_manager.focus_tool)
 			mt.new_symbol.connect(_manager.set_symbol)
 			mt.clear.connect(_manager.clear_editors)
@@ -63,7 +63,7 @@ func execute(value : Variant = null) -> bool:
 			_manager.tool_created()
 			_manager.update_metadata(mt)
 			
-			mt.trigger_focus()
+			_manager.queue_focus(mt)
 			return false
 	
 		if is_editor:

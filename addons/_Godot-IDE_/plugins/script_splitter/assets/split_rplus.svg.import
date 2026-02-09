@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1sqajw0mikdj"
-path="res://.godot/imported/split_rplus.svg-a38a9e7660a8f7d4f7e55dc2aa40dce2.ctex"
+path="res://.godot/imported/split_rplus.svg-83f950338217237725eab50ab336295c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_rplus.svg"
-dest_files=["res://.godot/imported/split_rplus.svg-a38a9e7660a8f7d4f7e55dc2aa40dce2.ctex"]
+source_file="res://addons/script_splitter/assets/split_rplus.svg"
+dest_files=["res://.godot/imported/split_rplus.svg-83f950338217237725eab50ab336295c.ctex"]
 
 [params]
 

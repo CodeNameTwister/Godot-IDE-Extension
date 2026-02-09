@@ -14,10 +14,18 @@ const GRANT_KEY_CODES : PackedInt64Array = [
 @export var _root : Node = null
 @export var _search : Control = null
 
+@export var button_top : Button
+
+var _manager : Object = null
+
+func set_manager(o : Object) -> void:
+	_manager = o
+
 func get_root() -> Node:
 	return _root
 	
 func _ready() -> void:
+	always_on_top = false
 	_search.visible = false
 	set_physics_process(false)
 	
@@ -29,13 +37,19 @@ func _ready() -> void:
 	
 	show()
 	move_to_center()
-	$PanelContainer/VBoxContainer/HBoxContainer/always_top.button_pressed = always_on_top
+	button_top.button_pressed = always_on_top
+	
+	var info : Dictionary = Engine.get_version_info()
+	if info.major >= 4 and info.minor > 5:
+		button_top.visible = false
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
 		_on_close()
-
+	
 func _enter_tree() -> void:
+	add_to_group(&"__SP_WND__")
+	
 	if !close_requested.is_connected(_on_close):
 		close_requested.connect(_on_close)
 		
@@ -48,8 +62,16 @@ func _enter_tree() -> void:
 	if !tree_exiting.is_connected(_on_close):
 		tree_exiting.connect(_on_close)
 		
+func _exit_tree() -> void:
+	remove_from_group(&"__SP_WND__")
+	
+	if is_instance_valid(_manager):
+		if _manager.has_method(&"queue_focus"):
+			_manager.call(&"queue_focus")
+		
 func _out_focus() -> void:
-	always_on_top = $PanelContainer/VBoxContainer/HBoxContainer/always_top.button_pressed
+	if button_top.visible:
+		always_on_top = button_top.button_pressed
 		
 func setup() -> void:
 	if _root:
@@ -57,7 +79,8 @@ func setup() -> void:
 		x.child_exiting_tree.connect(update)
 		
 func _on_focus(__ : Variant = null) -> void:
-	always_on_top = false
+	if button_top.visible:
+		always_on_top = false
 	_search.code_edit = null
 	_focus(_root)
 	_search.visible = _search.visible and null != _search.code_edit
@@ -67,7 +90,12 @@ func _focus(n : Node, focus : bool = false) -> void:
 		if focus and n is Control:
 			var c : Control = n
 			if c.focus_mode != Control.FOCUS_NONE:
-				c.grab_focus.call_deferred()
+				var tree : SceneTree = c.get_tree()
+				var grab : bool = is_instance_valid(tree)
+				if grab and tree.has_method(&"is_accessibility_enabled"):
+					grab = tree.call(&"is_accessibility_enabled")
+				if grab:
+					c.grab_focus.call_deferred()
 				
 			if c is CodeEdit:
 				_search.code_edit = c

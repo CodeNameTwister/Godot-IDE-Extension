@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1b7aoplxr0x7"
-path="res://.godot/imported/split_cminus.svg-e2809c97c9a0d3913d3b9355b3d51b1d.ctex"
+path="res://.godot/imported/split_cminus.svg-824cba903437f8f9e5c3e4d4b77f9d32.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/_Godot-IDE_/plugins/script_splitter/assets/split_cminus.svg"
-dest_files=["res://.godot/imported/split_cminus.svg-e2809c97c9a0d3913d3b9355b3d51b1d.ctex"]
+source_file="res://addons/script_splitter/assets/split_cminus.svg"
+dest_files=["res://.godot/imported/split_cminus.svg-824cba903437f8f9e5c3e4d4b77f9d32.ctex"]
 
 [params]
 

@@ -9,9 +9,11 @@ extends Button
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 const SEPARATOR = preload("./../../../../core/ui/multi_split_container/taby/separator.tscn")
-const DRAG_TIME : float = 0.15
+const DRAG_FRAME : float = 0.15
 static var line : VSeparator = null
+static var _drag_icon : Control = null
 
+var _fms : float = 0.0
 
 var _delta : float = 0.0
 var _last_control : Control = null
@@ -26,8 +28,6 @@ var is_drag : bool = false:
 			out_drag()
 			if Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-var _fms : float = 0.0
 
 func _ready() -> void:
 	auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -50,14 +50,15 @@ func out_drag() -> void:
 				x.call(&"dragged", tab, false)
 
 func _get_drag_data(__ : Vector2) -> Variant:
-	if !button_pressed:
-		pressed.emit()
+	pressed.emit()
 		
 	var c : Control = duplicate(0)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.z_index = RenderingServer.CANVAS_ITEM_Z_MAX - 2
 	set_drag_preview(c)
 	
+	_drag_icon = c
+	set_process(true)
 	return self
 	
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
@@ -154,29 +155,31 @@ func _exit_tree() -> void:
 		remove_from_group(&"__SPLITER_TAB__")
 
 func _process(delta: float) -> void:
-	_fms += delta
-	if _fms > DRAG_TIME:
-		if is_drag:
-			if !Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-				set_process(false)
-				is_drag = false
-				var parent : Node = self
-				
-				for __ : int in range(10):
-					parent = parent.get_parent()
-					if parent.has_signal(&"out_dragging"):
-						break
-				if !is_instance_valid(parent):
-					return
+	if is_drag:
+		if !Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			set_process(false)
+			_fms = 0.0
+			is_drag = false
+			var parent : Node = self
+			
+			for __ : int in range(10):
+				parent = parent.get_parent()
 				if parent.has_signal(&"out_dragging"):
-					for x : Node in parent.get_children():
-						if x is TabContainer:
-							parent.emit_signal(&"out_dragging",x.get_tab_bar())
-							return
-		else:
-			if !Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-				set_process(false)
+					break
+			if !is_instance_valid(parent):
 				return
+			if parent.has_signal(&"out_dragging"):
+				for x : Node in parent.get_children():
+					if x is TabContainer:
+						parent.emit_signal(&"out_dragging",x.get_tab_bar())
+						return
+	else:
+		if !Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			pressed.emit()
+			set_process(false)
+			_fms = 0.0
+			return
+		if is_instance_valid(_drag_icon):
 			is_drag = true
 			var parent : Node = self
 			for __ : int in range(10):
@@ -190,6 +193,18 @@ func _process(delta: float) -> void:
 					if x is TabContainer:
 						parent.emit_signal(&"on_dragging",x.get_tab_bar())
 						return
+		else:
+			_fms += delta
+			if _fms > DRAG_FRAME:
+				_fms = 0.0
+				var c : Control = duplicate(0)
+				c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				c.z_index = RenderingServer.CANVAS_ITEM_Z_MAX - 2
+				_drag_icon = c
+				force_drag(self, c)
+
+func set_drag_icon_reference(dd : Variant) -> void:
+	_drag_icon = dd
 
 func setup() -> void:
 	if !gui_input.is_connected(_on_input):
@@ -200,27 +215,22 @@ func setup() -> void:
 func _on_input(e : InputEvent) -> void:
 	if e is InputEventMouseButton:
 		if e.button_index == MOUSE_BUTTON_LEFT:
-			is_drag = false
 			if e.pressed:
 				_fms = 0.0
-				set_process(true)
-			else:
-				set_process(false)
-				if _fms >= DRAG_TIME:
-					var parent : Node = self
-					for __ : int in range(10):
-						parent = parent.get_parent()
-						if parent.has_signal(&"out_dragging"):
-							break
-						if !is_instance_valid(parent):
-							return
-					if parent.has_signal(&"out_dragging"):
-						for x : Node in parent.get_children():
-							if x is TabContainer:
-								parent.emit_signal(&"out_dragging",x.get_tab_bar())
-								return
+				set_process.call_deferred(true)
 		#elif e.button_index == MOUSE_BUTTON_RIGHT:
 			#pressed.emit()
 
 func get_selected_color() -> Color:
 	return owner.get_selected_color()
+
+func _on_gui(e : InputEvent) -> void:
+	if e is InputEventMouseButton:
+		if e.button_index == MOUSE_BUTTON_LEFT and  e.is_pressed():
+			var _self : Variant = self
+			if _self is Button:
+				if _self.button_pressed:
+					return
+				_self.pressed.emit()
+				get_viewport().set_input_as_handled()
+	

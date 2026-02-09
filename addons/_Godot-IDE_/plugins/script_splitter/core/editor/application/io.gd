@@ -221,36 +221,57 @@ func execute(value : Variant = null) -> bool:
 						break
 			&"MAKE_FLOATING":
 				if (container.get_parent() is VBoxContainer):
-					for x : ToolDB.MickeyTool in _tool_db.get_tools():
-						if x.has(container):
-							var y : Node = (_manager._base_container._editor_container.get_parent())
-							var new_window : Window = EDITOR.instantiate()
-							y.add_child(new_window)
-							
-							var root : Node = new_window.call(&"get_root")
-							root.initialize(null, _manager.get_base_container())
-							root.initialize_editor_contianer()
-							
-							var _root : Node = x.get_root()
-							
-							x.ochorus(root.call(&"get_current_editor"))
-							
-							if _root.get_child_count() < 1:
-								var item : Node = _manager.get_base_container().get_container_item(_root)	
-								if item.get_child_count() == 1:
-									var cont : Node = _manager.get_base_container().get_container(_root)
-									if cont.get_child_count() == 1:
-										cont.queue_free()
-									else:
-										item.queue_free()
+					var x : MickeyTool = _tool_db.get_by_reference(container)
+					if is_instance_valid(x):
+						var y : Node = (_manager._base_container._editor_container.get_parent())
+						var new_window : Window = EDITOR.instantiate()
+						new_window.set_manager(_manager)
+						y.add_child(new_window)
+						
+						var root : Node = new_window.call(&"get_root")
+						root.initialize(null, _manager.get_base_container())
+						root.initialize_editor_contianer()
+						
+						var _root : Node = x.get_root()
+						
+						x.ochorus(root.call(&"get_current_editor"))
+						
+						if _root.get_child_count() < 1:
+							var item : Node = _manager.get_base_container().get_container_item(_root)	
+							if item.get_child_count() == 1:
+								var cont : Node = _manager.get_base_container().get_container(_root)
+								if cont.get_child_count() == 1:
+									cont.queue_free()
 								else:
-									if _root.get_parent() is VBoxContainer:
-										_root.get_parent().queue_free()
-									else:
-										_root.queue_free()
-								
-							new_window.setup()
-							new_window.update()
-							_manager.update()
-							return false
+									item.queue_free()
+							else:
+								if _root.get_parent() is VBoxContainer:
+									_root.get_parent().queue_free()
+								else:
+									_root.queue_free()
+							
+						new_window.setup()
+						new_window.update()
+						
+						_manager.queue_focus(x)
+						
+						_queue_window.call_deferred(x)
+						return false
 	return false
+
+func _queue_window(x : MickeyTool) -> void:
+	while null != _manager._queue_focus_tool:
+		await Engine.get_main_loop().process_frame
+		if !is_instance_valid(_manager):
+			return
+			
+	if !is_instance_valid(x):
+		return
+		
+	# FORCE 3RRN0 WIN ISSUE
+	#if is_instance_valid(x.get_gui()):
+	#	var c : Control = x.get_gui()
+	#	if c.has_focus():
+	#		return
+			
+	_manager.queue_focus(x)

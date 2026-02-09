@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cj6sg45m64fiv"
-path="res://.godot/imported/plus_row.svg-947a3d1b90cc7713424371beaa7e9f65.ctex"
+path="res://.godot/imported/plus_row.svg-c644e3f245eec8d807df6e16bc34686c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/_Godot-IDE_/plugins/script_splitter/assets/plus_row.svg"
-dest_files=["res://.godot/imported/plus_row.svg-947a3d1b90cc7713424371beaa7e9f65.ctex"]
+source_file="res://addons/script_splitter/assets/plus_row.svg"
+dest_files=["res://.godot/imported/plus_row.svg-c644e3f245eec8d807df6e16bc34686c.ctex"]
 
 [params]
 

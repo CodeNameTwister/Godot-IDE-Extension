@@ -67,9 +67,11 @@ func execute(value : Variant = null) -> bool:
 			if x.has(control):
 				value = x
 				break
+				
 	if value is MickeyTool:
 		var index : int = value.get_index()
 		var editor_list : BaseList = _manager.get_editor_list()
+			
 		if editor_list.item_count() > index and index > -1:
 			var control : Node = value.get_control()
 			var root : Node = value.get_root()
@@ -106,9 +108,24 @@ func execute(value : Variant = null) -> bool:
 					if is_instance_valid(parent) and parent.has_method(&"expand_splited_container"):
 						parent.call(&"expand_splited_container", base.get_editor_root_container(new_container))
 					
+				#var gui : Node = value.get_gui()
+				#if gui is Control:
+				#	if gui.focus_mode != Control.FOCUS_NONE:
+				#		if !gui.has_focus():
+				#			gui.grab_focus.call_deferred()
+					
 			if !editor_list.is_selected(index):
 				editor_list.select(index)
 				
 			_manager.io.update()
 			_manager.get_editor_list().updated.emit()
+			
+			if is_instance_valid(control):
+				if control.focus_mode != Control.FOCUS_NONE and !control.has_focus():
+					var tree : SceneTree = control.get_tree()
+					var grab : bool = is_instance_valid(tree)
+					if grab and tree.has_method(&"is_accessibility_enabled"):
+						grab = tree.call(&"is_accessibility_enabled")
+					control.grab_focus()
+				
 	return false

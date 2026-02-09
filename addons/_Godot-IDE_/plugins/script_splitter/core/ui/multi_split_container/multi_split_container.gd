@@ -401,7 +401,7 @@ class DragButton extends Button:
 		for h : bool in _hover:
 			if h != false:
 				return
-
+	
 		_frm = 0.0
 		modulate.a = 1.0
 		is_hover = false
@@ -561,7 +561,8 @@ class LineSep extends ColorRect:
 		else:
 			min_size_offset = 0.0
 			for x : Control in bottom_items:
-				min_size_offset = maxf(min_size_offset, x.get_minimum_size().x)
+				if is_instance_valid(x):
+					min_size_offset = maxf(min_size_offset, x.get_minimum_size().x)
 
 			if prev_line:
 				prev_line.min_size_offset = 0.0

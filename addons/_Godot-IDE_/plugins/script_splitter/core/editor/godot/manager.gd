@@ -64,6 +64,7 @@ var _tool_db : ToolDB = null
 var _base_container : BaseContainer = null
 var _base_list : BaseList = null
 var _task : Task = null
+var _queue_focus_tool : ToolDB.MickeyTool = null
 
 func _app_setup() -> void:
 	_task = Task.new()
@@ -226,6 +227,11 @@ func update() -> bool:
 	
 	_base_container.update_split_container()
 	_base_list.update_list()
+	
+	if is_instance_valid(_queue_focus_tool):
+		_queue_focus_tool.trigger_focus()
+		_queue_focus_tool = null
+		
 	return !update_required
 
 # API
@@ -402,3 +408,143 @@ func move_item_container(container : TabContainer, from : int, to : int) -> void
 		return
 		
 	_base_container.move_container(vfrom, vto)
+
+func queue_focus(mk : ToolDB.MickeyTool = null) -> void:
+	_queue_focus_tool = mk
+	if is_instance_valid(mk):
+		update_request.emit()
+	else:
+		var _self : Object = self
+		for __ : int in range(5):
+			await Engine.get_main_loop().process_frame
+			if !is_instance_valid(_self) or !is_instance_valid(merge_tool):
+				return
+		recover_focus()
+
+func restore(data : Dictionary) -> void:
+	if data.is_empty():
+		return
+	
+	var tools : Array[ToolDB.MickeyTool] = _tool_db.get_tools()
+	
+	for x : ToolDB.MickeyTool in tools:
+		x.reset()
+		
+	var base : BaseContainer = get_base_container()
+	var container : Array[Node] = _base_container.get_all_containers()
+	var splits : Array[Node] = _base_container.get_all_splitters()
+						
+	for x : int in range(1, container.size(), 1):
+		var o : Variant = container[x]
+		if is_instance_valid(o):
+			o.queue_free()
+			
+	for x : int in range(1, splits.size(), 1):
+		var o : Variant = splits[x]
+		if is_instance_valid(o):
+			o.queue_free()
+	#
+	for x : Node in _base_container.get_editors():
+		_create_tool.execute(x)
+		
+	var rws : int = 0
+	var c_rws : int = 1
+	
+	while data.has(rws):
+		var _data : Variant = data[rws]
+		var has_rw : bool = false
+		if _data is Dictionary:
+			var col : Array = _data.keys()
+			var c_cls : int = 0 
+			var l_cls : int = 0
+			for x : int in range(col.size()):
+				var values : Variant = _data[col[x]]
+				if !(values is Array):
+					continue
+				for val : Variant in values:
+					if !val is String:
+						continue
+					for tool : ToolDB.MickeyTool in tools:
+						if !tool.is_valid():
+							continue
+							
+						if _base_list.get_item_tooltip(tool.get_index()) == val:
+							if l_cls != x:
+								c_cls += 1
+								l_cls = x
+							
+							if !has_rw:
+								has_rw = true
+								c_rws += 1
+							
+							container = _base_container.get_all_containers()
+							if _base_container.get_all_containers().size() < c_rws:
+								split_row.execute(tool)
+								continue
+							
+							var current : int = 0
+							var last_col : Node = null
+							splits = _base_container.get_all_splitters()
+							
+							
+							for isplit : Node in splits:
+								var y : int = container.find(base.get_container(isplit))
+								if y == c_rws - 1:
+									current += 1
+									last_col = isplit
+									
+							if is_instance_valid(last_col):
+								swap_tab.execute([tool.get_control(), tool.get_control().get_index(), last_col])
+									
+							if current < c_cls:
+								split_column.execute(tool)
+		rws += 1
+
+func dump() -> Dictionary:
+	var data : Dictionary = {}
+	var container : Array[Node] = _base_container.get_all_containers()
+	var splits : Array[Node] = 	_base_container.get_all_splitters()
+	
+	var base : BaseContainer = get_base_container()
+	var list : BaseList = get_editor_list()
+	
+	for x : int in range(container.size()):
+		data[x] = {}
+	
+	for isplit : int in range(splits.size()):
+		var x : int = container.find(base.get_container(splits[isplit]))
+		data[x][isplit] = []
+		
+	for x : ToolDB.MickeyTool in _tool_db.get_tools():
+		if is_instance_valid(x) and x.is_valid():
+			var isplit : int = -1
+			
+			for xsplit : int in range(splits.size()):
+				if x.has(splits[xsplit]):
+					isplit = xsplit
+					continue
+					
+			if isplit < 0:
+				continue
+				
+			var y : int = container.find(base.get_container(splits[isplit]))
+			if data.has(y) and data[y].has(isplit):
+				var _str : String = list.get_item_tooltip(x.get_index())
+				if _str.is_empty() or !FileAccess.file_exists(_str):
+					continue
+				data[y][isplit].append(_str)
+				
+	return data
+
+func recover_focus() -> void:
+	var base : BaseContainer = get_base_container()
+	
+	if !is_instance_valid(base):
+		return
+	
+	var current : Control = base._current_container
+	for t : ToolDB.MickeyTool in _tool_db.get_tools():
+		if is_instance_valid(t) and t.is_valid():
+			if t.get_root() == current:
+				queue_focus(t)	
+				return

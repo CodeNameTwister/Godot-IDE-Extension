@@ -14,7 +14,7 @@ var _ref : Control = null
 func _ready() -> void:
 	visible = false
 	z_index = RenderingServer.CANVAS_ITEM_Z_MAX - 1
-	z_as_relative = false
+	z_as_relative = true
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_process(_ref != null)
 

@@ -81,6 +81,8 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 					var ip : InputEventMouseButton = InputEventMouseButton.new()
 					ip.button_index = MOUSE_BUTTON_LEFT
 					ip.pressed = true
+					if x.has_method(&"set_drag_icon_reference"):
+						x.call(&"set_drag_icon_reference", drag_preview)
 					x.call(&"_on_input", ip)
 		
 		return item_index

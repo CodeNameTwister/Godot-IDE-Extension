@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dt830c42xmul5"
-path="res://.godot/imported/sep_bottom.svg-a577f1196e705e3ed47e1f9128399a34.ctex"
+path="res://.godot/imported/sep_bottom.svg-61090b97968673a2d1c2316fdbd96a52.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/_Godot-IDE_/plugins/script_splitter/assets/sep_bottom.svg"
-dest_files=["res://.godot/imported/sep_bottom.svg-a577f1196e705e3ed47e1f9128399a34.ctex"]
+source_file="res://addons/script_splitter/assets/sep_bottom.svg"
+dest_files=["res://.godot/imported/sep_bottom.svg-61090b97968673a2d1c2316fdbd96a52.ctex"]
 
 [params]
 

@@ -190,7 +190,7 @@ func reset() -> void:
 	]:
 		if is_instance_valid(x):
 			x.set_script(null)
-			
+		
 	if _control is CodeEdit and !_control.is_queued_for_deletion() and _control.get_parent() is VSplitContainer:
 		for x : Node in Engine.get_main_loop().get_nodes_in_group(&"__SCRIPT_SPLITTER__"):
 			x.script_merge(_control)
@@ -198,6 +198,16 @@ func reset() -> void:
 	
 	ochorus(_owner)
 	set_queue_free(true)
+	
+	if _root_control and _root_control.get_child_count() == 0:
+		if _control and _control.get_parent() is TabContainer:
+			if _control.get_parent() == _root_control.get_parent():
+				for x : Node in Engine.get_main_loop().get_nodes_in_group(&"__SCRIPT_SPLITTER__"):
+					x.script_merge(_root_control)
+					break
+				if is_instance_valid(_root_control):
+					_root_control.free.call_deferred()
+	
 	_owner = null
 	_root_control = null
 	_control = null

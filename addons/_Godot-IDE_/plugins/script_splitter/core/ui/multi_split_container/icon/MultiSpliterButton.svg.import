@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1oshw4o6jues"
-path="res://.godot/imported/MultiSpliterButton.svg-c4f3205a91f571beaa6eaa4d00d0c837.ctex"
+path="res://.godot/imported/MultiSpliterButton.svg-2d0a07173fe1e75a33d019b041262a7d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/multi_split_container/icon/MultiSpliterButton.svg"
-dest_files=["res://.godot/imported/MultiSpliterButton.svg-c4f3205a91f571beaa6eaa4d00d0c837.ctex"]
+source_file="res://addons/script_splitter/core/ui/multi_split_container/icon/MultiSpliterButton.svg"
+dest_files=["res://.godot/imported/MultiSpliterButton.svg-2d0a07173fe1e75a33d019b041262a7d.ctex"]
 
 [params]
 

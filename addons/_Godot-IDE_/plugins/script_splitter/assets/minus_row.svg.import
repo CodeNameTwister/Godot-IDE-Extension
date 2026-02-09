@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cy5kd5rqu50mo"
-path="res://.godot/imported/minus_row.svg-41677dd9d6292f7f66ac69259f155706.ctex"
+path="res://.godot/imported/minus_row.svg-544028da056c25554a7fabef78831360.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/_Godot-IDE_/plugins/script_splitter/assets/minus_row.svg"
-dest_files=["res://.godot/imported/minus_row.svg-41677dd9d6292f7f66ac69259f155706.ctex"]
+source_file="res://addons/script_splitter/assets/minus_row.svg"
+dest_files=["res://.godot/imported/minus_row.svg-544028da056c25554a7fabef78831360.ctex"]
 
 [params]
 

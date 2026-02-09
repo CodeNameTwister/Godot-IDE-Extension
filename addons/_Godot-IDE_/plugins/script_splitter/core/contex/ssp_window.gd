@@ -51,7 +51,8 @@ func _out_sub_split(value : Variant = null) -> void:
 	else:
 		var sc : ScriptEditor = EditorInterface.get_script_editor()
 		var ed : ScriptEditorBase = sc.get_current_editor()
-		be= ed.get_base_editor()
+		if is_instance_valid(ed):
+			be = ed.get_base_editor()
 	
 	
 	if be is CodeEdit:
