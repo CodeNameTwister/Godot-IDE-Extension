@@ -15,6 +15,7 @@ static var _ref : Dictionary[String, Object] = {}
 static var _safe_ref : Dictionary[String, Node] = {}
 
 static var debug : bool = true
+static var deep_info : bool = true
 
 static var PRIVATE_METHODS : String = "__"
 static var VIRTUAL_METHODS : String = "_"
@@ -293,6 +294,7 @@ static func _generate(script : Script, data : Dictionary = {}, index : int = -1)
 	}
 	
 	var base_name : String = get_name_script(script, base)
+	var const_map : Dictionary = script.get_script_constant_map()
 	base["name"] = base_name
 	index += 1
 	data[index] = base
@@ -320,6 +322,18 @@ static func _generate(script : Script, data : Dictionary = {}, index : int = -1)
 				if usage & x:
 					as_exporrt = true
 					break
+		
+		if deep_info:
+			var clazz : StringName = dict.get("class_name", &"")
+			if !clazz.is_empty():
+				if script.has_script_signal(pro_name) == false:
+					var _rx_0 : RegEx= RegEx.create_from_string("var\\s+{0}\\s+:\\s*(\\b\\w*\\b)".format([pro_name]), false)
+					if _rx_0 and _rx_0.is_valid():
+						var rgx : RegExMatch = _rx_0.search(script.source_code)
+						if rgx:
+							if rgx.strings.size() > 1:
+								dict["class_name"] = rgx.strings[1]
+					
 		props[pro_name] =_get_header_virtual(dict)
 		if as_exporrt:
 			props[pro_name] += "||export"
@@ -338,6 +352,7 @@ static func _generate(script : Script, data : Dictionary = {}, index : int = -1)
 			var usage : int = dict["usage"]
 			if !(usage & PROPERTY_USAGE_SCRIPT_VARIABLE):
 				continue
+				
 		props[pro_name] =_get_header_virtual(dict)
 		props[pro_name] += "||static"
 		
@@ -345,9 +360,23 @@ static func _generate(script : Script, data : Dictionary = {}, index : int = -1)
 		var pro_name: StringName = dict.name
 		signals[pro_name] =_get_header_virtual(dict)
 	
-	for dict : Variant in script.get_script_constant_map():
+	for dict : Variant in const_map:
 		if dict is StringName:
 			var variant : Variant = script.get(dict)
+			
+			if deep_info:
+				if variant is Script:
+					constants[dict] = "{0}||{1}".format([dict, "Class"])
+					continue
+				elif variant is Variant:
+					var _rx_0 : RegEx= RegEx.create_from_string("const\\s+{0}\\s+:\\s*(\\b\\w*\\b)".format([dict]), false)
+					if _rx_0 and _rx_0.is_valid():
+						var rgx : RegExMatch = _rx_0.search(script.source_code)
+						if rgx:
+							if rgx.strings.size() > 1:
+								constants[dict] = "{0}||{1}".format([dict, rgx.strings[1]])
+								continue
+				
 			constants[dict] = "{0}||{1}".format([dict, get_type(typeof(variant))])
 		elif dict is Dictionary:
 			var pro_name: StringName = dict.name
@@ -549,8 +578,6 @@ static func get_header_function(dict : Dictionary) -> String:
 				return_value = str("return ", return_type,"()")
 	return "func {0}({1}) -> {2}:\n\t#TODO: code here :)\n\t{3}".format([dict["name"], params, return_type, return_value])
 
-
-
 static func _get_header_virtual(dict : Dictionary, include_paremeters : bool = true) -> String:
 	var params : String = ""
 	var separator : String = ""
@@ -654,7 +681,7 @@ static func _get_reference(container_name : String, root_container : Node, patte
 	if !is_instance_valid(root_container):
 		if debug:
 			# If you recieved this message, try reset the engine with this addon enabled.
-			# | If the problem persist, make a issue on "https://github.com/CodeNameTwister/godot_ide"
+			# | If the problem persist, make a issue on "https://github.com/CodeNameTwister/Godot-IDE-Extension"
 			push_warning("Caution!, not root reference setted!!")
 		return null
 	elif _ref.has(container_name):
@@ -670,7 +697,7 @@ static func _get_reference(container_name : String, root_container : Node, patte
 		return new_object
 	if debug:
 		# If you recieved this message, try reset the engine with this addon enabled.
-		# | If the problem persist, make a issue on "https://github.com/CodeNameTwister/godot_ide"
+		# | If the problem persist, make a issue on "https://github.com/CodeNameTwister/Godot-IDE-Extension"
 		push_warning("Caution!, can not found: {0}!!".format([container_name]))
 	return null
 	
