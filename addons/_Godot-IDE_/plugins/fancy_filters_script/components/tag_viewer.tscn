@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bkrdjjhllfcdw"]
+
+[ext_resource type="Script" uid="uid://c3i6oaenb3pxl" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/components/tag_viewer.gd" id="1_7e4av"]
+
+[node name="Dock" type="PanelContainer" unique_id=1288395602 node_paths=PackedStringArray("tree")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7e4av")
+tree = NodePath("MC/VC/PanelContainer/VBoxContainer/RegionInfo")
+
+[node name="MC" type="MarginContainer" parent="." unique_id=51961929]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VC" type="VSplitContainer" parent="MC" unique_id=459581209]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MC/VC" unique_id=2077262099]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MC/VC/PanelContainer" unique_id=725192161]
+layout_mode = 2
+
+[node name="RegionInfo" type="Tree" parent="MC/VC/PanelContainer/VBoxContainer" unique_id=1250064137]
+layout_mode = 2
+size_flags_vertical = 3

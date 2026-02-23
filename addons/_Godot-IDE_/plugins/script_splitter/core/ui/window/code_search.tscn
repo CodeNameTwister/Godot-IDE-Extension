@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bomtra3fmv57j"]
+[gd_scene format=3 uid="uid://bomtra3fmv57j"]
 
 [ext_resource type="Script" uid="uid://bvqs6iskv4kx2" path="res://addons/script_splitter/core/ui/window/code_search.gd" id="1_dym63"]
 
@@ -12,11 +12,11 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dylah"]
 
-[node name="CodeSearch" type="Panel"]
+[node name="CodeSearch" type="Panel" unique_id=289165509]
 custom_minimum_size = Vector2(0, 30)
 script = ExtResource("1_dym63")
 
-[node name="VBoxContainer" type="HBoxContainer" parent="."]
+[node name="VBoxContainer" type="HBoxContainer" parent="." unique_id=2141544663]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,41 +24,41 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Search" type="LineEdit" parent="VBoxContainer"]
+[node name="Search" type="LineEdit" parent="VBoxContainer" unique_id=1111229109]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Matches" type="Label" parent="VBoxContainer"]
+[node name="Matches" type="Label" parent="VBoxContainer" unique_id=344670305]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 
-[node name="Previous" type="Button" parent="VBoxContainer"]
+[node name="Previous" type="Button" parent="VBoxContainer" unique_id=888553364]
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_58b8g")
 text = "<"
 flat = true
 
-[node name="Next" type="Button" parent="VBoxContainer"]
+[node name="Next" type="Button" parent="VBoxContainer" unique_id=910400872]
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_m7op6")
 text = ">"
 flat = true
 
-[node name="MatchCase" type="CheckBox" parent="VBoxContainer"]
+[node name="MatchCase" type="CheckBox" parent="VBoxContainer" unique_id=1358117213]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_styles/focus = SubResource("StyleBoxEmpty_jjfj5")
 text = "Match Case"
 flat = true
 
-[node name="WholeWords" type="CheckBox" parent="VBoxContainer"]
+[node name="WholeWords" type="CheckBox" parent="VBoxContainer" unique_id=1546054908]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_styles/focus = SubResource("StyleBoxEmpty_7k12u")
 text = "Whole Words"
 flat = true
 
-[node name="Close" type="Button" parent="VBoxContainer"]
+[node name="Close" type="Button" parent="VBoxContainer" unique_id=1480958394]
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_styles/focus = SubResource("StyleBoxEmpty_dylah")
