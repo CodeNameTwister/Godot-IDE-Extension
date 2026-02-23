@@ -431,19 +431,22 @@ func restore(data : Dictionary) -> void:
 		x.reset()
 		
 	var base : BaseContainer = get_base_container()
+	var root : Control = base.get_root_container()
+	
 	var container : Array[Node] = _base_container.get_all_containers()
 	var splits : Array[Node] = _base_container.get_all_splitters()
 						
 	for x : int in range(1, container.size(), 1):
 		var o : Variant = container[x]
-		if is_instance_valid(o):
+		if is_instance_valid(o) and o != root:
 			o.queue_free()
 			
 	for x : int in range(1, splits.size(), 1):
 		var o : Variant = splits[x]
 		if is_instance_valid(o):
 			o.queue_free()
-	#
+	
+	
 	for x : Node in _base_container.get_editors():
 		_create_tool.execute(x)
 		

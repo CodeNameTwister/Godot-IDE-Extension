@@ -146,6 +146,7 @@ func _enter_tree() -> void:
 				
 		container.name = "Script List"
 		_container = TAB.instantiate()
+		_container.plugin = self
 		
 		if _container.get_child_count() > 0:
 			_script_info = _container.get_child(0)

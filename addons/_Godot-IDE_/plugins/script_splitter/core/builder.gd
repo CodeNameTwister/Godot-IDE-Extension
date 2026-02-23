@@ -11,6 +11,7 @@ extends RefCounted
 const EditorManager = preload("./../core/editor/godot/manager.gd")
 const BaseContainer = preload("./../core/base/container.gd")
 const BaseList = preload("./../core/base/list.gd")
+const Info = preload("util/info.gd")
 
 var _plugin : EditorPlugin = null
 var _editor_manager : EditorManager = null
@@ -234,13 +235,50 @@ func _clean_settings() -> void:
 		#for x : int in range(1, 11, 1):
 			#e.set_setting(str("plugin/script_splitter/input/split_type_" , x), null)
 		
-	
+func _info_settings() -> void:
+	var data : Dictionary = {
+		"plugin/script_splitter/behaviour/refresh_warnings_on_save" : "Check on save if all scripts has new errors/warnings (EXPERIMENTAL)"
+		,"plugin/script_splitter/editor/document_helper_unwrapped" : "It allows new editor helpers that you open to open in an expanded format, avoiding compression errors on large screens."
+		,"plugin/script_splitter/editor/out_focus_color_value" : "Out focus color of inactives editors."
+		,"plugin/script_splitter/editor/out_focus_color_enabled" : "Enable/Disable out focus color of inactives editors."
+		,"plugin/script_splitter/editor/behaviour/expand_on_focus" : "Expand split container if the editor document/script is selected."
+		,"plugin/script_splitter/editor/behaviour/can_expand_on_same_focus" : "Allow expand the same container if the current editor document/script is selected."
+		,"plugin/script_splitter/editor/behaviour/smooth_expand" : "Smooth behaviour on expand split container."
+		,"plugin/script_splitter/editor/behaviour/smooth_expand_time" : "Time expected for complety expand container using smooth behaviour."
+		,"plugin/script_splitter/editor/behaviour/swap_by_double_click_separator_button" : "Allow swap between container when double click event in the line drag button."
+		,"plugin/script_splitter/editor/list/selected_color" : "Color of selected document in the script list container."
+		,"plugin/script_splitter/editor/list/others_color" : "Color of other active documents by others split in the script list container."
+		,"plugin/script_splitter/editor/tabs/use_old_behaviour" : "Allow use the native tabs behaviour by Godot."
+		,"plugin/script_splitter/editor/tabs/close_button_visible" : "Enable/Disable visibility of close button in the new tab behaviour."
+		,"plugin/script_splitter/editor/tabs/pin_button_visible" : "Enable/Disable visibility of pin button in the new tab behaviour."
+		,"plugin/script_splitter/line/size" : "Size of the line separator between split containers."
+		,"plugin/script_splitter/line/color" : "Color of the line separator between splits (Magenta is the default, magenta is override internal as same godot editor color)"
+		,"plugin/script_splitter/line/draggable" : "Allow drag line by mouse click/touch event."
+		,"plugin/script_splitter/line/expand_by_double_click" : "Allow restore/expand container by double click in the line separator."
+		,"plugin/script_splitter/line/button/size" : "Size of the embedded button in the line separator."
+		,"plugin/script_splitter/line/button/modulate" : "Modulate color of the embedded button in the line separator."
+		,"plugin/script_splitter/line/button/always_visible" : "Make always visible for the embedded button in the line separator."
+		,"plugin/script_splitter/editor/minimap_for_unfocus_window" : "Disable code minimap for editor has not focus."
+		
+		,"plugin/script_splitter/editor/behaviour/back_and_forward/handle_back_and_forward": "NO IMPLEMENTED (IN EVALUATION)"
+		,"plugin/script_splitter/editor/behaviour/back_and_forward/history_size": "NO IMPLEMENTED (IN EVALUATION)"
+		,"plugin/script_splitter/editor/behaviour/back_and_forward/using_as_next_and_back_tab": "NO IMPLEMENTED (IN EVALUATION)"
+		,"plugin/script_splitter/editor/behaviour/back_and_forward/use_native_handler_when_there_are_no_more_tabs": "NO IMPLEMENTED (IN EVALUATION)"
+		,"plugin/script_splitter/editor/behaviour/back_and_forward/backward_key_button_input": "NO IMPLEMENTED (IN EVALUATION)"
+		,"plugin/script_splitter/editor/behaviour/back_and_forward/forward_key_button_input": "NO IMPLEMENTED (IN EVALUATION)"
+		,"plugin/script_splitter/editor/behaviour/back_and_forward/backward_mouse_button_input": "NO IMPLEMENTED (IN EVALUATION)"
+		,"plugin/script_splitter/editor/behaviour/back_and_forward/forward_mouse_button_input": "NO IMPLEMENTED (IN EVALUATION)"
+		}
+	for k : Variant in data.keys():
+		Info.set_editor_setting_tooltip(k, data[k])
+		
 func init_1(plugin : EditorPlugin, tab_container : TabContainer, item_list : ItemList) -> void:
 	if !is_instance_valid(plugin) or !is_instance_valid(tab_container):
 		printerr("Error, can`t initalize plugin, not valid references!")
 		return
 		
 	_clean_settings()
+	_info_settings()
 	_plugin = plugin
 	_plugin.set_process(true)
 	

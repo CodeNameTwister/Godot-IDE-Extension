@@ -8,6 +8,8 @@ extends "./../../../core/editor/tools/editor_tool.gd"
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		
+var notice : bool = false
+		
 func _use_expand() -> bool:
 	var settings : EditorSettings = EditorInterface.get_editor_settings()
 	var setting : String = "plugin/script_splitter/editor/document_helper_unwrapped"
@@ -93,24 +95,30 @@ func _handler(control : Node) -> MickeyTool:
 			for n : Node in childs:
 				control.remove_child(n)
 				
-				if n is RichTextLabel and expanded:
-					n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-					n.size_flags_vertical = Control.SIZE_EXPAND_FILL
-					n.autowrap_mode = TextServer.AUTOWRAP_OFF
-					n.custom_minimum_size.x = maxf(1000.0, DisplayServer.screen_get_size().x) * maxf(EditorInterface.get_editor_scale(), 1.0)
-					n.size = canvas.size
-				
-					var c : ScrollContainer = ScrollContainer.new()
-					canvas.add_child(c)
-					c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-					c.size_flags_vertical = Control.SIZE_EXPAND_FILL
-					c.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS
-					c.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS
+				if n is RichTextLabel:
+					if expanded:
+						n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+						n.size_flags_vertical = Control.SIZE_EXPAND_FILL
+						n.autowrap_mode = TextServer.AUTOWRAP_OFF
+						n.custom_minimum_size.x = maxf(1000.0, DisplayServer.screen_get_size().x) * maxf(EditorInterface.get_editor_scale(), 1.0)
+						n.size = canvas.size
 					
-					c.add_child(n)
-					_on_load.call_deferred(c)
-					continue
-					
+						var c : ScrollContainer = ScrollContainer.new()
+						canvas.add_child(c)
+						c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+						c.size_flags_vertical = Control.SIZE_EXPAND_FILL
+						c.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS
+						c.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS
+						
+						c.add_child(n)
+						_on_load.call_deferred(c)
+						continue
+					else:
+						if !notice:
+							notice = true
+							if DisplayServer.screen_get_size().x >= 2000:
+								print("[Script-Splitter][INFO] If you experience a visual error in the document helper, try changing the editor's scale or enable document_helper_unwrapped in Editor Settings")
+						
 				canvas.add_child(n)
 				
 		mickey = MickeyToolRoute.new(control, canvas, canvas)

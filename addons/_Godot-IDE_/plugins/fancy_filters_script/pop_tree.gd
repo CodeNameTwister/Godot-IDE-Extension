@@ -39,6 +39,7 @@ func close() -> void:
 func goto() -> void:
 	if callback.is_valid():
 		callback.call(&"goto")
+	close()
 
 
 func _on_popup_hide() -> void:

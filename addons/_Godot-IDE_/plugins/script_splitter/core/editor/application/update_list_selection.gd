@@ -25,8 +25,8 @@ func _notification(what: int) -> void:
 
 func _on_change() -> void:
 	var dt : Array = [
-		"plugin/script_splitter/behaviour/refresh_warnings_on_saveplugin/script_splitter/editor/list/selected_color"
-		,"plugin/script_splitter/behaviour/refresh_warnings_on_saveplugin/script_splitter/editor/list/others_color"
+		"plugin/script_splitter/editor/list/selected_color"
+		,"plugin/script_splitter/editor/list/others_color"
 	]
 	
 	var settings : EditorSettings = EditorInterface.get_editor_settings()
@@ -43,8 +43,8 @@ func _setup() -> void:
 		settings.settings_changed.connect(_on_change)
 	
 	for x : Array in [
-		["LIST_VISIBLE_SELECTED_COLOR", "plugin/script_splitter/behaviour/refresh_warnings_on_saveplugin/script_splitter/editor/list/selected_color"]
-		,["LIST_VISIBLE_OTHERS_COLOR", "plugin/script_splitter/behaviour/refresh_warnings_on_saveplugin/script_splitter/editor/list/others_color"]
+		["LIST_VISIBLE_SELECTED_COLOR", "plugin/script_splitter/editor/list/selected_color"]
+		,["LIST_VISIBLE_OTHERS_COLOR", "plugin/script_splitter/editor/list/others_color"]
 	]:
 		if settings.has_setting(x[1]):
 			set(x[0], settings.get_setting(x[1]))

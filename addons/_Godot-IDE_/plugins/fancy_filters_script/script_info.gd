@@ -44,6 +44,8 @@ enum SORT_NAME_TYPE{
 
 var DOTS_ICON : Texture2D = null
 
+var plugin : EditorPlugin = null
+
 #region CONFIG
 var use_colors_in_tittles : bool = false
 var use_dots_as_item_icons : bool = false
