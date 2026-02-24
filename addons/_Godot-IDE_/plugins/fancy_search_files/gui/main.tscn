@@ -1,70 +1,142 @@
-[gd_scene load_steps=6 format=3 uid="uid://cddiai7iiut3l"]
+[gd_scene format=3 uid="uid://cddiai7iiut3l"]
 
 [ext_resource type="Script" uid="uid://dvsbvurbdecex" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/main.gd" id="1_0f0lw"]
-[ext_resource type="Texture2D" uid="uid://816fejewtbfj" path="res://addons/_Godot-IDE_/shared_resources/search.svg" id="2_fowvl"]
+[ext_resource type="Texture2D" uid="uid://dg5o2young4vw" path="res://addons/_Godot-IDE_/shared_resources/search.svg" id="2_fowvl"]
 [ext_resource type="Script" uid="uid://cpdqmdfvgpxmv" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/button.gd" id="2_ydlx0"]
 [ext_resource type="Script" uid="uid://bx6ivdaldbcf8" path="res://addons/_Godot-IDE_/plugins/fancy_search_files/gui/line_edit.gd" id="3_5ntm4"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fowvl"]
-content_margin_left = 3.0
-content_margin_top = 3.0
-content_margin_right = 3.0
-content_margin_bottom = 3.0
-bg_color = Color(0.1155, 0.132, 0.1595, 1)
-corner_detail = 1
-anti_aliasing = false
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tb81"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.07888999, 0.07888999, 0.07888999, 1)
+corner_detail = 3
 
-[node name="Window" type="Popup" node_paths=PackedStringArray("_container", "_tree", "_tree_recents")]
+[sub_resource type="DPITexture" id="DPITexture_fowvl"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"m7 1-.565 2.258a5 5 0 0 0-.689.28L3.758 2.343 2.344 3.758l1.195 1.994a5 5 0 0 0-.285.685L1 7v2l2.258.564a5 5 0 0 0 .279.688l-1.193 1.99 1.414 1.414 1.994-1.195a5 5 0 0 0 .685.285L7 15h2l.564-2.258a5 5 0 0 0 .688-.28l1.99 1.194 1.414-1.414-1.195-1.994a5 5 0 0 0 .285-.685L15 9V7l-2.258-.564a5 5 0 0 0-.28-.688l1.194-1.99-1.414-1.414-1.994 1.195a5 5 0 0 0-.686-.285L9 1H7zm1 5a2 2 0 0 1 0 4 2 2 0 0 1 0-4z\"/></svg>
+"
+base_scale = 0.75
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_5ntm4"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"m14.564 2-2.244.328.818 1.9 1.715-.25zm-4.223.615-1.978.29.818 1.902 1.979-.29zm-3.959.578-1.978.29.818 1.902 1.979-.29zm-3.957.578-1.714.25L1 6l2.244-.328zM1 7v6a2 2 0 0 0 2 2h12V7z\"/></svg>
+"
+base_scale = 0.75
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_4c0ev"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h6v-2h2v-2H3V3h5V1zm6 2v2h2V3zm2 0h2V1h-2zm2 0v2h2V3zm0 2h-2v2h2zm0 2v2h2V7zm0 2h-2v2h2zm0 2v2h2v-2zm0 2h-2v2h2zm-2-4V7H8V6H7v1H6v1H5v1H4v1h4V9z\"/></svg>
+"
+base_scale = 0.75
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_o1qp4"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M14 12h1v-2h-4v2h1v4h2zm-8.3-2h1.7l.6 1.5.6-1.5h1.7l-1.2 3 1.2 3H8.6L8 14.5 7.4 16H5.7l1.2-3zM4 12h1v-2H1v2h1v4h2ZM9 1l.564 2.258.69.28 1.988-1.194 1.414 1.414-1.196 1.994.286.684L15 7v2H9.75a2 2 0 1 0-3.5 0H1V7l2.26-.564.278-.688-1.194-1.99 1.414-1.414L5.752 3.54l.686-.286L7 1z\"/></svg>
+"
+base_scale = 0.75
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_p8mdt"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><linearGradient id=\"a\" x2=\"0\" y2=\"16\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".188\" stop-color=\"#ff4545\"/><stop stop-color=\"#ffe345\"/><stop offset=\".313\" stop-color=\"#ffe345\"/><stop stop-color=\"#80ff45\"/><stop offset=\".438\" stop-color=\"#80ff45\"/><stop stop-color=\"#45ffa2\"/><stop offset=\".563\" stop-color=\"#45ffa2\"/><stop stop-color=\"#45d7ff\"/><stop offset=\".688\" stop-color=\"#45d7ff\"/><stop stop-color=\"#8045ff\"/><stop offset=\".813\" stop-color=\"#8045ff\"/><stop stop-color=\"#ff4596\"/></linearGradient><path fill=\"url(#a)\" d=\"M2 1a1 1 0 0 0-1 1v1h2V1zm3 0v2h2V1zm4 0v2h2V1zm4 0v2h2V2a1 1 0 0 0-1-1zM1 5v2h2V5zm12 0v.232c.316.179.578.438.76.752L14.459 7H15V5zM1 9v2h2V9zm0 4v1a1 1 0 0 0 1 1h1v-2zm4 0v2h2v-2zm7-6c-.429.746-.946 1.387-1.429 2-.571.69-1.066 1.342-1.34 2-.138.326-.231.656-.231 1s.072.686.184 1c.413 1.163 1.512 2 2.816 2s2.402-.837 2.816-2c.112-.314.184-.656.184-1s-.094-.674-.231-1c-.275-.658-.77-1.31-1.34-2-.484-.613-1-1.254-1.43-2z\"/></svg>
+"
+base_scale = 0.75
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_8bv76"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><linearGradient id=\"a\" x2=\"0\" y2=\"16\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".188\" stop-color=\"#ff4545\"/><stop stop-color=\"#ffe345\"/><stop offset=\".313\" stop-color=\"#ffe345\"/><stop stop-color=\"#80ff45\"/><stop offset=\".438\" stop-color=\"#80ff45\"/><stop stop-color=\"#45ffa2\"/><stop offset=\".563\" stop-color=\"#45ffa2\"/><stop stop-color=\"#45d7ff\"/><stop offset=\".688\" stop-color=\"#45d7ff\"/><stop stop-color=\"#8045ff\"/><stop offset=\".813\" stop-color=\"#8045ff\"/><stop stop-color=\"#ff4596\"/></linearGradient><path fill=\"url(#a)\" d=\"M1 14a1 1 0 0 0 1 1h6.037a5.044 5.044 0 0 1-.92-2A4.735 4.735 0 0 1 7 12c0-.356.045-.687.117-1 .18-.784.546-1.435.938-2 .14-.203.285-.402.424-.584.386-.505.763-.968 1.103-1.416.257-.338.495-.67.686-1a2 2 0 0 1 3.465 0c.188.327.428.66.685 1 .186.246.38.494.582.75V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1Zm11-7c-.429.746-.946 1.387-1.429 2-.571.69-1.066 1.342-1.34 2-.138.326-.231.656-.231 1s.072.686.184 1c.413 1.163 1.512 2 2.816 2s2.402-.837 2.816-2c.112-.314.184-.656.184-1s-.094-.674-.231-1c-.275-.658-.77-1.31-1.34-2-.484-.613-1-1.254-1.43-2z\"/></svg>
+"
+base_scale = 0.75
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
+[node name="Window" type="Popup" unique_id=400916071 node_paths=PackedStringArray("_container", "_tree", "_tree_recents")]
+oversampling_override = 1.0
 title = "Fancy Search Files"
 initial_position = 4
-size = Vector2i(816, 500)
+size = Vector2i(819, 500)
 visible = true
 script = ExtResource("1_0f0lw")
 _container = NodePath("Main/MainContainer/HBoxContainer/BoxContainer/Container")
 _tree = NodePath("Main/MainContainer/HBoxContainer/BoxContainer/Resource/Tree")
 _tree_recents = NodePath("Main/MainContainer/HBoxContainer/RecentsContainer/SCroll/Recents")
 
-[node name="Main" type="PanelContainer" parent="."]
+[node name="Main" type="PanelContainer" parent="." unique_id=390681415]
 custom_minimum_size = Vector2(200, 500)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_fowvl")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3tb81")
 
-[node name="MainContainer" type="MarginContainer" parent="Main"]
+[node name="MainContainer" type="MarginContainer" parent="Main" unique_id=1581251749]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Main/MainContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Main/MainContainer" unique_id=789235157]
 layout_mode = 2
 
-[node name="BoxContainer" type="VBoxContainer" parent="Main/MainContainer/HBoxContainer"]
+[node name="BoxContainer" type="VBoxContainer" parent="Main/MainContainer/HBoxContainer" unique_id=797930582]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Tittle" type="Label" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+[node name="Tittle" type="Label" parent="Main/MainContainer/HBoxContainer/BoxContainer" unique_id=1513298551]
 layout_mode = 2
 text = "Search Files By Type"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Separator" type="HSeparator" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+[node name="Separator" type="HSeparator" parent="Main/MainContainer/HBoxContainer/BoxContainer" unique_id=1081458357]
 layout_mode = 2
 
-[node name="Container" type="TabContainer" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+[node name="Container" type="TabContainer" parent="Main/MainContainer/HBoxContainer/BoxContainer" unique_id=70413806]
 layout_mode = 2
 current_tab = 0
+tab_1/icon = SubResource("DPITexture_fowvl")
+tab_2/icon = SubResource("DPITexture_5ntm4")
+tab_3/icon = SubResource("DPITexture_4c0ev")
+tab_4/icon = SubResource("DPITexture_o1qp4")
+tab_5/icon = SubResource("DPITexture_p8mdt")
+tab_6/icon = SubResource("DPITexture_8bv76")
 
-[node name="All" type="Control" parent="Main/MainContainer/HBoxContainer/BoxContainer/Container"]
+[node name="All" type="Control" parent="Main/MainContainer/HBoxContainer/BoxContainer/Container" unique_id=1783510421]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="LineEdit" type="LineEdit" parent="Main/MainContainer/HBoxContainer/BoxContainer" node_paths=PackedStringArray("tree")]
+[node name="LineEdit" type="LineEdit" parent="Main/MainContainer/HBoxContainer/BoxContainer" unique_id=1937965299 node_paths=PackedStringArray("tree")]
 layout_mode = 2
 placeholder_text = "File Search"
 alignment = 1
@@ -73,36 +145,36 @@ right_icon = ExtResource("2_fowvl")
 script = ExtResource("3_5ntm4")
 tree = NodePath("../Resource/Tree")
 
-[node name="Resource" type="ScrollContainer" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+[node name="Resource" type="ScrollContainer" parent="Main/MainContainer/HBoxContainer/BoxContainer" unique_id=1780597047]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Tree" type="Tree" parent="Main/MainContainer/HBoxContainer/BoxContainer/Resource"]
+[node name="Tree" type="Tree" parent="Main/MainContainer/HBoxContainer/BoxContainer/Resource" unique_id=902276398]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Bottom" type="HSeparator" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+[node name="Bottom" type="HSeparator" parent="Main/MainContainer/HBoxContainer/BoxContainer" unique_id=174530935]
 layout_mode = 2
 
-[node name="close" type="Button" parent="Main/MainContainer/HBoxContainer/BoxContainer"]
+[node name="close" type="Button" parent="Main/MainContainer/HBoxContainer/BoxContainer" unique_id=1673370682]
 layout_mode = 2
 text = "Close"
 script = ExtResource("2_ydlx0")
 
-[node name="RecentsContainer" type="VBoxContainer" parent="Main/MainContainer/HBoxContainer"]
+[node name="RecentsContainer" type="VBoxContainer" parent="Main/MainContainer/HBoxContainer" unique_id=1496124895]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 
-[node name="Tittle" type="Label" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
+[node name="Tittle" type="Label" parent="Main/MainContainer/HBoxContainer/RecentsContainer" unique_id=1116390140]
 layout_mode = 2
 text = "Recents"
 horizontal_alignment = 1
 
-[node name="Sep" type="HSeparator" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
+[node name="Sep" type="HSeparator" parent="Main/MainContainer/HBoxContainer/RecentsContainer" unique_id=2012323545]
 layout_mode = 2
 
-[node name="LineEdit2" type="LineEdit" parent="Main/MainContainer/HBoxContainer/RecentsContainer" node_paths=PackedStringArray("tree")]
+[node name="LineEdit2" type="LineEdit" parent="Main/MainContainer/HBoxContainer/RecentsContainer" unique_id=1722538999 node_paths=PackedStringArray("tree")]
 layout_mode = 2
 placeholder_text = "Recent Search"
 alignment = 1
@@ -111,16 +183,16 @@ right_icon = ExtResource("2_fowvl")
 script = ExtResource("3_5ntm4")
 tree = NodePath("../SCroll/Recents")
 
-[node name="SCroll" type="ScrollContainer" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
+[node name="SCroll" type="ScrollContainer" parent="Main/MainContainer/HBoxContainer/RecentsContainer" unique_id=77511162]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Recents" type="Tree" parent="Main/MainContainer/HBoxContainer/RecentsContainer/SCroll"]
+[node name="Recents" type="Tree" parent="Main/MainContainer/HBoxContainer/RecentsContainer/SCroll" unique_id=96603828]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="clear" type="Button" parent="Main/MainContainer/HBoxContainer/RecentsContainer"]
+[node name="clear" type="Button" parent="Main/MainContainer/HBoxContainer/RecentsContainer" unique_id=1853001982]
 layout_mode = 2
 text = "Clear"
 script = ExtResource("2_ydlx0")

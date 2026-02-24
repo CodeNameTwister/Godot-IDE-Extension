@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://hsyqdgwk3rr0"]
+[gd_scene format=3 uid="uid://hsyqdgwk3rr0"]
 
 [ext_resource type="Script" uid="uid://ccdxcm5e4uuaw" path="res://addons/_Godot-IDE_/plugins/symbol_navigator/gui/find_references_panel.gd" id="1_panel_script"]
 
-[node name="FindReferencesPanel" type="Control" node_paths=PackedStringArray("search_bar", "results_tree", "status_label", "search_button", "clear_button", "code_header", "code_display", "case_sensitive_check", "match_mode_option", "exclude_dirs_button", "highlight_style_option")]
+[node name="FindReferencesPanel" type="Control" unique_id=989362521 node_paths=PackedStringArray("search_bar", "results_tree", "status_label", "search_button", "clear_button", "code_header", "code_display", "case_sensitive_check", "match_mode_option", "exclude_dirs_button", "highlight_style_option")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,7 +22,7 @@ match_mode_option = NodePath("MainContainer/SearchSection/MatchModeOption")
 exclude_dirs_button = NodePath("MainContainer/SearchSection/ExcludeDirsButton")
 highlight_style_option = NodePath("MainContainer/SearchSection/HighlightStyleOption")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=354628231]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,37 +34,36 @@ offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SearchSection" type="HBoxContainer" parent="MainContainer"]
+[node name="SearchSection" type="HBoxContainer" parent="MainContainer" unique_id=1629435160]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 
-[node name="SearchLabel" type="Label" parent="MainContainer/SearchSection"]
+[node name="SearchLabel" type="Label" parent="MainContainer/SearchSection" unique_id=759279793]
 layout_mode = 2
 text = "Search:"
 vertical_alignment = 1
 
-[node name="SearchBar" type="LineEdit" parent="MainContainer/SearchSection"]
+[node name="SearchBar" type="LineEdit" parent="MainContainer/SearchSection" unique_id=234742934]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Enter symbol to find references..."
 select_all_on_focus = true
 
-[node name="SearchButton" type="Button" parent="MainContainer/SearchSection"]
+[node name="SearchButton" type="Button" parent="MainContainer/SearchSection" unique_id=1112165873]
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "Find"
 
-[node name="ExcludeDirsButton" type="Button" parent="MainContainer/SearchSection"]
+[node name="ExcludeDirsButton" type="Button" parent="MainContainer/SearchSection" unique_id=1881720387]
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "Exclude Dirs"
 
-[node name="CaseSensitiveCheck" type="CheckBox" parent="MainContainer/SearchSection"]
+[node name="CaseSensitiveCheck" type="CheckBox" parent="MainContainer/SearchSection" unique_id=767499446]
 layout_mode = 2
-button_pressed = true
 text = "Case Sensitive"
 
-[node name="MatchModeOption" type="OptionButton" parent="MainContainer/SearchSection"]
+[node name="MatchModeOption" type="OptionButton" parent="MainContainer/SearchSection" unique_id=1935768122]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 selected = 0
@@ -80,15 +79,15 @@ popup/item_3/id = 3
 popup/item_4/text = "Ends With"
 popup/item_4/id = 4
 
-[node name="HighlightLabel" type="Label" parent="MainContainer/SearchSection"]
+[node name="HighlightLabel" type="Label" parent="MainContainer/SearchSection" unique_id=84156842]
 layout_mode = 2
 text = "Highlight:"
 vertical_alignment = 1
 
-[node name="HighlightStyleOption" type="OptionButton" parent="MainContainer/SearchSection"]
+[node name="HighlightStyleOption" type="OptionButton" parent="MainContainer/SearchSection" unique_id=307247645]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-selected = 3
+selected = 0
 item_count = 6
 popup/item_0/text = "Dots (·symbol·)"
 popup/item_0/id = 0
@@ -103,63 +102,64 @@ popup/item_4/id = 4
 popup/item_5/text = "Circles (○symbol○)"
 popup/item_5/id = 5
 
-[node name="Separator1" type="HSeparator" parent="MainContainer"]
+[node name="Separator1" type="HSeparator" parent="MainContainer" unique_id=1326888741]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
-[node name="MainContent" type="HSplitContainer" parent="MainContainer"]
+[node name="MainContent" type="HSplitContainer" parent="MainContainer" unique_id=1162341915]
 layout_mode = 2
 size_flags_vertical = 3
+split_offsets = PackedInt32Array(300)
 split_offset = 300
 
-[node name="LeftPanel" type="VBoxContainer" parent="MainContainer/MainContent"]
+[node name="LeftPanel" type="VBoxContainer" parent="MainContainer/MainContent" unique_id=37864410]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ResultsInfo" type="Label" parent="MainContainer/MainContent/LeftPanel"]
+[node name="ResultsInfo" type="Label" parent="MainContainer/MainContent/LeftPanel" unique_id=1398412950]
 layout_mode = 2
 text = "Enter a symbol to search"
 
-[node name="ResultsTree" type="Tree" parent="MainContainer/MainContent/LeftPanel"]
+[node name="ResultsTree" type="Tree" parent="MainContainer/MainContent/LeftPanel" unique_id=1846523000]
 layout_mode = 2
 size_flags_vertical = 3
 columns = 2
 column_titles_visible = true
 hide_root = true
 
-[node name="RightPanel" type="VBoxContainer" parent="MainContainer/MainContent"]
+[node name="RightPanel" type="VBoxContainer" parent="MainContainer/MainContent" unique_id=1164603993]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CodeHeader" type="Label" parent="MainContainer/MainContent/RightPanel"]
+[node name="CodeHeader" type="Label" parent="MainContainer/MainContent/RightPanel" unique_id=787888893]
 layout_mode = 2
 text = "Select a reference to view code"
 
-[node name="CodeSeparator" type="HSeparator" parent="MainContainer/MainContent/RightPanel"]
+[node name="CodeSeparator" type="HSeparator" parent="MainContainer/MainContent/RightPanel" unique_id=436353748]
 layout_mode = 2
 
-[node name="CodeDisplay" type="RichTextLabel" parent="MainContainer/MainContent/RightPanel"]
+[node name="CodeDisplay" type="RichTextLabel" parent="MainContainer/MainContent/RightPanel" unique_id=690300394]
 layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 2
 selection_enabled = true
 
-[node name="Separator2" type="HSeparator" parent="MainContainer"]
+[node name="Separator2" type="HSeparator" parent="MainContainer" unique_id=67965975]
 custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
-[node name="StatusSection" type="HBoxContainer" parent="MainContainer"]
+[node name="StatusSection" type="HBoxContainer" parent="MainContainer" unique_id=302198596]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 
-[node name="StatusLabel" type="Label" parent="MainContainer/StatusSection"]
+[node name="StatusLabel" type="Label" parent="MainContainer/StatusSection" unique_id=998261046]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Ready"
 vertical_alignment = 1
 
-[node name="ClearButton" type="Button" parent="MainContainer/StatusSection"]
+[node name="ClearButton" type="Button" parent="MainContainer/StatusSection" unique_id=1372166365]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "Clear"

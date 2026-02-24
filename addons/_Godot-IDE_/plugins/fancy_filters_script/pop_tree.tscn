@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cmcd05m1t5hwr" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/pop_tree.gd" id="1_x40uf"]
 [ext_resource type="Script" uid="uid://b1v225muollg5" path="res://addons/_Godot-IDE_/plugins/fancy_filters_script/button.gd" id="2_l7727"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l7727"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tb81"]
 content_margin_left = 0.0
 content_margin_top = 0.0
 content_margin_right = 0.0
@@ -26,7 +26,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_l7727")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3tb81")
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1170300977]
 layout_mode = 2

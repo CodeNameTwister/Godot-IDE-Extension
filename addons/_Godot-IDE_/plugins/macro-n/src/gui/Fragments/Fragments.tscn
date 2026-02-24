@@ -1,22 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://ckn2qdpg5fs5y"]
+[gd_scene format=3 uid="uid://ckn2qdpg5fs5y"]
 
 [ext_resource type="Script" uid="uid://bio4l72bwqcsi" path="res://addons/_Godot-IDE_/plugins/macro-n/src/gui/Fragments/fragments.gd" id="1_4jc8e"]
 [ext_resource type="Script" uid="uid://b4ypyfc1c0ybj" path="res://addons/_Godot-IDE_/plugins/macro-n/src/gui/util/Button.gd" id="2_k3ugs"]
-[ext_resource type="Texture2D" uid="uid://ckc3yk6f8y3ob" path="res://addons/_Godot-IDE_/shared_resources/func_public.svg" id="2_r7fa2"]
+[ext_resource type="Texture2D" uid="uid://bg6s1dykmifeu" path="res://addons/_Godot-IDE_/shared_resources/func_public.svg" id="2_r7fa2"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r7fa2"]
-content_margin_left = 5.0
-content_margin_top = 5.0
-content_margin_right = 5.0
-content_margin_bottom = 5.0
-bg_color = Color(0.1155, 0.132, 0.1595, 1)
-corner_detail = 1
-anti_aliasing = false
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tb81"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.07888999, 0.07888999, 0.07888999, 1)
+corner_detail = 3
 
-[node name="Fragments" type="Window" node_paths=PackedStringArray("container")]
+[node name="Fragments" type="Window" unique_id=369678340 node_paths=PackedStringArray("container")]
+oversampling_override = 1.0
 title = "Show All Macros"
 initial_position = 4
-size = Vector2i(1536, 864)
+size = Vector2i(1092, 614)
 wrap_controls = true
 transient = true
 transient_to_focused = true
@@ -24,57 +24,57 @@ exclusive = true
 script = ExtResource("1_4jc8e")
 container = NodePath("PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/GridContainer")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1383665884]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_r7fa2")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3tb81")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=479362850]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1873786038]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1276383433]
 layout_mode = 2
 text = "All Shortucts"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=795794634]
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=387657804]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1545513438]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 7
 
-[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=489488631]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=854800550]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="create" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="create" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=473974037]
 layout_mode = 2
 text = "Create New"
 icon = ExtResource("2_r7fa2")
 script = ExtResource("2_k3ugs")
 
-[node name="close" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="close" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1212785892]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Close"

@@ -1,20 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://b25j4mq6e1fso"]
+[gd_scene format=3 uid="uid://b25j4mq6e1fso"]
 
 [ext_resource type="Script" uid="uid://bnkrnw0nf5fhm" path="res://addons/_Godot-IDE_/plugins/macro-n/src/gui/SweetOne/SweetOne.gd" id="1_axr5e"]
 [ext_resource type="Script" uid="uid://b4ypyfc1c0ybj" path="res://addons/_Godot-IDE_/plugins/macro-n/src/gui/util/Button.gd" id="2_x0cqq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tb81"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0.1155, 0.132, 0.1595, 1)
-corner_detail = 1
-anti_aliasing = false
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.07888999, 0.07888999, 0.07888999, 1)
+corner_detail = 3
 
 [sub_resource type="GDScriptSyntaxHighlighter" id="GDScriptSyntaxHighlighter_x0cqq"]
 
-[node name="SweetOne" type="Window" node_paths=PackedStringArray("fragment_data_container", "base_editor")]
+[node name="SweetOne" type="Window" unique_id=893092236 node_paths=PackedStringArray("fragment_data_container", "base_editor")]
+oversampling_override = 1.0
 title = "Plugin Macro-N"
 initial_position = 4
 size = Vector2i(500, 500)
@@ -23,7 +23,7 @@ script = ExtResource("1_axr5e")
 fragment_data_container = NodePath("PanelContainer/MarginContainer/VBoxContainer/VBoxContainer")
 base_editor = NodePath("PanelContainer/MarginContainer/CodeEdit")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=299061090]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -31,50 +31,50 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_3tb81")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=418196746]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="CodeEdit" type="CodeEdit" parent="PanelContainer/MarginContainer"]
+[node name="CodeEdit" type="CodeEdit" parent="PanelContainer/MarginContainer" unique_id=442475232]
 visible = false
 layout_mode = 2
 syntax_highlighter = SubResource("GDScriptSyntaxHighlighter_x0cqq")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=2030689247]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=762420341]
 layout_mode = 2
 text = "Macro-N"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=681543070]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1444121665]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1566902092]
 layout_mode = 2
 size_flags_vertical = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1228107654]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="close" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="close" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=118743059]
 modulate = Color(1, 0.392157, 1, 1)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Close"
 script = ExtResource("2_x0cqq")
 
-[node name="accept" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="accept" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=234136590]
 modulate = Color(0.392157, 1, 1, 1)
 layout_mode = 2
 size_flags_horizontal = 3

@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://b76nmixqh7tom"]
+[gd_scene format=3 uid="uid://b76nmixqh7tom"]
 
 [sub_resource type="GDScript" id="GDScript_ly0sj"]
 script/source = "@tool
@@ -319,7 +319,8 @@ func _on_focus_exited() -> void:
 	_on_close_pressed()
 "
 
-[node name="Window" type="Window" node_paths=PackedStringArray("search_bar", "results_tree", "status_label", "search_button", "close_button")]
+[node name="Window" type="Window" unique_id=1887448032 node_paths=PackedStringArray("search_bar", "results_tree", "status_label", "search_button", "close_button")]
+oversampling_override = 1.0
 title = "Find References"
 position = Vector2i(0, 36)
 size = Vector2i(800, 600)
@@ -331,46 +332,46 @@ status_label = NodePath("VBoxContainer/Status/Label")
 search_button = NodePath("VBoxContainer/SearchBar/Button")
 close_button = NodePath("VBoxContainer/Status/Button")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1934424498]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="SearchBar" type="HBoxContainer" parent="VBoxContainer"]
+[node name="SearchBar" type="HBoxContainer" parent="VBoxContainer" unique_id=1254555304]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/SearchBar"]
+[node name="Label" type="Label" parent="VBoxContainer/SearchBar" unique_id=933846599]
 layout_mode = 2
 text = "Search for:"
 
-[node name="SearchBar" type="LineEdit" parent="VBoxContainer/SearchBar"]
+[node name="SearchBar" type="LineEdit" parent="VBoxContainer/SearchBar" unique_id=1967395514]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Button" type="Button" parent="VBoxContainer/SearchBar"]
+[node name="Button" type="Button" parent="VBoxContainer/SearchBar" unique_id=940009850]
 layout_mode = 2
 text = "Search"
 
-[node name="MainContent" type="HSplitContainer" parent="VBoxContainer"]
+[node name="MainContent" type="HSplitContainer" parent="VBoxContainer" unique_id=1196744205]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Tree" type="Tree" parent="VBoxContainer/MainContent"]
+[node name="Tree" type="Tree" parent="VBoxContainer/MainContent" unique_id=1870080004]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.0
 columns = 3
 column_titles_visible = true
 
-[node name="Status" type="HBoxContainer" parent="VBoxContainer"]
+[node name="Status" type="HBoxContainer" parent="VBoxContainer" unique_id=1074599480]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="Label" type="Label" parent="VBoxContainer/Status"]
+[node name="Label" type="Label" parent="VBoxContainer/Status" unique_id=1590161286]
 layout_mode = 2
 text = "Ready"
 
-[node name="Button" type="Button" parent="VBoxContainer/Status"]
+[node name="Button" type="Button" parent="VBoxContainer/Status" unique_id=818625449]
 layout_mode = 2
 text = "Close"
 

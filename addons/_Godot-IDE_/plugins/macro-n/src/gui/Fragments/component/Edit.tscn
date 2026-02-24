@@ -1,20 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://dt1pjig5ml6we"]
+[gd_scene format=3 uid="uid://dt1pjig5ml6we"]
 
 [ext_resource type="Script" uid="uid://ctoxe1fxxiuc1" path="res://addons/_Godot-IDE_/plugins/macro-n/src/gui/Fragments/component/edit.gd" id="1_0vdlq"]
 [ext_resource type="Script" uid="uid://b4ypyfc1c0ybj" path="res://addons/_Godot-IDE_/plugins/macro-n/src/gui/util/Button.gd" id="2_h73ec"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_leugs"]
-content_margin_left = 5.0
-content_margin_top = 5.0
-content_margin_right = 5.0
-content_margin_bottom = 5.0
-bg_color = Color(0.1155, 0.132, 0.1595, 1)
-corner_detail = 1
-anti_aliasing = false
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tb81"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.07888999, 0.07888999, 0.07888999, 1)
+corner_detail = 3
 
 [sub_resource type="GDScriptSyntaxHighlighter" id="GDScriptSyntaxHighlighter_h73ec"]
 
-[node name="Edit" type="Window" node_paths=PackedStringArray("update_btn", "base_edit", "container")]
+[node name="Edit" type="Window" unique_id=893612570 node_paths=PackedStringArray("update_btn", "base_edit", "code_edit", "container")]
+oversampling_override = 1.0
 position = Vector2i(0, 36)
 size = Vector2i(500, 500)
 transient = true
@@ -23,60 +23,61 @@ exclusive = true
 script = ExtResource("1_0vdlq")
 update_btn = NodePath("MarginContainer/MarginContainer/VBoxContainer/HBoxContainer/update")
 base_edit = NodePath("MarginContainer/MarginContainer/CodeEdit")
+code_edit = NodePath("MarginContainer/MarginContainer/VBoxContainer/ScrollContainer/_CodeEdit_18855")
 container = NodePath("MarginContainer/MarginContainer/VBoxContainer/ScrollContainer")
 
-[node name="MarginContainer" type="PanelContainer" parent="."]
+[node name="MarginContainer" type="PanelContainer" parent="." unique_id=2122026443]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_leugs")
+theme_override_styles/panel = SubResource("StyleBoxFlat_3tb81")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer" unique_id=1702404550]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="CodeEdit" type="CodeEdit" parent="MarginContainer/MarginContainer"]
+[node name="CodeEdit" type="CodeEdit" parent="MarginContainer/MarginContainer" unique_id=782227078]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 syntax_highlighter = SubResource("GDScriptSyntaxHighlighter_h73ec")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MarginContainer" unique_id=818887597]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=1798317406]
 layout_mode = 2
 text = "Edit Content"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=1056534854]
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=521763296]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSeparator2" type="HSeparator" parent="MarginContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=708014651]
 layout_mode = 2
 size_flags_vertical = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=616908879]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="close" type="Button" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="close" type="Button" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=76135427]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Close"
 script = ExtResource("2_h73ec")
 
-[node name="update" type="Button" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="update" type="Button" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=537885283]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Update"

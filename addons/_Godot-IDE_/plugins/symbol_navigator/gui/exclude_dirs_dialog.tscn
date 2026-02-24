@@ -1,11 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://drnd7lnoqdl7n"]
+[gd_scene format=3 uid="uid://drnd7lnoqdl7n"]
 
 [ext_resource type="Script" uid="uid://cpsjg2ybiew8s" path="res://addons/_Godot-IDE_/plugins/symbol_navigator/gui/exclude_dirs_dialog.gd" id="1_exclude_script"]
 
-[node name="ExcludeDirsDialog" type="Window" node_paths=PackedStringArray("header_label", "directories_edit", "preset_container", "save_button", "cancel_button", "validation_label")]
+[node name="ExcludeDirsDialog" type="Window" unique_id=1059988988 node_paths=PackedStringArray("header_label", "directories_edit", "preset_container", "save_button", "cancel_button", "validation_label")]
+oversampling_override = 1.0
 title = "Configure Excluded Directories"
-position = Vector2i(1470, 742)
-size = Vector2i(900, 675)
+position = Vector2i(191, 159)
+size = Vector2i(600, 450)
 exclusive = true
 script = ExtResource("1_exclude_script")
 header_label = NodePath("MarginContainer/MainContainer/HeaderLabel")
@@ -15,7 +16,7 @@ save_button = NodePath("MarginContainer/MainContainer/ButtonContainer/SaveButton
 cancel_button = NodePath("MarginContainer/MainContainer/ButtonContainer/CancelButton")
 validation_label = NodePath("MarginContainer/MainContainer/ValidationLabel")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1083113561]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -26,16 +27,16 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="MainContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="MainContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1567228674]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="HeaderLabel" type="Label" parent="MarginContainer/MainContainer"]
+[node name="HeaderLabel" type="Label" parent="MarginContainer/MainContainer" unique_id=960505434]
 layout_mode = 2
 text = "Enter directory names to exclude from search (one per line):"
 autowrap_mode = 3
 
-[node name="DirectoriesEdit" type="TextEdit" parent="MarginContainer/MainContainer"]
+[node name="DirectoriesEdit" type="TextEdit" parent="MarginContainer/MainContainer" unique_id=516137380]
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Example:
@@ -46,54 +47,54 @@ exports
 .mono"
 wrap_mode = 1
 
-[node name="ValidationLabel" type="Label" parent="MarginContainer/MainContainer"]
+[node name="ValidationLabel" type="Label" parent="MarginContainer/MainContainer" unique_id=1812286053]
 layout_mode = 2
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="PresetContainer" type="VBoxContainer" parent="MarginContainer/MainContainer"]
+[node name="PresetContainer" type="VBoxContainer" parent="MarginContainer/MainContainer" unique_id=197992965]
 layout_mode = 2
 size_flags_vertical = 4
 
-[node name="PresetLabel" type="Label" parent="MarginContainer/MainContainer/PresetContainer"]
+[node name="PresetLabel" type="Label" parent="MarginContainer/MainContainer/PresetContainer" unique_id=184121603]
 layout_mode = 2
 text = "Quick Add Common Directories:"
 
-[node name="PresetButtonsContainer" type="HBoxContainer" parent="MarginContainer/MainContainer/PresetContainer"]
+[node name="PresetButtonsContainer" type="HBoxContainer" parent="MarginContainer/MainContainer/PresetContainer" unique_id=457670072]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="GodotButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+[node name="GodotButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer" unique_id=346653671]
 layout_mode = 2
 text = ".godot"
 
-[node name="GitButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+[node name="GitButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer" unique_id=708900907]
 layout_mode = 2
 text = ".git"
 
-[node name="ImportButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+[node name="ImportButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer" unique_id=1209192644]
 layout_mode = 2
 text = ".import"
 
-[node name="ExportsButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+[node name="ExportsButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer" unique_id=709995506]
 layout_mode = 2
 text = "exports"
 
-[node name="MonoButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer"]
+[node name="MonoButton" type="Button" parent="MarginContainer/MainContainer/PresetContainer/PresetButtonsContainer" unique_id=523151561]
 layout_mode = 2
 text = ".mono"
 
-[node name="ButtonContainer" type="HBoxContainer" parent="MarginContainer/MainContainer"]
+[node name="ButtonContainer" type="HBoxContainer" parent="MarginContainer/MainContainer" unique_id=117054410]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 10
 alignment = 2
 
-[node name="SaveButton" type="Button" parent="MarginContainer/MainContainer/ButtonContainer"]
+[node name="SaveButton" type="Button" parent="MarginContainer/MainContainer/ButtonContainer" unique_id=1667179965]
 layout_mode = 2
 text = "Save"
 
-[node name="CancelButton" type="Button" parent="MarginContainer/MainContainer/ButtonContainer"]
+[node name="CancelButton" type="Button" parent="MarginContainer/MainContainer/ButtonContainer" unique_id=1086812071]
 layout_mode = 2
 text = "Cancel"
 
