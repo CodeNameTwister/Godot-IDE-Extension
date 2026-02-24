@@ -21,7 +21,7 @@ func _ready() -> void:
 
 func enable_copy_override(e : bool) -> void:
 	override_copy_button.disabled = !e
-	
+
 func override_copy() -> void:
 	if callback.is_valid():
 		callback.call(&"override_copy")

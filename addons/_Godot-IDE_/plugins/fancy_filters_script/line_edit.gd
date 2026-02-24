@@ -52,16 +52,15 @@ func sxrch(txt : String) -> void:
 		var root : TreeItem = tree.get_root()
 		if !root:
 			return
-		var rgx0 : RegEx = RegEx.create_from_string("(?i)\\b{0}\\b".format([txt]))
-		var rgx1 : RegEx = RegEx.create_from_string("(?i).*{0}.*".format([txt]))
+		var rgx0 : RegEx = RegEx.create_from_string("(?i)\\b{0}\\b".format([txt]), false)
+		var rgx1 : RegEx = RegEx.create_from_string("(?i).*{0}.*".format([txt]), false)
 		var d0 : Array[TreeItem] = []
 		var d1 : Array[TreeItem] = []
 		
 		for x : RegEx in [rgx0, rgx1]:
 			if !is_instance_valid(x) or !x.is_valid():
 				return
-				
-		_sxrch(root, rgx0, rgx1, d0, d1)
+		_sxrch(root, rgx0, rgx1, d0, d1, tree)
 		root.visible = true
 		
 		for t : TreeItem in d0:
@@ -74,12 +73,15 @@ func _visible(root : TreeItem) -> void:
 		root.visible = true
 		_visible(root.get_parent())
 	
-func _sxrch(root : TreeItem, rgx0 : RegEx, rgx1 : RegEx, d0 : Array[TreeItem], d1 : Array[TreeItem]) -> void:
-	var txt : String = root.get_text(0)
-	root.visible = false
-	if rgx0.search(txt) != null:
-		d0.append(root)
-	elif d0.size() == 0 and rgx1.search(txt) != null:
-		d1.append(root)
+func _sxrch(root : TreeItem, rgx0 : RegEx, rgx1 : RegEx, d0 : Array[TreeItem], d1 : Array[TreeItem], root_tree : Tree) -> void:
+	for x : int in root_tree.columns:
+		var txt : String = root.get_text(x)
+		root.visible = false
+		if rgx0.search(txt) != null:
+			d0.append(root)
+			break
+		elif d0.size() == 0 and rgx1.search(txt) != null:
+			d1.append(root)
+			break
 	for x : TreeItem in root.get_children():
-		_sxrch(x, rgx0, rgx1, d0, d1)
+		_sxrch(x, rgx0, rgx1, d0, d1, tree)
