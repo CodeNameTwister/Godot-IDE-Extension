@@ -87,6 +87,8 @@ var _pop : Popup = null
 var _buffer : Dictionary = {}
 var _last : Variant = null
 
+var enable : bool = false
+
 #var accessibility : AccesibilityOrder = null
 
 #func _init() -> void:
@@ -1141,6 +1143,9 @@ func _on_change_script(script : Script) -> void:
 								
 					
 func _ready() -> void:
+	if !enable:
+		set_process(false)
+		return
 	var editor : ScriptEditor  = EditorInterface.get_script_editor()
 	if editor:
 		var sc : Script = editor.get_current_script()

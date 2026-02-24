@@ -2,270 +2,16 @@
 
 [ext_resource type="Script" uid="uid://dalllwmyh2v5m" path="res://addons/_Godot-IDE_/plugins/fancy_search_class/gui/main.gd" id="1_v5iyo"]
 [ext_resource type="Script" uid="uid://c6pfvkgkabvt6" path="res://addons/_Godot-IDE_/plugins/fancy_search_class/gui/button.gd" id="2_bnpnb"]
-[ext_resource type="Texture2D" uid="uid://cyl0kc0f2fxdk" path="res://addons/_Godot-IDE_/shared_resources/Script.svg" id="2_hf3pi"]
 [ext_resource type="Texture2D" uid="uid://dg5o2young4vw" path="res://addons/_Godot-IDE_/shared_resources/search.svg" id="2_nf02n"]
 [ext_resource type="Script" uid="uid://blmveofp20cm1" path="res://addons/_Godot-IDE_/plugins/fancy_search_class/gui/line_edit.gd" id="3_m1yal"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tb81"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hf3pi"]
 content_margin_left = 0.0
 content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 bg_color = Color(0.07888999, 0.07888999, 0.07888999, 1)
 corner_detail = 3
-
-[sub_resource type="DPITexture" id="DPITexture_pqmn8"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><circle cx=\"8\" cy=\"8\" r=\"5\" fill=\"none\" stroke=\"#fc7f7f\" stroke-width=\"2\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_qrkwg"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#f0caa0\" d=\"M2 1a1 1 0 00-1 1v8a1 1 0 001 1h3v.25a2 2 0 102 0V11h3a1 1 0 001-1V7h.25a2 2 0 100-2H11V2a1 1 0 00-1-1z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_l8yom"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><circle cx=\"8\" cy=\"8\" r=\"5\" fill=\"none\" stroke=\"#e0e0e0\" stroke-width=\"2\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_r5o58"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M7 1v3.133l-1.445-.965-1.11 1.664 3 2a1 1 0 0 0 1.11 0l3-2-1.11-1.664L9 4.133V1zM5.5 9A1.5 1.5 0 0 0 4 10.5V12H2v2h12v-2h-2v-1.5A1.5 1.5 0 0 0 10.5 9z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_nhm4u"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 2h10v10H3zm5 1L4 8l4 4 4-4zm2 2v4H6V6z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_8xygo"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M2 4v5h2V4zm-1 7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_78i4s"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm4 2h2v6H7zm0 8h2v2H7z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_2bgcn"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><circle cx=\"8\" cy=\"8\" r=\"5\" fill=\"none\" stroke=\"#8eef97\" stroke-width=\"2\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_yw36n"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 2h5v4h5v6H3zm7 0h3v2h-3z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_8sj3p"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"m3 1c-1.1046 0-2 .8954-2 2v1h14v-1c0-1.1046-.89543-2-2-2zm9 1h1v1h-1zm-11 3v8c0 1.1046.89543 2 2 2h10c1.1046 0 2-.8954 2-2v-8z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_1kv0b"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><linearGradient id=\"a\"><stop offset=\".25\" stop-color=\"#ffe345\"/><stop offset=\".75\" stop-color=\"#919191\"/></linearGradient><path fill=\"#45d7ff\" d=\"m5.914 4-2 2H9.01V4z\"/><path fill=\"#ff4596\" d=\"M11 4v2h4V4Z\"/><path fill=\"#ff4545\" d=\"M1 8v2h3V8z\"/><path fill=\"url(#a)\" d=\"M6 8v2h7V8z\"/><path fill=\"#919191\" d=\"M1 12v2h5v-2zm7 0v2h6v-2z\"/><path fill=\"#e0e0e0\" d=\"M2 1 1 2l1.5 1.5L1 5l1 1 2.5-2.5z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_dst6f"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M3 1a2 2 0 0 0-2 2h2zm2 0v2h2V1zm4 0v2h2V1zm4 0v2h2a2 2 0 0 0-2-2zM1 5v2h2V5zm12 0v2h2V5zM1 9v2h2V9zm12 0v2h2V9zM1 13a2 2 0 0 0 2 2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm4 0v2a2 2 0 0 0 2-2z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_ekx16"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M6 3a1 1 0 0 0-.707.293l-4 4a1 1 0 0 0 0 1.414l4 4A1 1 0 0 0 6 13h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H6zM5 7a1 1 0 0 1 0 2 1 1 0 0 1 0-2z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_yo2ig"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 2h10v10H3z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_sub50"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M2 11h3V5H2zm5 4h2V1H7zm4-4h3V5h-3z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_u2d0c"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 2h10v10H3zm1 3v4l2-2z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_blont"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 2h10v2H3zm0 4h10v2H3zm0 4h10v2H3z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_caxsn"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 2h10v10H3zm1 1v2h2V4zm3 0v2h2V4zm3 0v2h2V4zM4 7v2h2V7zm3 0v2h2V7zm3 0v2h2V7zm-6 3v2h2v-2zm3 0v2h2v-2zm3 0v2h2v-2z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_f4yty"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 2h10v10H3zm2 1L4 5l1 1-1 1 1 1 2-2zm2 3v1h2V7z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_6bfr5"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M5.5 4c-1.108 0-1.818.907-2 2l-1 6H1v2h14v-2h-1.5l-1-6c-.182-1.093-.892-2-2-2z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_k5fuy"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#8eef97\" d=\"M1 1v14h14V1zm2 2h10v10H3z\"/><path fill=\"#45d7ff\" d=\"M12 12H7.2L12 7.2z\"/><path fill=\"#ff4545\" d=\"M4 4h4.8L4 8.8z\"/><path fill=\"#80ff45\" d=\"M4 12V8.8L8.8 4H12v3.2L7.2 12z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_dyipl"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><rect width=\"14\" height=\"14\" x=\"1\" y=\"1\" fill=\"#8eef97\" rx=\"2\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
-
-[sub_resource type="DPITexture" id="DPITexture_oq4h0"]
-_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M1.553 4.104A1 1 0 0 0 1 5v6a1 1 0 0 0 .553.895l6 3a1 1 0 0 0 .894 0l6-3A1 1 0 0 0 15 11V5a1 1 0 0 0-.553-.894l-6-3a1 1 0 0 0-.894 0zm6.447-1 3.764 1.882L8 6.868 4.236 4.986zm-5 3.5 4 2v3.766l-4-2z\"/></svg>
-"
-base_scale = 0.75
-saturation = 2.0
-color_map = {
-Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
-Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
-Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
-}
 
 [node name="Window" type="Popup" unique_id=232738294 node_paths=PackedStringArray("_container", "_tree", "_tree_recents")]
 oversampling_override = 1.0
@@ -285,7 +31,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_3tb81")
+theme_override_styles/panel = SubResource("StyleBoxFlat_hf3pi")
 
 [node name="MainContainer" type="MarginContainer" parent="Main" unique_id=209992608]
 layout_mode = 2
@@ -313,34 +59,6 @@ layout_mode = 2
 [node name="Container" type="TabContainer" parent="Main/MainContainer/HBoxContainer/BoxContainer" unique_id=1672919474]
 layout_mode = 2
 current_tab = 0
-tab_1/icon = SubResource("DPITexture_pqmn8")
-tab_2/icon = SubResource("DPITexture_qrkwg")
-tab_3/icon = ExtResource("2_hf3pi")
-tab_4/icon = ExtResource("2_hf3pi")
-tab_5/icon = SubResource("DPITexture_l8yom")
-tab_6/icon = ExtResource("2_hf3pi")
-tab_7/icon = SubResource("DPITexture_r5o58")
-tab_8/icon = SubResource("DPITexture_nhm4u")
-tab_9/icon = SubResource("DPITexture_8xygo")
-tab_10/icon = SubResource("DPITexture_78i4s")
-tab_11/icon = SubResource("DPITexture_2bgcn")
-tab_12/icon = SubResource("DPITexture_yw36n")
-tab_13/icon = SubResource("DPITexture_8sj3p")
-tab_14/icon = ExtResource("2_hf3pi")
-tab_15/icon = ExtResource("2_hf3pi")
-tab_16/icon = SubResource("DPITexture_1kv0b")
-tab_17/icon = SubResource("DPITexture_dst6f")
-tab_18/icon = SubResource("DPITexture_ekx16")
-tab_19/icon = SubResource("DPITexture_yo2ig")
-tab_20/icon = SubResource("DPITexture_sub50")
-tab_21/icon = SubResource("DPITexture_u2d0c")
-tab_22/icon = SubResource("DPITexture_blont")
-tab_23/icon = SubResource("DPITexture_caxsn")
-tab_24/icon = SubResource("DPITexture_f4yty")
-tab_25/icon = SubResource("DPITexture_6bfr5")
-tab_26/icon = SubResource("DPITexture_k5fuy")
-tab_27/icon = SubResource("DPITexture_dyipl")
-tab_28/icon = SubResource("DPITexture_oq4h0")
 
 [node name="All" type="Control" parent="Main/MainContainer/HBoxContainer/BoxContainer/Container" unique_id=185869231]
 layout_mode = 2

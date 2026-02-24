@@ -12,6 +12,8 @@ extends Window
 @export var _tree : Tree = null
 @export var _tree_recents : Tree = null
 
+var enable : bool = false
+
 var files : Dictionary[StringName, PackedStringArray] = {}
 
 var _first_time : bool = false
@@ -33,6 +35,10 @@ func _enter_tree() -> void:
 	size = screen
 
 func _ready() -> void:
+	if !enable:
+		set_process(false)
+		return
+	
 	update()
 	for x : int in range(1, _container.get_child_count(), 1):
 		_container.get_child(x).queue_free()

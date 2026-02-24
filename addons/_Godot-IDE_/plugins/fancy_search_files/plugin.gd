@@ -29,5 +29,6 @@ func _input(event: InputEvent) -> void:
 	if event.is_pressed() and event.is_match(_c_input):
 		if !is_instance_valid(pop):
 			pop = FANCY_SEARCH.instantiate()
+			pop.enable = true
 			add_child(pop)
 		pop.popup_centered()

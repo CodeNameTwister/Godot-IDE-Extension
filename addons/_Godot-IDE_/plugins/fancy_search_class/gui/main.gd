@@ -12,6 +12,8 @@ extends Window
 @export var _tree : Tree = null
 @export var _tree_recents : Tree = null
 
+var enable : bool = false
+
 #var files : Dictionary[StringName, Dictionary] = {}
 
 const CUTE_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/Script.svg")
@@ -39,6 +41,10 @@ func _enter_tree() -> void:
 	size = screen
 
 func _ready() -> void:
+	if !enable:
+		set_process(false)
+		return
+		
 	update()
 	for x : int in range(1, _container.get_child_count(), 1):
 		_container.get_child(x).queue_free()
