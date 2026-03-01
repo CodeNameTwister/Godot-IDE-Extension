@@ -23,6 +23,7 @@ var _c_input_switch_panels : InputEventKey = null
 
 var _as_separate_container : bool = false
 var _as_info_top : bool = true
+var _as_right_container : bool = false
 
 var _input_defined : bool = false
 
@@ -44,6 +45,12 @@ func _on_changes() -> void:
 				if value is bool and value != _as_info_top:
 					_as_info_top = value
 					rst = true
+					
+			elif "script_list_and_filter_to_right" in x:
+				var value : Variant = IDE.get_config("fancy_filters_script", "script_list_and_filter_to_right")
+				if value is bool and value != _as_right_container:
+					_as_right_container = value
+					rst = true
 			
 		if rst:
 			_exit_tree()
@@ -54,6 +61,7 @@ func _init() -> void:
 	var input1 : Variant = IDE.get_config("fancy_filters_script", "switch_panels")
 	var as_separate_container : Variant = IDE.get_config("fancy_filters_script", "separate_container_list")
 	var as_info_top : Variant = IDE.get_config("fancy_filters_script", "script_info_on_top")
+	var as_right_container : Variant = IDE.get_config("fancy_filters_script", "script_list_and_filter_to_right")
 	
 	var settings : EditorSettings = EditorInterface.get_editor_settings()
 	if settings:
@@ -74,6 +82,11 @@ func _init() -> void:
 		_as_info_top = as_info_top
 	else:
 		IDE.set_config("fancy_filters_script", "script_info_on_top", _as_info_top)
+		
+	if as_right_container is bool:
+		_as_right_container = as_right_container
+	else:
+		IDE.set_config("fancy_filters_script", "script_list_and_filter_to_right", _as_right_container)
 	
 	if input0 is InputEventKey:
 		_c_input_show_hide = input0
@@ -83,7 +96,6 @@ func _init() -> void:
 		_c_input_show_hide.ctrl_pressed = true
 		_c_input_show_hide.keycode = KEY_T
 		IDE.set_config("fancy_filters_script", "show_hide", _c_input_show_hide)
-	
 	
 	if input1 is InputEventKey:
 		_c_input_switch_panels = input1
@@ -102,7 +114,7 @@ func _on_pop_pressed(index : int) -> void:
 		if index == _id_show_hide_tool:
 			_container.visible = !_container.visible 
 		elif index == _id_toggle_position_tool:
-			toggle_position()
+			IDE.set_config("fancy_filters_script", "script_list_and_filter_to_right", !_as_right_container)
 		elif index == _id_switch_panels:
 			if !_script_info.visible:
 				var tab : Variant = _script_info.get_parent()
@@ -137,13 +149,7 @@ func _enter_tree() -> void:
 			return
 	
 	var container : VSplitContainer = IDE.get_script_list_container()
-	if container:
-		var variant : Variant = IDE.get_config("fancy_filters_script", "script_list_and_filter_to_right")
-		var expected_index : int = 0
-		if variant is bool:
-			if variant == true:
-				expected_index = 1
-				
+	if container:				
 		container.name = "Script List"
 		_container = TAB.instantiate()
 		_container.enable = true
@@ -151,7 +157,7 @@ func _enter_tree() -> void:
 		
 		if _container.get_child_count() > 0:
 			_script_info = _container.get_child(0)
-		
+			
 		var parent : Control = container.get_parent()
 		_parent = parent
 		if !_as_separate_container:
@@ -165,23 +171,34 @@ func _enter_tree() -> void:
 						cntl.reparent(_placeholder)
 					
 				container.add_child(_container) 
-				#if _as_info_top:
-				container.move_child(_container, 0)
+				
+				if _as_info_top:
+					if _container.get_index() > 0:
+						container.move_child(_container, 0)
+				else:
+					if _container.get_index() < container.get_child_count() - 1:
+						container.move_child(_container, -1)
+					
 				_offset.call_deferred(container, 100)
 			else:	
 				container.add_child(_container)
+			
+			if _as_right_container:
+				if container.get_index() != _parent.get_child_count() - 1:
+					_parent.move_child(container, -1)
+			else:
+				if container.get_index() != 0:
+					_parent.move_child(container, 0)
 		else:
 			parent.add_child(_container)
 			container.reparent(_container)
 			
-		toggle_position()
-		
-		var cnt : Control = _container
-		if !_as_separate_container:
-			cnt = _container.get_parent()
-			
-		if cnt.get_index() != expected_index:
-			toggle_position()
+			if _as_right_container:
+				if _container.get_index() != parent.get_child_count() - 1:
+					parent.move_child(_container, -1)
+			else:
+				if _container.get_index() != 0:
+					parent.move_child(_container, 0)
 			
 		var menu : MenuButton = IDE.get_menu_button()		
 		if is_instance_valid(menu):
@@ -226,35 +243,6 @@ func _add_input(pop : PopupMenu, msg : String, input : InputEventKey) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_pressed() and event.is_match(_c_input_switch_panels):
 		_on_pop_pressed(_id_switch_panels)
-		
-func toggle_position() -> void:
-	var container : Control = _container
-	if container:
-		if !_as_separate_container:
-			container = container.get_parent()
-			
-			if null == container:
-				return
-			
-		var parent : Control = container.get_parent()
-			
-		if parent is HSplitContainer and parent.get_child_count() > 1:
-			if container.get_index() != 0:
-				var size : float = (parent.get_child(0) as Control).size.x
-				parent.move_child(container, 0)
-				_offset.call_deferred(parent, -size)
-				
-				var settings : EditorSettings = EditorInterface.get_editor_settings()
-				if is_instance_valid(settings):
-					settings.set_setting("plugin/godot_ide/fancy_filters_script/script_list_and_filter_to_right", false)
-			else:
-				var size : float = (parent.get_child(1) as Control).size.x
-				parent.move_child(container, parent.get_child_count() - 1)
-				_offset.call_deferred(parent, size)
-				
-				var settings : EditorSettings = EditorInterface.get_editor_settings()
-				if is_instance_valid(settings):
-					settings.set_setting("plugin/godot_ide/fancy_filters_script/script_list_and_filter_to_right", true)
 
 func _offset(node : SplitContainer, size : float) -> void:
 	if !is_instance_valid(node):
@@ -272,10 +260,7 @@ func _offset(node : SplitContainer, size : float) -> void:
 
 func _exit_tree() -> void:
 	var container : VSplitContainer = IDE.get_script_list_container()
-	
-	if is_instance_valid(_container) and _container.is_inside_tree():
-		IDE.set_config("fancy_filters_script", "script_list_and_filter_to_right", _container.get_index() > 0)
-		
+
 	if container:
 		var current_parent : Node = container.get_parent()
 		
@@ -304,5 +289,3 @@ func _exit_tree() -> void:
 				var size : float = (parent.get_child(1) as Control).size.x
 				parent.move_child(container, 0)
 				_offset.call_deferred(parent, -size)
-			
-	#TODO: Remove new menu buttons	

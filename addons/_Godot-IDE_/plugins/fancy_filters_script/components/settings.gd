@@ -19,6 +19,7 @@ extends Control
 @export var flat_mode_button : Button
 @export var separate_script_list_button : Button
 @export var script_info_on_top_button : Button
+@export var script_list_and_filter_to_right_button : Button
 
 const NORMAL_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/up.svg")
 const INVERT_ICON : Texture2D = preload("res://addons/_Godot-IDE_/shared_resources/down.svg")
@@ -48,6 +49,9 @@ func separate_script_list() -> void:
 		
 func script_info_on_top() -> void:
 	IDE.set_config("fancy_filters_script", "script_info_on_top", script_info_on_top_button.button_pressed)
+
+func script_list_and_filter_to_right() -> void:
+	IDE.set_config("fancy_filters_script", "script_list_and_filter_to_right", script_list_and_filter_to_right_button.button_pressed)
 	
 func update_settings() -> void:
 	var order : Variant = IDE.get_config("fancy_filters_script", "members_order_by")
@@ -57,6 +61,7 @@ func update_settings() -> void:
 	var flat_mode_pressed : Variant = IDE.get_config("fancy_filters_script", "flat_mode")
 	var separate_script_list_pressed : Variant = IDE.get_config("fancy_filters_script", "separate_container_list")
 	var script_info_on_top_pressed: Variant = IDE.get_config("fancy_filters_script", "script_info_on_top")
+	var script_list_and_filter_to_right: Variant = IDE.get_config("fancy_filters_script", "script_list_and_filter_to_right")
 	
 	if !(separate_script_list_pressed is bool):
 		separate_script_list_pressed = false
@@ -72,12 +77,15 @@ func update_settings() -> void:
 		flat_mode_pressed = false
 	if !(script_info_on_top_pressed is bool):
 		script_info_on_top_pressed = true
+	if !(script_list_and_filter_to_right is bool):
+		script_list_and_filter_to_right = false
 		
 	use_dots.button_pressed = use_dots_pressed
 	background_color.button_pressed = background_pressed
 	flat_mode_button.button_pressed = flat_mode_pressed
 	separate_script_list_button.button_pressed = separate_script_list_pressed
 	script_info_on_top_button.button_pressed = script_info_on_top_pressed
+	script_list_and_filter_to_right_button.button_pressed = script_list_and_filter_to_right
 	
 	name_order = name_type
 	
