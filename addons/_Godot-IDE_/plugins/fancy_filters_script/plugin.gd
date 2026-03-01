@@ -141,6 +141,16 @@ func _await() -> bool:
 		await scene.process_frame
 	return true
 
+func _m_offset(node : SplitContainer, default : float) -> float:
+	if node.get_child_count() > 1:
+		var wd : float = node.size.x
+		var ml : float = node.get_child(0).get_combined_minimum_size().x
+		var mr : float = node.get_child(1).get_combined_minimum_size().x
+		var sep = node.get_theme_constant("separation")
+
+		return wd - ml - mr - sep
+	return default
+
 func _enter_tree() -> void:
 	if !is_node_ready():
 		await ready
@@ -186,8 +196,16 @@ func _enter_tree() -> void:
 			if _as_right_container:
 				if container.get_index() != _parent.get_child_count() - 1:
 					_parent.move_child(container, -1)
+					if _parent is SplitContainer:
+						var mo : float = _m_offset(_parent, 0)
+						if mo > 0.0:
+							_parent.split_offset = mo - 10
+							_parent.clamp_split_offset()
 			else:
 				if container.get_index() != 0:
+					if _parent is SplitContainer:
+						_parent.split_offset = 10
+						_parent.clamp_split_offset()
 					_parent.move_child(container, 0)
 		else:
 			parent.add_child(_container)
@@ -195,9 +213,19 @@ func _enter_tree() -> void:
 			
 			if _as_right_container:
 				if _container.get_index() != parent.get_child_count() - 1:
+					if _parent is SplitContainer:
+						var mo : float = _m_offset(_parent, 0)
+						if mo > 0.0:
+							_parent.split_offset = mo - 10
+							_parent.clamp_split_offset()
+					
 					parent.move_child(_container, -1)
 			else:
 				if _container.get_index() != 0:
+					if _parent is SplitContainer:
+						_parent.split_offset = 10
+						_parent.clamp_split_offset()
+						
 					parent.move_child(_container, 0)
 			
 		var menu : MenuButton = IDE.get_menu_button()		

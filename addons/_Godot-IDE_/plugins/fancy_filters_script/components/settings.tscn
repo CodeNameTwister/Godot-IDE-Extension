@@ -163,12 +163,12 @@ script = ExtResource("4_f6f5j")
 [node name="script_info_on_top" type="CheckBox" parent="." unique_id=1912079229]
 layout_mode = 2
 size_flags_horizontal = 0
+button_pressed = true
 text = "Script Info on top (Only if script list is embedded)"
 script = ExtResource("4_f6f5j")
 
 [node name="script_list_and_filter_to_right" type="CheckBox" parent="." unique_id=1082488410]
 layout_mode = 2
 size_flags_horizontal = 0
-button_pressed = true
 text = "Script list and filter to right"
 script = ExtResource("4_f6f5j")
