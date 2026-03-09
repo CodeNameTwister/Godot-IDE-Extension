@@ -49,6 +49,7 @@ func _setup_shortcuts() -> void:
 	else:
 		_rename_symbol_input = InputEventKey.new()
 		_rename_symbol_input.pressed = true
+		_rename_symbol_input.alt_pressed = true
 		_rename_symbol_input.keycode = KEY_F12
 		IDE.set_config("symbol_navigator", "rename_symbol_input", _rename_symbol_input)
 
