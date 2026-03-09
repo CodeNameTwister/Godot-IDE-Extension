@@ -46,15 +46,15 @@ Each feature is described more fully in it's own repository, as well as down bel
 * GD Override Functions:
 	https://github.com/CodeNameTwister/GD-Override-Functions
 * Refactor Tool Symbol Navigator:
-	https://github.com/CodeNameTwister/Godot-IDE/tree/main/addons/_Godot-IDE_/plugins/symbol_navigator
+	https://github.com/kyrosle/Godot-IDE/addons/_Godot-IDE_/plugins/symbol_navigator
 	*  Find Symbol References (`Shift + F12`)
 	  - **Instant Search**: Select a symbol and press `Shift + F12` to find all its usages.
 	  - **Interactive Panel**: View results grouped by file in the bottom panel.
 	  - **Code Preview**: Click any reference to see a preview of the code context.
 	  - **Quick Navigation**: Double-click a reference to jump directly to the line.
 	  - **Advanced Filtering**: Customize searches with case sensitivity, multiple match modes, and directory exclusion.
-	* Rename Symbol (`F2`)
-	  - **Smart Refactoring**: Select a symbol and press `F2` to open the rename dialog.
+	* Rename Symbol (`F12`)
+	  - **Smart Refactoring**: Select a symbol and press `F12` to open the rename dialog.
 	  - **Interactive Preview**: Review all potential changes before renaming. Use checkboxes to include or exclude specific references.
 	  - **Scope Control**: Choose to rename within the current file or the entire project.
 	  - **Seamless Updates**: Modifies open files directly without annoying "reload" popups, preserving your scroll and cursor position.
@@ -113,7 +113,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 	  3. The "Find References" panel will open at the bottom with the results.
 	* Rename Symbol
 	  1. In the script editor, select a symbol you want to rename.
-	  2. Press **`F2`**.
+	  2. Press **`F12`**.
 	  3. In the dialog, enter the new name, review the previewed changes, and click **Rename**.
 	
 * Editor Settings

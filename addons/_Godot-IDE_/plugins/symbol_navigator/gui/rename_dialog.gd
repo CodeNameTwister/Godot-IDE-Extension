@@ -13,7 +13,7 @@ extends Window
 # - Quality assurance: Automatic file content verification after batch changes
 # 
 # User Workflow:
-# 1. Select symbol → Press F2 (auto-preview)
+# 1. Select symbol → Press F12 (auto-preview)
 # 2. Enter new name → Press Enter or click Rename
 # 3. Files modified and editor updates in real-time ✨
 # =============================================================================

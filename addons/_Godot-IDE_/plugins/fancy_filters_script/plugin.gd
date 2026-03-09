@@ -199,13 +199,13 @@ func _enter_tree() -> void:
 					if _parent is SplitContainer:
 						var mo : float = _m_offset(_parent, 0)
 						if mo > 0.0:
-							_parent.split_offset = mo - 10
-							_parent.clamp_split_offset()
+							_parent.set_deferred(&"split_offset", mo - 10)
+							_parent.clamp_split_offset.call_deferred()
 			else:
 				if container.get_index() != 0:
 					if _parent is SplitContainer:
-						_parent.split_offset = 10
-						_parent.clamp_split_offset()
+						_parent.set_deferred(&"split_offset", 10)
+						_parent.clamp_split_offset.call_deferred()
 					_parent.move_child(container, 0)
 		else:
 			parent.add_child(_container)
@@ -216,15 +216,15 @@ func _enter_tree() -> void:
 					if _parent is SplitContainer:
 						var mo : float = _m_offset(_parent, 0)
 						if mo > 0.0:
-							_parent.split_offset = mo - 10
-							_parent.clamp_split_offset()
+							_parent.set_deferred(&"split_offset", mo - 10)
+							_parent.clamp_split_offset.call_deferred()
 					
 					parent.move_child(_container, -1)
 			else:
 				if _container.get_index() != 0:
 					if _parent is SplitContainer:
-						_parent.split_offset = 10
-						_parent.clamp_split_offset()
+						_parent.set_deferred(&"split_offset", 10)
+						_parent.clamp_split_offset.call_deferred()
 						
 					parent.move_child(_container, 0)
 			
@@ -283,7 +283,7 @@ func _offset(node : SplitContainer, size : float) -> void:
 			return
 			
 	if node.get_child_count() > 1:
-		node.set_deferred("split_offset", size)
+		node.set_deferred(&"split_offset", size)
 		node.clamp_split_offset.call_deferred()
 
 func _exit_tree() -> void:

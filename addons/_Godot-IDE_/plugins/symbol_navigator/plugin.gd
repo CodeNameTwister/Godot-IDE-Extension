@@ -37,14 +37,19 @@ func _setup_shortcuts() -> void:
 		_find_references_input.keycode = KEY_F12
 		IDE.set_config("symbol_navigator", "find_references_input", _find_references_input)
 
-	# Rename symbol shortcut (F2)
+	# Rename symbol shortcut (F12)
 	var rename_input : Variant = IDE.get_config("symbol_navigator", "rename_symbol_input")
 	if rename_input is InputEventKey:
+		if rename_input.keycode == KEY_F2:
+			#Fix overlap F12 predefined action.
+			rename_input.alt_pressed = true
+			rename_input.keycode = KEY_F12
+			IDE.set_config("symbol_navigator", "rename_symbol_input", rename_input)
 		_rename_symbol_input = rename_input
 	else:
 		_rename_symbol_input = InputEventKey.new()
 		_rename_symbol_input.pressed = true
-		_rename_symbol_input.keycode = KEY_F2
+		_rename_symbol_input.keycode = KEY_F12
 		IDE.set_config("symbol_navigator", "rename_symbol_input", _rename_symbol_input)
 
 func _enter_tree() -> void:
