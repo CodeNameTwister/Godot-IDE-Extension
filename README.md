@@ -53,8 +53,8 @@ Each feature is described more fully in it's own repository, as well as down bel
 	  - **Code Preview**: Click any reference to see a preview of the code context.
 	  - **Quick Navigation**: Double-click a reference to jump directly to the line.
 	  - **Advanced Filtering**: Customize searches with case sensitivity, multiple match modes, and directory exclusion.
-	* Rename Symbol (`F12`)
-	  - **Smart Refactoring**: Select a symbol and press `F12` to open the rename dialog.
+	* Rename Symbol (`Alt + F12`)
+	  - **Smart Refactoring**: Select a symbol and press `Alt + F12` to open the rename dialog.
 	  - **Interactive Preview**: Review all potential changes before renaming. Use checkboxes to include or exclude specific references.
 	  - **Scope Control**: Choose to rename within the current file or the entire project.
 	  - **Seamless Updates**: Modifies open files directly without annoying "reload" popups, preserving your scroll and cursor position.
@@ -113,7 +113,7 @@ Each feature is described more fully in it's own repository, as well as down bel
 	  3. The "Find References" panel will open at the bottom with the results.
 	* Rename Symbol
 	  1. In the script editor, select a symbol you want to rename.
-	  2. Press **`F12`**.
+	  2. Press **`Alt + F12`**.
 	  3. In the dialog, enter the new name, review the previewed changes, and click **Rename**.
 	
 * Editor Settings
