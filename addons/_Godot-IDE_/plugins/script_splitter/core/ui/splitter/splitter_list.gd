@@ -47,6 +47,11 @@ func _physics_process(__ : float) -> void:
 	_delta += 1
 	if _delta < 10:
 		return
+	
+	if !is_inside_tree() or !_list.is_inside_tree():
+		_delta = 0
+		return
+		
 	set_physics_process(false)
 	if !_ss.is_valid():
 		return

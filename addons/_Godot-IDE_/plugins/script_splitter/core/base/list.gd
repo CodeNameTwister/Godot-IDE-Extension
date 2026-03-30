@@ -137,6 +137,9 @@ func _on_update_list() -> void:
 	if !is_instance_valid(_script_list) or !is_instance_valid(_editor_list):
 		return
 		
+	elif !_script_list.is_inside_tree() or !_editor_list.is_inside_tree():
+		return
+		
 	_update_list_queue = true
 	
 	var filtered : bool = false
@@ -199,6 +202,12 @@ func _item_selected(i : int) -> void:
 	item_selected.emit(i)
 	
 func _update_list() -> void:
+	if !is_instance_valid(_editor_list) or !is_instance_valid(_script_list):
+		return
+		
+	if !_editor_list.is_inside_tree() or !_script_list.is_inside_tree():
+		return
+		
 	updated.emit()
 	_on_update_list()
 	
@@ -219,6 +228,8 @@ func item_count() -> int:
 	return _editor_list.item_count
 	
 func _select() -> void:
+	if !_editor_list.is_inside_tree():
+		return
 	if _selet_queue > -1 and _editor_list.item_count > _selet_queue:
 		_editor_list.select(_selet_queue, true)
 		_editor_list.item_selected.emit(_selet_queue)

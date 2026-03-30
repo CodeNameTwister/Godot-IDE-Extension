@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://b62s3m1aupj10"]
+
+[ext_resource type="Script" uid="uid://h51go08o41bw" path="res://addons/script_splitter/core/ui/templates/component/editor_slot.gd" id="1_4aj47"]
+
+[node name="EditorSlot" type="HBoxContainer" unique_id=1193090783 node_paths=PackedStringArray("label", "del_button")]
+script = ExtResource("1_4aj47")
+label = NodePath("Label")
+del_button = NodePath("delete")
+
+[node name="Label" type="Label" parent="." unique_id=1376083276]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Item Name"
+
+[node name="delete" type="Button" parent="." unique_id=1099156466]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "X"

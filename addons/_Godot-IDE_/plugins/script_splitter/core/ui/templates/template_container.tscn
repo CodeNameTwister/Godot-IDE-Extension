@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://j3y3a8pwnait"]
+
+[ext_resource type="Script" uid="uid://c7aesfkcx8v05" path="res://addons/script_splitter/core/ui/templates/template.gd" id="1_i84qh"]
+[ext_resource type="Script" uid="uid://bypriksi51mim" path="res://addons/script_splitter/core/ui/templates/container.gd" id="2_g6hbs"]
+[ext_resource type="Script" uid="uid://dsvqrvpe6fi8w" path="res://addons/script_splitter/core/ui/templates/button.gd" id="3_jn773"]
+[ext_resource type="Texture2D" uid="uid://dgug5eaj52488" path="res://addons/script_splitter/assets/edit.svg" id="4_fjcvj"]
+
+[node name="TemplateContainer" type="Control" unique_id=598336637 node_paths=PackedStringArray("button", "name_id_button", "color")]
+custom_minimum_size = Vector2(31, 158)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 31.0
+offset_bottom = 152.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_i84qh")
+button = NodePath("PanelContainer")
+name_id_button = NodePath("PanelContainer/VBoxContainer/open")
+color = NodePath("PanelContainer/VBoxContainer/ColorRect")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=16016348]
+layout_mode = 1
+offset_left = 31.0
+offset_right = 189.0
+offset_bottom = 31.0
+rotation = 1.5707964
+script = ExtResource("2_g6hbs")
+
+[node name="VBoxContainer" type="HBoxContainer" parent="PanelContainer" unique_id=1771478594]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="HSeparator" type="VSeparator" parent="PanelContainer/VBoxContainer" unique_id=527781608]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="PanelContainer/VBoxContainer" unique_id=859308905]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+
+[node name="open" type="Button" parent="PanelContainer/VBoxContainer" unique_id=2124424316]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+text = "New Template"
+script = ExtResource("3_jn773")
+
+[node name="edit" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1664426865]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+icon = ExtResource("4_fjcvj")
+flat = true
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("3_jn773")

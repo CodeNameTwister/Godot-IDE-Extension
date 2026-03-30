@@ -62,70 +62,73 @@ func _setup() -> void:
 
 func execute(value : Variant = null) -> bool:
 	if value is ScriptEditorBase:
-		var control : Control = value.get_base_editor()
-		for x : MickeyTool in _tool_db.get_tools():
-			if x.has(control):
-				value = x
-				break
+		if is_instance_valid(value):
+			var control : Control = value.get_base_editor()
+			for x : MickeyTool in _tool_db.get_tools():
+				if is_instance_valid(x):
+					if x.has(control):
+						value = x
+						break
 				
 	if value is MickeyTool:
-		var index : int = value.get_index()
-		var editor_list : BaseList = _manager.get_editor_list()
-			
-		if editor_list.item_count() > index and index > -1:
-			var control : Node = value.get_control()
-			var root : Node = value.get_root()
-			if root is TabContainer:
-				var base : Manager.BaseContainer = _manager.get_base_container()
-				var _index : int = control.get_index()
-				if root.current_tab != _index and  _index > -1 and _index < root.get_tab_count():
-					if root.has_method(&"set_tab"):
-						root.call(&"set_tab", _index)
-					else:
-						root.set(&"current_tab", _index)
-					
-				var container : Control = base.get_current_container()
-				if is_instance_valid(container) and unfocus_enabled:
-					container.modulate = unfocus_color
+		if is_instance_valid(value):
+			var index : int = value.get_index()
+			var editor_list : BaseList = _manager.get_editor_list()
 				
-				base.set_current_container(root)
-	
-				if is_instance_valid(root):
-					root.modulate = Color.WHITE
+			if editor_list.item_count() > index and index > -1:
+				var control : Node = value.get_control()
+				var root : Node = value.get_root()
+				if is_instance_valid(root) and root is TabContainer:
+					var base : Manager.BaseContainer = _manager.get_base_container()
+					var _index : int = control.get_index()
+					if root.current_tab != _index and  _index > -1 and _index < root.get_tab_count():
+						if root.has_method(&"set_tab"):
+							root.call(&"set_tab", _index)
+						else:
+							root.set(&"current_tab", _index)
+						
+					var container : Control = base.get_current_container()
+					if is_instance_valid(container) and unfocus_enabled:
+						container.modulate = unfocus_color
 					
-				var new_container : Node = base.get_container(root)
-				if is_instance_valid(new_container) and new_container.has_method(&"expand_splited_container"):
-					new_container.call(&"expand_splited_container", base.get_container_item(root))
-				
-				if is_instance_valid(container):
-					container = base.get_container(container)
-					if is_instance_valid(container) and container != new_container and container.has_method(&"expand_splited_container"):
-						container.call(&"expand_splited_container", null)
-				
-				var grant_conainer : Node = base.get_editor_root_container(new_container)
-				if is_instance_valid(grant_conainer):
-					var parent : Node = grant_conainer.get_parent()
-					if is_instance_valid(parent) and parent.has_method(&"expand_splited_container"):
-						parent.call(&"expand_splited_container", base.get_editor_root_container(new_container))
+					base.set_current_container(root)
+		
+					if is_instance_valid(root):
+						root.modulate = Color.WHITE
+						
+					var new_container : Node = base.get_container(root)
+					if is_instance_valid(new_container) and new_container.has_method(&"expand_splited_container"):
+						new_container.call(&"expand_splited_container", base.get_container_item(root))
 					
-				#var gui : Node = value.get_gui()
-				#if gui is Control:
-				#	if gui.focus_mode != Control.FOCUS_NONE:
-				#		if !gui.has_focus():
-				#			gui.grab_focus.call_deferred()
+					if is_instance_valid(container):
+						container = base.get_container(container)
+						if is_instance_valid(container) and container != new_container and container.has_method(&"expand_splited_container"):
+							container.call(&"expand_splited_container", null)
 					
-			if !editor_list.is_selected(index):
-				editor_list.select(index)
+					var grant_conainer : Node = base.get_editor_root_container(new_container)
+					if is_instance_valid(grant_conainer):
+						var parent : Node = grant_conainer.get_parent()
+						if is_instance_valid(parent) and parent.has_method(&"expand_splited_container"):
+							parent.call(&"expand_splited_container", base.get_editor_root_container(new_container))
+						
+					#var gui : Node = value.get_gui()
+					#if gui is Control:
+					#	if gui.focus_mode != Control.FOCUS_NONE:
+					#		if !gui.has_focus():
+					#			gui.grab_focus.call_deferred()
+						
+				if !editor_list.is_selected(index):
+					editor_list.select(index)
+					
+				_manager.io.update()
+				_manager.get_editor_list().updated.emit()
 				
-			_manager.io.update()
-			_manager.get_editor_list().updated.emit()
-			
-			if is_instance_valid(control):
-				if control.focus_mode != Control.FOCUS_NONE and !control.has_focus():
-					var tree : SceneTree = control.get_tree()
-					var grab : bool = is_instance_valid(tree)
-					if grab and tree.has_method(&"is_accessibility_enabled"):
-						grab = tree.call(&"is_accessibility_enabled")
-					control.grab_focus()
+				if is_instance_valid(control):
+					if control.focus_mode != Control.FOCUS_NONE and !control.has_focus():
+						var tree : SceneTree = control.get_tree()
+						var grab : bool = is_instance_valid(tree)
+						if grab and tree.has_method(&"is_accessibility_enabled"):
+							grab = tree.call(&"is_accessibility_enabled")
+						control.grab_focus()
 				
 	return false

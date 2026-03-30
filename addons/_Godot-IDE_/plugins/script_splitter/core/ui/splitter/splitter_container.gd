@@ -80,6 +80,7 @@ func initialize(container : TabContainer, handler_container : HandlerContainer) 
 	else:
 		io = HandlerContainer.IoBar.new()
 		io.enable_vertical_split = false
+		io.enable_templates = false
 		vspl.add_child(io)
 		
 	initialize_editor_contianer()

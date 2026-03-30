@@ -26,7 +26,7 @@ func execute(value : Variant = null) -> bool:
 		
 	var control : Control = value
 	
-	if !control.is_node_ready() or !control.is_inside_tree():
+	if !control.is_node_ready() or !control.is_inside_tree() or control.is_queued_for_deletion():
 		return false
 	
 	for x : MickeyTool in _tool_db.get_tools():
@@ -62,7 +62,7 @@ func execute(value : Variant = null) -> bool:
 			
 			_manager.tool_created()
 			_manager.update_metadata(mt)
-			
+		
 			_manager.queue_focus(mt)
 			return false
 	

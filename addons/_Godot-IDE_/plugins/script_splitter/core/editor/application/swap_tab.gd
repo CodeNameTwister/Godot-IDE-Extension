@@ -32,6 +32,7 @@ func execute(value : Variant = null) -> bool:
 								x.ochorus(to)
 								_manager.clear_editors()
 								set_deferred(&"_last_tool", null)
+								_manager.focus_tool(x)
 								return true
 			else:
 				if value[0] is String and value[1] is String and value[2] is bool:
@@ -75,5 +76,6 @@ func execute(value : Variant = null) -> bool:
 						#_manager.get_base_container().update_split_container()
 							else:
 								fm.ochorus(troot)
+						_manager.focus_tool(fm)
 						return true
 	return false

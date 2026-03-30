@@ -63,11 +63,11 @@ func ochorus(root : Node) -> void:
 				root.add_child(_root_control)
 				
 			if _owner == root:
-				if _root_control.get_index() != _index:
+				if _root_control.is_inside_tree() and _root_control.get_index() != _index:
 					if _owner.get_child_count() > _index:
-						_owner.move_child(_root_control, _index)
+						_owner.move_child.call_deferred(_root_control, _index)
 			else:
-				if root is TabContainer:
+				if root is TabContainer and _root_control.is_inside_tree():
 					var tittle_id : int = _root_control.get_index()
 					if tittle_id > -1 and tittle_id < root.get_tab_count():
 						var tl : String = root.get_tab_title(tittle_id)
@@ -77,9 +77,25 @@ func ochorus(root : Node) -> void:
 				_connect_callback(true)			
 					
 			_root_control.visible = true
-			
-func trigger_focus() -> void:
+				
+func trigger_focus(force : bool = false) -> void:
+	if !is_instance_valid(_control) or _control.is_queued_for_deletion():
+		return
+		
+	if !is_instance_valid(_owner) or _owner.is_queued_for_deletion():
+		return
+		
+		
 	focus.emit(self)
+	
+	if !force:
+		return
+		
+	if !is_instance_valid(_control) or _control.is_queued_for_deletion():
+		return
+		
+	if _control.is_inside_tree() and _control.focus_mode != Control.FOCUS_NONE and !_control.has_focus():
+		_control.grab_focus.call_deferred()
 			
 func get_owner() -> Node:
 	return _owner
@@ -95,7 +111,6 @@ func get_root_control() -> Node:
 		if node:
 			return node.get_parent()
 	return null
-	
 	
 func get_control() -> Node:
 	return _root_control

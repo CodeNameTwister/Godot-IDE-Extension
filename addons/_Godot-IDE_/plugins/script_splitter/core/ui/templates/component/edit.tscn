@@ -1,0 +1,168 @@
+[gd_scene format=3 uid="uid://da36gbvb15eew"]
+
+[ext_resource type="Script" uid="uid://cadmmlgspagm1" path="res://addons/script_splitter/core/ui/templates/component/edit.gd" id="1_7pakk"]
+[ext_resource type="PackedScene" uid="uid://b62s3m1aupj10" path="res://addons/script_splitter/core/ui/templates/component/editor_slot.tscn" id="2_7fngf"]
+[ext_resource type="Script" uid="uid://dsvqrvpe6fi8w" path="res://addons/script_splitter/core/ui/templates/button.gd" id="3_tyjku"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tyjku"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.07888999, 0.07888999, 0.07888999, 1)
+corner_detail = 3
+
+[node name="Edit" type="Window" unique_id=423278531 node_paths=PackedStringArray("tname", "tcolor", "titems", "add_button", "current_file")]
+oversampling_override = 1.0
+title = "Script Splitter Edit"
+position = Vector2i(0, 36)
+size = Vector2i(300, 376)
+script = ExtResource("1_7pakk")
+tname = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/Line")
+tcolor = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/ColorPickerButton")
+titems = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/ScrollContainer/PanelContainer/VBoxContainer")
+add_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/add")
+current_file = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/ScrollContainer2/Label5")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1214972058]
+custom_minimum_size = Vector2(300, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_tyjku")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=2133635193]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=141330140]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=221843928]
+layout_mode = 2
+text = "Edit Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=42481430]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1770311441]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=1243779368]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Line" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=326416846]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "New Name"
+alignment = 1
+
+[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=996974239]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Color"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=1220002556]
+layout_mode = 2
+text = "Color"
+color = Color(1, 1, 1, 1)
+
+[node name="Label3" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=781166450]
+layout_mode = 2
+text = "Current File"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=1508586550]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tyjku")
+
+[node name="Label5" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/ScrollContainer2" unique_id=2083097432]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "File_name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="add" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=1873824127]
+layout_mode = 2
+text = "Add"
+script = ExtResource("3_tyjku")
+
+[node name="Label4" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=1870531755]
+layout_mode = 2
+text = "Files Added"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=800635965]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_tyjku")
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/ScrollContainer" unique_id=76720512]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_tyjku")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/ScrollContainer/PanelContainer" unique_id=14968240]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="EditorSlot" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/ScrollContainer/PanelContainer/VBoxContainer" unique_id=1193090783 instance=ExtResource("2_7fngf")]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=345671796]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=794064137]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="delete" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=208402593]
+self_modulate = Color(0.85636467, 0.5323922, 5.7756904e-07, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Delete"
+script = ExtResource("3_tyjku")
+
+[node name="cancel" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=447740962]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel
+"
+script = ExtResource("3_tyjku")
+
+[node name="apply" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=664543438]
+modulate = Color(0.06223117, 0.95219785, 0, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Apply"
+script = ExtResource("3_tyjku")

@@ -17,8 +17,14 @@ signal on_pin(button : Object)
 @export var changes : Label
 
 var is_pinned : bool = false
+var _text : String = ""
+var hover : bool = false
+
+var color_override : Color = Color.WHITE
+var color_override_enabled : bool = false
 
 func _ready() -> void:
+	set_process(false)
 	add_to_group(&"SP_TAB_BUTTON")
 	mouse_entered.connect(_on_enter)
 	mouse_exited.connect(_on_exit)
@@ -60,7 +66,6 @@ func _on_enter() -> void:
 
 func _on_exit() -> void:
 	remove_from_group(&"__SPLITER_BUTTON_TAB__")
-	
 
 func get_reference() -> TabBar:
 	return get_parent().get_parent().get_parent().get_reference()
@@ -81,6 +86,7 @@ func get_src() -> String:
 	return button_main.tooltip_text
 
 func set_text(txt : String) -> void:
+	_text = txt
 	if txt.ends_with("(*)"):
 		button_main.text = txt.trim_suffix("(*)")
 		changes.modulate.a = 1.0
@@ -88,11 +94,34 @@ func set_text(txt : String) -> void:
 	button_main.text = txt
 	changes.modulate.a = 0.0
 
+func get_text() -> String:
+	return _text
+		
 func get_button() -> Button:
 	return button_main
 
 func get_button_close() -> Button:
 	return button_close
+	
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			_drag_data()
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			_drag_data()
+			
+func _drag_data() -> void:
+	if !button_main.button_pressed:
+		button_main.pressed.emit()
+		
+	var c : Control = button_main.duplicate(0)
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	c.z_index = RenderingServer.CANVAS_ITEM_Z_MAX - 2
+	
+	button_main._drag_icon = c
+	button_main.set_process(true)
+	force_drag(button_main, c)
 
 func _get_drag_data(__ : Vector2) -> Variant:
 	return button_main._get_drag_data(__)
@@ -105,3 +134,9 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 
 func get_selected_color() -> Color:
 	return color_rect.color
+
+func _process(__: float) -> void:
+	if !get_global_rect().has_point(get_global_mouse_position()):
+		set_process(false)
+		hover = false
+		mouse_exited.emit()

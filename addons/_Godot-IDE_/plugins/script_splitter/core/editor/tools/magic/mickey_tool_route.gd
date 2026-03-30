@@ -38,7 +38,7 @@ func ochorus(root : Node) -> void:
 				if root is Control:
 					_root_control.size = root.size
 					
-				if root is TabContainer:
+				if root is TabContainer and _root_control.is_inside_tree():
 					var tittle_id : int = _root_control.get_index()
 					if tittle_id > -1 and tittle_id < root.get_tab_count():
 						var tl : String = root.get_tab_title(tittle_id)

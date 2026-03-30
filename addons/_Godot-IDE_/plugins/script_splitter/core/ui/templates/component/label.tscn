@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://g8uo3c00sm1m"]
+
+[node name="Label" type="Label" unique_id=1566870462]
+text = "Okey this file does not exist in other templates."

@@ -257,6 +257,24 @@ func execute(value : Variant = null) -> bool:
 						
 						_queue_window.call_deferred(x)
 						return false
+			
+			&"_T_EDITOR":
+				if (container.get_parent() is VBoxContainer):
+					#EditorInterface.get_editor_toaster().push_toast("[Script Splitter 0.5-DEV-4] Hey not implemented!, yet...", EditorToaster.SEVERITY_INFO, "Wait to the next version dude.")
+					var x : MickeyTool = _tool_db.get_by_reference(container)
+					if is_instance_valid(x):
+						var list : BaseList = _manager.get_editor_list()
+						var _str : String = list.get_item_tooltip(x.get_index())
+						
+						if !_str.is_empty():
+							for z : Node in Engine.get_main_loop().get_nodes_in_group(&"__SCRIPT_SPLITTER__"):
+								var res : Variant = ResourceLoader.load((get_script().resource_path).get_base_dir().path_join("./../../ui/templates/main.tscn"))
+								if res is Resource:
+									var node : Popup = res.instantiate()
+									node.set_file(_str)
+									z.add_child(node)
+									node.popup_centered()
+								break
 	return false
 
 func _queue_window(x : MickeyTool) -> void:

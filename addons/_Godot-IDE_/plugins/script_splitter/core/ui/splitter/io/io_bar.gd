@@ -15,7 +15,12 @@ const SPLIT_PLUS_TOOL = preload("./../../../../assets/split_plus_tool.svg")
 const SPLIT_RMINUS_TOOL = preload("./../../../../assets/split_rminus_tool.svg")
 const SPLIT_RPLUS_TOOL = preload("./../../../../assets/split_rplus_tool.svg")
 const SPLIT_CMINUS_TOOL = preload("./../../../../assets/split_cminus_tool.svg")
+
+const TEMPLATE_EDITOR = preload("./../../../../assets/shortcut.svg")
+
 const ATOP = preload("./../../../../assets/atop.png")
+
+const TEMPLATE = preload("./../../templates/template.tscn")
 
 
 const PAD : float = 12.0
@@ -26,6 +31,7 @@ var enable_horizontal_split : bool = true
 var enable_vertical_split : bool = true
 var enable_pop_script : bool = true
 var enable_sub_split : bool = true
+var enable_templates : bool = true
 
 var _root : VBoxContainer = null
 var _min_size : float = 0.0
@@ -91,6 +97,9 @@ func _setup() -> void:
 		make_function(&"MERGE_SPLIT_SUB", SPLIT_MINUS_TOOL, _tr("Merge sub split of current editor"))
 	if enable_pop_script:
 		make_function(&"MAKE_FLOATING", ATOP, _tr("Make separate window"))
+	if enable_templates:
+		make_function(&"_T_EDITOR", TEMPLATE_EDITOR, _tr("Make new split template"))
+		_root.add_child(TEMPLATE.instantiate())
 	
 func enable(id : StringName, e : bool) -> void:
 	for x : Node in _root.get_children():
@@ -104,16 +113,26 @@ func get_button(id : String) -> Button:
 			return node
 	return null
 	
-func make_function(id : StringName, icon : Texture2D = null, txt : String = "") -> void:
+func _create_button(tx : Texture2D) -> Button:
 	var btn : Button = Button.new()
-	btn.name = id
+	var editor_scale : float = EditorInterface.get_editor_scale()
+	var base : float = 32
+	var new_size : float = base * editor_scale
+	btn.icon = tx
+	btn.expand_icon = true
+	btn.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	btn.custom_minimum_size = Vector2(new_size, new_size)
+	return btn
 	
+func make_function(id : StringName, icon : Texture2D = null, txt : String = "") -> void:
+	var btn : Button = _create_button(icon)
+	btn.name = id
 	btn.pressed.connect(_call.bind(id))
-	btn.icon = icon
 	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	btn.tooltip_text = txt
 	btn.flat = is_instance_valid(icon)
-	_min_size = maxf(icon.get_size().x, _min_size)
+	
+	_min_size = maxf(btn.get_combined_minimum_size().x, _min_size)
 	_root.add_child(btn)
 
 func _call(id : StringName) -> void:

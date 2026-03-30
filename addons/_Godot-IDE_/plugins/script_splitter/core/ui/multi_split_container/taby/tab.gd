@@ -29,7 +29,15 @@ var is_drag : bool = false:
 			if Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
+func _on_mouse() -> void:
+	owner.mouse_entered.emit()
+	
+func _out_mouse() -> void:
+	owner.mouse_exited.emit()
+
 func _ready() -> void:
+	mouse_entered.connect(_on_mouse)
+	mouse_exited.connect(_out_mouse)
 	auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	set_process(false)
 	add_to_group(&"SP_TAB_BUTTON")
@@ -51,7 +59,6 @@ func out_drag() -> void:
 
 func _get_drag_data(__ : Vector2) -> Variant:
 	pressed.emit()
-		
 	var c : Control = duplicate(0)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.z_index = RenderingServer.CANVAS_ITEM_Z_MAX - 2
@@ -175,7 +182,8 @@ func _process(delta: float) -> void:
 						return
 	else:
 		if !Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			pressed.emit()
+			if !button_pressed:
+				pressed.emit()
 			set_process(false)
 			_fms = 0.0
 			return
@@ -212,21 +220,36 @@ func setup() -> void:
 	if !is_in_group(&"__SPLITER_TAB__"):
 		add_to_group(&"__SPLITER_TAB__")
 
-func _on_input(e : InputEvent) -> void:
-	if e is InputEventMouseButton:
-		if e.button_index == MOUSE_BUTTON_LEFT:
-			if e.pressed:
-				_fms = 0.0
-				set_process.call_deferred(true)
-		#elif e.button_index == MOUSE_BUTTON_RIGHT:
-			#pressed.emit()
+func _on_input(event : InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index != MOUSE_BUTTON_LEFT or !event.pressed:
+			return
+	elif event is InputEventScreenTouch:
+		if !event.pressed:
+			return
+	else:
+		return
+	_fms = 0.0
+	
+	if !button_pressed:
+		pressed.emit()
+		
+	set_process.call_deferred(true)
 
 func get_selected_color() -> Color:
 	return owner.get_selected_color()
 
-func _on_gui(e : InputEvent) -> void:
-	if e is InputEventMouseButton:
-		if e.button_index == MOUSE_BUTTON_LEFT and  e.is_pressed():
+func _on_gui(event : InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			var _self : Variant = self
+			if _self is Button:
+				if _self.button_pressed:
+					return
+				_self.pressed.emit()
+				get_viewport().set_input_as_handled()
+	elif event is InputEventScreenTouch:
+		if event.pressed:
 			var _self : Variant = self
 			if _self is Button:
 				if _self.button_pressed:
@@ -234,3 +257,7 @@ func _on_gui(e : InputEvent) -> void:
 				_self.pressed.emit()
 				get_viewport().set_input_as_handled()
 	
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END:
+		if is_drag:
+			is_drag = false

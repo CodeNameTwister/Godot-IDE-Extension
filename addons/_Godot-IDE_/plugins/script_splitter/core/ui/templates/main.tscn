@@ -1,0 +1,153 @@
+[gd_scene format=3 uid="uid://c3fkk3q4hn6gt"]
+
+[ext_resource type="Script" uid="uid://cjdnll667h61u" path="res://addons/script_splitter/core/ui/templates/main.gd" id="1_ml3tr"]
+[ext_resource type="PackedScene" uid="uid://g8uo3c00sm1m" path="res://addons/script_splitter/core/ui/templates/component/label.tscn" id="2_jxc2a"]
+[ext_resource type="Script" uid="uid://dsvqrvpe6fi8w" path="res://addons/script_splitter/core/ui/templates/button.gd" id="4_70uwi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jxc2a"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.07888999, 0.07888999, 0.07888999, 1)
+corner_detail = 3
+
+[node name="Main" type="Popup" unique_id=1137398106 node_paths=PackedStringArray("scroll", "_file", "_name", "_color")]
+oversampling_override = 1.0
+initial_position = 4
+size = Vector2i(439, 404)
+visible = true
+script = ExtResource("1_ml3tr")
+scroll = NodePath("PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/MarginContainer/ScrollContainer/VBoxContainer")
+_file = NodePath("PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/Label")
+_name = NodePath("PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/GridContainer/ColorPickerButton")
+_color = NodePath("PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/GridContainer/ColorPickerButton2")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=966885587]
+custom_minimum_size = Vector2(200, 200)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_jxc2a")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=975551554]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=42128902]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=963166125]
+layout_mode = 2
+text = "Create Template Menu"
+horizontal_alignment = 1
+uppercase = true
+
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1769363356]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=726605135]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=814575437]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "FileName.gd"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1914669927]
+layout_mode = 2
+columns = 2
+
+[node name="Label3" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/GridContainer" unique_id=384586631]
+layout_mode = 2
+text = "Template Name"
+horizontal_alignment = 2
+
+[node name="ColorPickerButton" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/GridContainer" unique_id=795639823]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Template Name"
+clear_button_enabled = true
+
+[node name="Label4" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/GridContainer" unique_id=2141819410]
+layout_mode = 2
+text = "Color"
+horizontal_alignment = 2
+
+[node name="ColorPickerButton2" type="ColorPickerButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/GridContainer" unique_id=1888020405]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Color"
+color = Color(1, 1, 1, 1)
+
+[node name="Label3" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=2015222251]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Existence in other templates"
+uppercase = true
+
+[node name="HSeparator3" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=785473549]
+layout_mode = 2
+
+[node name="Label4" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1053527098]
+layout_mode = 2
+text = "Template Names:"
+
+[node name="MarginContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=709600541]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_jxc2a")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer" unique_id=530145835]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/MarginContainer" unique_id=658505815]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jxc2a")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/MarginContainer/ScrollContainer" unique_id=1835726963]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+alignment = 1
+
+[node name="Label" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1566870462 instance=ExtResource("2_jxc2a")]
+layout_mode = 2
+
+[node name="HSeparator4" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1616209748]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1503243094]
+layout_mode = 2
+text = "Do you want to create a shortcut template for this file?"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1107146422]
+layout_mode = 2
+
+[node name="ok" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=738087649]
+modulate = Color(0.8213999, 0.97711843, 7.70092e-07, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ok"
+script = ExtResource("4_70uwi")
+
+[node name="cancel" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=168483379]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+script = ExtResource("4_70uwi")

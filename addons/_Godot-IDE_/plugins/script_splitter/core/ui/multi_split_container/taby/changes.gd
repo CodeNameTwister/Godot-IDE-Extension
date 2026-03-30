@@ -1,7 +1,15 @@
 @tool
 extends Label
 
+func _on_mouse() -> void:
+	owner.mouse_entered.emit()
+	
+func _out_mouse() -> void:
+	owner.mouse_exited.emit()
+
 func _ready() -> void:
+	mouse_entered.connect(_on_mouse)
+	mouse_exited.connect(_out_mouse)
 	add_to_group(&"SP_TAB_BUTTON")
 
 func _gui_input(event: InputEvent) -> void:
@@ -9,7 +17,8 @@ func _gui_input(event: InputEvent) -> void:
 		if event.is_pressed() and event.button_index == MOUSE_BUTTON_LEFT:
 			var btn : Node = get_parent().get_child(0)
 			if btn is Button:
-				btn.pressed.emit()
+				if !btn.button_pressed:
+					btn.pressed.emit()
 				
 func _get_drag_data(__ : Vector2) -> Variant:
 	return owner.button_main._get_drag_data(__)
