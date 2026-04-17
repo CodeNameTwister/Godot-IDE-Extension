@@ -8,7 +8,8 @@ extends "./../../../core/editor/app.gd"
 #	author:		"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-var _refreshing : bool = true
+var _refreshing : bool = false
+var is_running : bool = false
 
 func _init(manager : Manager, tool_db : ToolDB) -> void:
 	super(manager, tool_db)
@@ -45,7 +46,13 @@ func _setup() -> void:
 			settings.set_setting(x[1], get(x[0]))
 			
 func execute(_value : Variant = null) -> bool:
+	# TEMPORARY DISABLED
+	return true
+	
 	if !_refreshing:
+		return true
+		
+	if is_running:
 		return true
 	
 	var sp : Array[Node] = Engine.get_main_loop().get_nodes_in_group(&"__SC_SPLITTER__")
@@ -55,6 +62,7 @@ func execute(_value : Variant = null) -> bool:
 	var ltool : MickeyTool = null
 	
 	if sp.size() < 2:
+		set_deferred(&"is_running", false)
 		return true
 	
 	for x : Variant in _tool_db.get_tools():
@@ -73,5 +81,6 @@ func execute(_value : Variant = null) -> bool:
 						
 	if is_instance_valid(ctool) and ctool != ltool:
 		_manager.select_editor_by_index(ctool.get_index())
-		
+
+	set_deferred(&"is_running", false)
 	return true

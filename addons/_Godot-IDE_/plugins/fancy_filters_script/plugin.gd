@@ -74,7 +74,7 @@ func _init() -> void:
 			settings.settings_changed.connect(_on_changes)
 	
 	if as_separate_container is bool:
-		_as_separate_container = _as_separate_container
+		_as_separate_container = as_separate_container
 	else:
 		IDE.set_config("fancy_filters_script", "separate_container_list", _as_separate_container)
 	

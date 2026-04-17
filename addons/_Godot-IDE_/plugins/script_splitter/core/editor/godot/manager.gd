@@ -210,6 +210,15 @@ func _on_item_selected(i : int) -> void:
 func is_valid_item_index(index : int) -> bool:
 	return index > -1 and _base_list.item_count() > index and !_base_list.get_item_tooltip(index).is_empty() and !_base_list.get_item_text(index).is_empty()
 
+func custom_split(from : Container, index : int, type : StringName, as_task : bool = true) -> void:
+	if is_instance_valid(from) and from.is_inside_tree():
+		if as_task:
+			_task.add(_custom_split.execute.bind([from, index, type]))
+		else:
+			_custom_split.execute([from, index, type])
+		_task.add(get_editor_list().updated.emit)
+		update_request.emit()
+
 func update() -> bool:
 	if !_base_container.has_method(&"is_active") or !_base_container.is_active():
 		return false
@@ -232,7 +241,9 @@ func update() -> bool:
 	_base_list.update_list()
 	
 	if is_instance_valid(_queue_focus_tool):
-		_queue_focus_tool.trigger_focus(true)
+		var ctrl : Control = _queue_focus_tool.get_control()
+		if ctrl.is_inside_tree() and ctrl.get_window().has_focus():
+			_queue_focus_tool.trigger_focus(true)
 		_queue_focus_tool = null
 		
 	return !update_required
@@ -423,6 +434,10 @@ func queue_focus(mk : ToolDB.MickeyTool = null) -> void:
 			if !is_instance_valid(_self) or !is_instance_valid(merge_tool):
 				return
 		recover_focus()
+
+func add_task(task : Callable) -> void:
+	_task.add(task)
+	update_request.emit()
 
 func restore(data : Dictionary) -> void:
 	if data.is_empty():

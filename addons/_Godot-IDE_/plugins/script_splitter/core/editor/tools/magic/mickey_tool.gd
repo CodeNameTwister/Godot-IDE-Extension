@@ -82,16 +82,12 @@ func trigger_focus(force : bool = false) -> void:
 	if !is_instance_valid(_control) or _control.is_queued_for_deletion():
 		return
 		
-	if !is_instance_valid(_owner) or _owner.is_queued_for_deletion():
+	elif !is_instance_valid(_owner) or _owner.is_queued_for_deletion():
 		return
-		
 		
 	focus.emit(self)
 	
 	if !force:
-		return
-		
-	if !is_instance_valid(_control) or _control.is_queued_for_deletion():
 		return
 		
 	if _control.is_inside_tree() and _control.focus_mode != Control.FOCUS_NONE and !_control.has_focus():
@@ -238,16 +234,15 @@ func _context_update(window : Window, control : Control) -> void:
 		window.set_deferred(&"position", gvp)
 
 func _on_input(input : InputEvent) -> void:
-	if input is InputEventMouseMotion:
-		return
-	
 	if input is InputEventMouseButton:
 		if input.pressed and input.button_index == MOUSE_BUTTON_RIGHT:
-			for x : Node in _owner.get_children():
-				var variant : Node = x
-				if variant is Window and _control is Control:
-					_context_update.call_deferred(variant, _control)
-			trigger_focus()
+			var ctrl : Control = get_control()
+			if ctrl and ctrl.is_inside_tree() and ctrl.get_window().has_focus():
+				for x : Node in _owner.get_children():
+					var variant : Node = x
+					if variant is Window and _control is Control:
+						_context_update.call_deferred(variant, _control)
+				trigger_focus()
 
 func _on_symb(symbol: String, _line : int, _column: int, _edit : CodeEdit = null) -> void:
 	new_symbol.emit(symbol)

@@ -33,7 +33,9 @@ func open() -> void:
 func close() -> void:
 	hide()
 	if code_edit:
-		code_edit.grab_focus()
+		var window : Window = code_edit.get_window()
+		if window and window.has_focus():
+			code_edit.grab_focus()
 		code_edit.set_search_text("")
 		code_edit.queue_redraw()
 

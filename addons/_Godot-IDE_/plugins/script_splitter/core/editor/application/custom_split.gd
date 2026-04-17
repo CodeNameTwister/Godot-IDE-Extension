@@ -17,11 +17,10 @@ func execute(value : Variant = null) -> bool:
 				var from : Container = value[0]
 				var index : int = value[1]
 				var type : StringName = value[2]
-				
+					
 				if from is BaseContainer.SplitterContainer.SplitterEditorContainer.Editor:
 					for x : MickeyTool in _tool_db.get_tools():
 						if x.is_valid():
-							
 							if x.get_root() == from and x.get_control().get_index() == index:
 								if type == &"LEFT":
 									

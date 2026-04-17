@@ -129,6 +129,8 @@ func execute(value : Variant = null) -> bool:
 						var grab : bool = is_instance_valid(tree)
 						if grab and tree.has_method(&"is_accessibility_enabled"):
 							grab = tree.call(&"is_accessibility_enabled")
+							
+						#if !_manager.refresh_warnings.is_running:
 						control.grab_focus()
 				
 	return false

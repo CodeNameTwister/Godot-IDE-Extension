@@ -180,8 +180,21 @@ func _clean_settings() -> void:
 	if !e:
 		return
 	
-	if !e.has_setting("plugin/script_splitter/editor/document_helper_unwrapped"):
-		e.set_setting("plugin/script_splitter/editor/document_helper_unwrapped", false)
+	if e.has_setting("plugin/script_splitter/editor/document_helper_unwrapped"):
+		e.set_setting("plugin/script_splitter/editor/document_helper/unwrapped", e.get_setting("plugin/script_splitter/editor/document_helper_unwrapped"))
+		e.set_setting("plugin/script_splitter/editor/document_helper_unwrapped", null)
+		
+	if !e.has_setting("plugin/script_splitter/editor/document_helper/unwrapped"):
+		e.set_setting("plugin/script_splitter/eFditor/document_helper/unwrapped", false)
+	
+	if !e.has_setting("plugin/script_splitter/editor/document_helper/opening/use_new_split"):
+		e.set_setting("plugin/script_splitter/editor/document_helper/opening/use_new_split", false)
+	
+	if !e.has_setting("plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split"):
+		e.set_setting("plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split", false)
+	
+	#if !e.has_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split"):
+		#e.set_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split", true)
 	
 	if e.has_setting("plugin/script_spliter/rows"):
 		_nws()
@@ -238,7 +251,6 @@ func _clean_settings() -> void:
 func _info_settings() -> void:
 	var data : Dictionary = {
 		"plugin/script_splitter/behaviour/refresh_warnings_on_save" : "Check on save if all scripts has new errors/warnings (EXPERIMENTAL)"
-		,"plugin/script_splitter/editor/document_helper_unwrapped" : "It allows new editor helpers that you open to open in an expanded format, avoiding compression errors on large screens."
 		,"plugin/script_splitter/editor/out_focus_color_value" : "Out focus color of inactives editors."
 		,"plugin/script_splitter/editor/out_focus_color_enabled" : "Enable/Disable out focus color of inactives editors."
 		,"plugin/script_splitter/editor/behaviour/expand_on_focus" : "Expand split container if the editor document/script is selected."
@@ -268,6 +280,10 @@ func _info_settings() -> void:
 		,"plugin/script_splitter/editor/behaviour/back_and_forward/forward_key_button_input": "NO IMPLEMENTED (IN EVALUATION)"
 		,"plugin/script_splitter/editor/behaviour/back_and_forward/backward_mouse_button_input": "NO IMPLEMENTED (IN EVALUATION)"
 		,"plugin/script_splitter/editor/behaviour/back_and_forward/forward_mouse_button_input": "NO IMPLEMENTED (IN EVALUATION)"
+		,"plugin/script_splitter/editor/document_helper/unwrapped" : "It allows new editor helpers that you open to open in an expanded format, avoiding compression errors on large screens."
+		,"plugin/script_splitter/editor/document_helper/opening/use_new_split" : "Use new tab when open a document helper."
+		,"plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split" : "Create row when open a document helper ('use_new_split' enabled is required!)"
+		,"plugin/script_splitter/editor/document_helper/opening/user_another_existing_split" : "Try use another split already created ('use_new_split' enabled is required!)"
 		}
 	for k : Variant in data.keys():
 		Info.set_editor_setting_tooltip(k, data[k])
