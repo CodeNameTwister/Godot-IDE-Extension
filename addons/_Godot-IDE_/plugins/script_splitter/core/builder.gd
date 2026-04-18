@@ -193,8 +193,8 @@ func _clean_settings() -> void:
 	if !e.has_setting("plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split"):
 		e.set_setting("plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split", false)
 	
-	#if !e.has_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split"):
-		#e.set_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split", true)
+	if !e.has_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split"):
+		e.set_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split", true)
 	
 	if e.has_setting("plugin/script_spliter/rows"):
 		_nws()

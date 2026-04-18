@@ -71,46 +71,40 @@ func execute(value : Variant = null) -> bool:
 				var settings : EditorSettings = EditorInterface.get_editor_settings()
 				if settings:
 					if settings.has_setting("plugin/script_splitter/editor/document_helper/opening/use_new_split") and settings.get_setting("plugin/script_splitter/editor/document_helper/opening/use_new_split") == true:
-						#var base : Manager.BaseContainer = _manager.get_base_container()
-						#var use_another : bool = settings.has_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split") and settings.get_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split") == true
-						if settings.has_setting("plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split") and settings.get_setting("plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split"):
-							#if use_another:
-								#var last : Control = null
-								#var next : bool = false
-								#for x : Node in base.get_all_splitters():
-									#if root == x :
-										#next = true
-										#continue
-										#
-									#if next:
-										#break
-								
-							_manager.add_task(_manager.split_row.execute.bind(mt))
-						else:
-							#if use_another:
-								#var s_container : Control = base.get_container_item(root)
-								#var new_container : Control = root
-								#var next : bool = false
-								#for x : Node in base.get_all_splitters():
-									#if root == x:
-										#next = true
-										#continue
-									#new_container = x
-									#if s_container == base.get_container_item(x):
-										#if new_container != root:
-											#new_container = x
-						#
-								#if new_container != root:
-									#_manager.add_task(_manager.swap_tab.execute.bind([root, mt.get_control().get_index(), new_container]))
-									#for x : MickeyTool in _tool_db.get_tools():
-										#var c : Control = x.get_control()
-										#if root == c:
-											#if c is TabContainer:
-												#if c.current_tab == x.get_gui().get_index():
-													#_manager.add_task(c.tab_selected.emit.bind(c.current_tab))
-													#break
-									#return false
+						if settings.has_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split") and settings.get_setting("plugin/script_splitter/editor/document_helper/opening/user_another_existing_split") == true:
+							var base : Manager.BaseContainer = _manager.get_base_container()
+							#var s_container : Control = base.get_container_item(root)
+							var new_container : Control = root
+							var next : bool = false
+							var win : Window = new_container.get_window()
+							for x : Node in base.get_all_splitters():
+								if root == x:
+									next = true
+									continue
+								elif x.get_window() != win:
+									continue
 									
+								new_container = x
+								#if s_container == base.get_container_item(x):
+									#if new_container != root:
+										#new_container = x
+								if next:
+									break
+					
+							if new_container != root:
+								_manager.add_task(_manager.swap_tab.execute.bind([root, mt.get_control().get_index(), new_container]))
+								for x : MickeyTool in _tool_db.get_tools():
+									var c : Control = x.get_control()
+									if root == c:
+										if c is TabContainer:
+											if c.current_tab == x.get_gui().get_index():
+												_manager.add_task(c.tab_selected.emit.bind(c.current_tab))
+												break
+								return false
+					
+						if settings.has_setting("plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split") and settings.get_setting("plugin/script_splitter/editor/document_helper/opening/use_row_on_new_split"):
+							_manager.add_task(_manager.split_row.execute.bind(mt))
+						else:									
 							_manager.add_task(_manager.split_column.execute.bind(mt))
 			return false
 	
