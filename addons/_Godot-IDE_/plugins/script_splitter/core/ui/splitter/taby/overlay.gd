@@ -45,7 +45,11 @@ func start(ref : TabBar) -> void:
 	_target = null
 	
 	if is_instance_valid(ref):
-		_container = ref.get_parent()
+		_container = ref
+		for __ : int in range(0, 4, 1):
+			if _container is TabContainer or _container == null:
+				break
+			_container = _container.get_parent()
 	else:
 		_container = null
 		
@@ -77,6 +81,11 @@ func stop(tab : TabBar = null) -> bool:
 		_free.call_deferred()
 		if is_instance_valid(tab) and tab == _ref:
 			var container : Node = _ref.get_parent()
+			for __ : int in range(0, 4, 1):
+				if container is TabContainer or container == null:
+					break
+				container = container.get_parent()
+			
 			if is_instance_valid(_container) and _container == container:
 				out = get_global_rect().has_point(get_global_mouse_position())
 				

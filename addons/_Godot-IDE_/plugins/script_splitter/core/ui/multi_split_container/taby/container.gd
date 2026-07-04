@@ -196,6 +196,12 @@ func _update_required() -> bool:
 	if pins.size() > 0:
 		var indx : int = 0
 		var control : Node = tab.get_parent_control()
+		
+		for __ : int in range(0, 4, 1):
+			if control is TabContainer or control == null:
+				break
+			control = control.get_parent()
+		
 		if control:
 			for x : int in range(control.get_child_count()):
 				if x > -1 and tab.tab_count > x:
@@ -308,6 +314,12 @@ func update(fllbck : bool = true) -> void:
 	if pins.size() > 0:
 		var indx : int = 0
 		var control : Node = tab.get_parent_control()
+		
+		for __ : int in range(0, 4, 1):
+			if control is TabContainer or control == null:
+				break
+			control = control.get_parent()
+		
 		if control:
 			for x : int in range(control.get_child_count()):
 				if x > -1 and tab.tab_count > x:

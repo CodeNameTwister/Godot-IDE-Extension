@@ -10,7 +10,6 @@ extends RefCounted
 
 const SplitterContainer = preload("./../../../script_splitter/core/ui/splitter/splitter_container.gd")
 const NControl = preload("./../../core/util/control.gd")
-
 const IoBar = preload("./../../core/ui/splitter/io/io_bar.gd")
 
 signal update()
@@ -99,10 +98,18 @@ func get_editor_container() -> TabContainer:
 func get_root_container() -> SplitterContainer.SplitterRoot:
 	return _editor_splitter_container.get_root()
 	
-func get_editor_root_container(node : Node) -> SplitterContainer.BaseContainerItem:
-	if node is SplitterContainer.SplitterRoot:
-		node = node.get_parent()
-		return node
+func get_editor_root_container(root : Node) -> SplitterContainer.BaseContainerItem:
+	if root is SplitterContainer.SplitterRoot:
+		var node : Node = root
+		for __ : int in range(0, 5, 1):
+			if node == null:
+				break
+			elif node.has_method(&"get_editor_root_container"):
+				return node
+			node = node.get_parent()
+		for x : Node in root.get_children():
+			if x is SplitterContainer.BaseContainerItem:
+				return x
 	return null
 	
 func get_editors() -> Array[Node]:

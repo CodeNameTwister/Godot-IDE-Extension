@@ -1,12 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://8468n431hc6u"]
+[gd_scene format=3 uid="uid://8468n431hc6u"]
 
-[ext_resource type="Texture2D" uid="uid://cffqinddvan8k" path="res://addons/script_splitter/assets/sep_up.svg" id="1_jygbp"]
-[ext_resource type="Script" uid="uid://bcf6213bhffkm" path="res://addons/script_splitter/core/ui/splitter/taby/split_selection/split_selection.gd" id="1_tifrm"]
-[ext_resource type="Script" uid="uid://b2jjpfip8pcsf" path="res://addons/script_splitter/core/ui/splitter/taby/split_selection/btn.gd" id="2_tifrm"]
-[ext_resource type="Texture2D" uid="uid://wp32fwv4flno" path="res://addons/script_splitter/assets/sep_left.svg" id="2_ttdhj"]
-[ext_resource type="Texture2D" uid="uid://cxds5tr6aq5v3" path="res://addons/script_splitter/assets/file_in.png" id="2_w45p2"]
-[ext_resource type="Texture2D" uid="uid://d1ee2fk3y8n83" path="res://addons/script_splitter/assets/sep_right.svg" id="3_tifrm"]
-[ext_resource type="Texture2D" uid="uid://dt830c42xmul5" path="res://addons/script_splitter/assets/sep_bottom.svg" id="4_jevbt"]
+[ext_resource type="Texture2D" uid="uid://cffqinddvan8k" path="res://addons/_Godot-IDE_/plugins/script_splitter/assets/sep_up.svg" id="1_jygbp"]
+[ext_resource type="Script" uid="uid://bcf6213bhffkm" path="res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/splitter/taby/split_selection/split_selection.gd" id="1_tifrm"]
+[ext_resource type="Script" uid="uid://b2jjpfip8pcsf" path="res://addons/_Godot-IDE_/plugins/script_splitter/core/ui/splitter/taby/split_selection/btn.gd" id="2_tifrm"]
+[ext_resource type="Texture2D" uid="uid://wp32fwv4flno" path="res://addons/_Godot-IDE_/plugins/script_splitter/assets/sep_left.svg" id="2_ttdhj"]
+[ext_resource type="Texture2D" uid="uid://cxds5tr6aq5v3" path="res://addons/_Godot-IDE_/plugins/script_splitter/assets/file_in.png" id="2_w45p2"]
+[ext_resource type="Texture2D" uid="uid://d1ee2fk3y8n83" path="res://addons/_Godot-IDE_/plugins/script_splitter/assets/sep_right.svg" id="3_tifrm"]
+[ext_resource type="Texture2D" uid="uid://dt830c42xmul5" path="res://addons/_Godot-IDE_/plugins/script_splitter/assets/sep_bottom.svg" id="4_jevbt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w45p2"]
 bg_color = Color(0.09320182, 0.57214785, 0.68215865, 0.5)
@@ -33,7 +33,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="SplitSelection" type="AspectRatioContainer" node_paths=PackedStringArray("file_texture")]
+[node name="SplitSelection" type="AspectRatioContainer" unique_id=1091126158 node_paths=PackedStringArray("file_texture")]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -48,13 +48,13 @@ grow_vertical = 2
 script = ExtResource("1_tifrm")
 file_texture = NodePath("VB/HB/TextureRect")
 
-[node name="VB" type="VBoxContainer" parent="."]
+[node name="VB" type="VBoxContainer" parent="." unique_id=1370849545]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 12
 
-[node name="TOP" type="Button" parent="VB"]
+[node name="TOP" type="Button" parent="VB" unique_id=1205851097]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 focus_mode = 0
@@ -64,11 +64,11 @@ icon = ExtResource("1_jygbp")
 icon_alignment = 1
 script = ExtResource("2_tifrm")
 
-[node name="HB" type="HBoxContainer" parent="VB"]
+[node name="HB" type="HBoxContainer" parent="VB" unique_id=238032406]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="LEFT" type="Button" parent="VB/HB"]
+[node name="LEFT" type="Button" parent="VB/HB" unique_id=410037270]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 focus_mode = 0
@@ -78,14 +78,14 @@ icon = ExtResource("2_ttdhj")
 icon_alignment = 1
 script = ExtResource("2_tifrm")
 
-[node name="TextureRect" type="TextureRect" parent="VB/HB"]
+[node name="TextureRect" type="TextureRect" parent="VB/HB" unique_id=1097195548]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 texture = ExtResource("2_w45p2")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="RIGHT" type="Button" parent="VB/HB"]
+[node name="RIGHT" type="Button" parent="VB/HB" unique_id=1606496230]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 focus_mode = 0
@@ -95,7 +95,7 @@ icon = ExtResource("3_tifrm")
 icon_alignment = 1
 script = ExtResource("2_tifrm")
 
-[node name="BOTTOM" type="Button" parent="VB"]
+[node name="BOTTOM" type="Button" parent="VB" unique_id=1949606814]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 focus_mode = 0

@@ -208,6 +208,12 @@ func dragged(tab : TabBar, is_drag : bool) -> void:
 			if _overlay.stop(tab):
 				var container : Node = _overlay.get_container()
 				var from : Container = tab.get_parent()
+				
+				for __ : int in range(0, 4, 1):
+					if from is TabContainer or from == null:
+						break
+					from = from.get_parent()
+					
 				if is_instance_valid(container) and is_instance_valid(from):
 					if from != container:
 						_handler_container.swap_tab.emit(from, tab.current_tab, container)
