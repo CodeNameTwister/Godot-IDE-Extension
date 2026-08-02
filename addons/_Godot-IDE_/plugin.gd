@@ -207,6 +207,10 @@ func _load_plugins(path : String) -> void:
 		var	plugin_path : String = current_path.path_join("plugin.gd")
 		var plugin_cfg : String = current_path.path_join("plugin.cfg")
 		
+		if DirAccess.dir_exists_absolute("res://addons/".path_join(current_path.get_file())):
+			print("[Godot-IDE WARNING] addon {0} already exist, integrated version will be ignored.".format([current_path.get_file()]))
+			continue
+		
 		if FileAccess.file_exists(plugin_cfg):
 			var cfg : ConfigFile = ConfigFile.new()
 			if cfg.load(plugin_cfg) == OK:
