@@ -74,6 +74,9 @@ Each feature is described more fully in it's own repository, as well as down bel
 
 * [Documentation](https://github.com/CodeNameTwister/Godot-IDE/blob/main/DOCUMENTATION.md)
 
+>[!WARNING]
+> If an addon mentioned above is available in the Asset Store, do not install it separately as this could cause errors.
+
 >[!TIP]
 >* If you delete any plugin in the plugins folder, this addon will still work, so feel free to delete anything you don't want.
 >* If there are more plugin contributors in the future, I will add a panel to enable and disable plugins at your discretion.
