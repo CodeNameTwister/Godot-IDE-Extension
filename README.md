@@ -9,8 +9,8 @@ This addon extends Godot's native code editor with additional functionality and 
 
 # Compatibility
 > Due to external reasons, previous versions are often incompatible with newer versions of the Godot Engine; it's a complex task, but we do it anyway. Here we mention compatibility versions.
-  * From Godot 4.7: `Godot-IDE 5.10-DEV`
-  * From Godot 4.6: `Godot-IDE 5.8`
+  * From Godot 4.7: `Godot-IDE 0.5.10-DEV`
+  * From Godot 4.6: `Godot-IDE 0.5.8`
   * From Godot 4.5: `Godot-IDE 0.5.1`
   * From Godot 4.4: `Godot-IDE 0.4.0`
 
