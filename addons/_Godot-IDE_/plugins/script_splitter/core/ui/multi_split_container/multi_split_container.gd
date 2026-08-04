@@ -205,7 +205,13 @@ func is_vertical_line_separator(index : int) -> bool:
 
 ## Expand splited container by index container.
 func expand_splited_container(node : Node) -> void:
+	var base : Node = node
+	if !base or !base.is_inside_tree():
+		return
+		
+	node = base.get_viewport().gui_get_focus_owner()
 	var same : bool = _last_container_focus == node
+	
 	if same and !behaviour_can_expand_focus_same_container:
 		return
 
@@ -226,10 +232,10 @@ func expand_splited_container(node : Node) -> void:
 	var update_required : bool = false
 
 	for line : LineSep in _separators:
-		if node in line.top_items:
+		if base in line.top_items:
 			update_required = update_required or line.offset < 0.0
 			top_lines.append(line)
-		elif node in line.bottom_items:
+		elif base in line.bottom_items:
 			update_required = update_required or line.offset > 0.0
 			bottom_lines.append(line)
 			
