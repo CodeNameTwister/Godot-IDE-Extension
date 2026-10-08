@@ -40,9 +40,11 @@ var _settle : int = 0
 var _script_container : VSplitContainer = null
 var _pin_control : Control = null
 var _pin_sign : int = 1
+var _frames : int = 0
 
 const _DEFAULT_WIDTH : float = 220.0
 const _MIN_PIN_WIDTH : float = 100.0
+const _REFRESING_FRAMES : int = 3
 
 func _mode_now() -> int:
 	# EditorInterface.distraction_free_mode (Godot 4.7). Read via get() so a
@@ -54,6 +56,7 @@ func _get_width(mode : int) -> float:
 	return _width_focus_off if mode == 0 else _width_focus_on
 
 func _set_width(mode : int, value : float, persist : bool = true) -> void:
+	set_process(true)
 	if mode == 0:
 		_width_focus_off = value
 	else:
@@ -128,6 +131,12 @@ func _process(_delta : float) -> void:
 		return
 	if !is_instance_valid(_parent) or !is_instance_valid(_pin_control):
 		return
+	
+	if _frames > 0:
+		_frames -= 1
+	else:
+		set_process(false)
+	
 	var changed : bool = false
 	var mode : int = _mode_now()
 	if mode != _mode:
@@ -296,12 +305,19 @@ func _m_offset(node : SplitContainer, default : float) -> float:
 		return wd - ml - mr - sep
 	return default
 
+func _on_change_rect() -> void:
+	_frames = _REFRESING_FRAMES
+	set_process(true)
+
 func _enter_tree() -> void:
 	if !is_node_ready():
 		await ready
 		
 		if !(await _await()):
 			return
+	
+	if is_node_ready():
+		set_process(true)
 	
 	var container : VSplitContainer = IDE.get_script_list_container()
 	_script_container = container
@@ -316,6 +332,7 @@ func _enter_tree() -> void:
 			
 		var parent : Control = container.get_parent()
 		_parent = parent
+		
 		if !_as_separate_container:
 			var x : int = container.get_child_count()
 			if x > 1:
@@ -375,6 +392,10 @@ func _enter_tree() -> void:
 				# current native width is adopted on first run.
 				if _container.get_index() != 0:
 					parent.move_child(_container, 0)
+		
+		for ctrl : Control in [container.get_parent(), _parent, _script_info]:
+			if is_instance_valid(ctrl) and !ctrl.item_rect_changed.is_connected(_on_change_rect):
+				ctrl.item_rect_changed.connect(_on_change_rect)
 		
 		_setup_pinning()
 		
@@ -441,9 +462,14 @@ func _exit_tree() -> void:
 	set_process(false)
 	_pinning = false
 	_dragging = false
+	
 	var container : VSplitContainer = IDE.get_script_list_container()
 
 	if container:
+		for ctrl : Control in [container.get_parent(), _parent, _script_info]:
+			if is_instance_valid(ctrl) and ctrl.item_rect_changed.is_connected(_on_change_rect):
+				ctrl.item_rect_changed.disconnect(_on_change_rect)
+			
 		var current_parent : Node = container.get_parent()
 		
 		if _placeholder:
