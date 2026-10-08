@@ -27,6 +27,152 @@ var _as_right_container : bool = false
 
 var _input_defined : bool = false
 
+# Scripts/Filters panel width pinning, for every layout combination (separate
+# or embedded container, left or right placement). One stored width per
+# distraction-free mode; -1.0 means "not captured yet".
+var _width_focus_off : float = -1.0
+var _width_focus_on : float = -1.0
+var _mode : int = -1
+var _dragging : bool = false
+var _pinning : bool = false
+var _last_parent_size : Vector2 = Vector2.ZERO
+var _settle : int = 0
+var _script_container : VSplitContainer = null
+var _pin_control : Control = null
+var _pin_sign : int = 1
+var _frames : int = 0
+
+const _DEFAULT_WIDTH : float = 220.0
+const _MIN_PIN_WIDTH : float = 100.0
+const _REFRESING_FRAMES : int = 3
+
+func _mode_now() -> int:
+	# EditorInterface.distraction_free_mode (Godot 4.7). Read via get() so a
+	# missing property degrades to "off" instead of erroring.
+	var dfm : Variant = EditorInterface.get(&"distraction_free_mode")
+	return 1 if (dfm is bool and dfm) else 0
+
+func _get_width(mode : int) -> float:
+	return _width_focus_off if mode == 0 else _width_focus_on
+
+func _set_width(mode : int, value : float, persist : bool = true) -> void:
+	set_process(true)
+	if mode == 0:
+		_width_focus_off = value
+	else:
+		_width_focus_on = value
+	if persist:
+		IDE.set_config("fancy_filters_script", "width_focus_off" if mode == 0 else "width_focus_on", value)
+
+func _control_width() -> float:
+	if is_instance_valid(_pin_control):
+		return _pin_control.size.x
+	return -1.0
+
+## Shift the split so the pinned control is `width` pixels wide. Width changes
+## 1:1 with split_offset (positive for the first child, negative for the
+## second), so a signed delta is exact and placement-independent.
+func _apply_width(width : float) -> void:
+	if !_pinning or !is_instance_valid(_parent) or !is_instance_valid(_pin_control):
+		return
+	var current : float = _control_width()
+	if current <= 0.0:
+		return
+	_parent.split_offset = int(round(_parent.split_offset + _pin_sign * (width - current)))
+	_parent.clamp_split_offset()
+
+func _capture_width(mode : int) -> void:
+	var w : float = _control_width()
+	if w > 0.0:
+		_set_width(mode, w)
+
+## Pinned control: the Filters panel when it is a standalone (separate) child of
+## the splitter, otherwise the script-list container it is embedded in. Works
+## for both left and right placement (the sign handles which child it is).
+func _setup_pinning() -> void:
+	var control : Control = _container if _as_separate_container else _script_container
+	if _parent is SplitContainer and is_instance_valid(control) and control.get_parent() == _parent:
+		_pin_control = control
+		_pinning = true
+	else:
+		_pin_control = null
+		_pinning = false
+	if !_pinning:
+		set_process(false)
+		return
+	_pin_sign = 1 if _pin_control.get_index() == 0 else -1
+	if _parent.has_signal(&"drag_started") and !_parent.drag_started.is_connected(_on_drag_started):
+		_parent.drag_started.connect(_on_drag_started)
+	if _parent.has_signal(&"drag_ended") and !_parent.drag_ended.is_connected(_on_drag_ended):
+		_parent.drag_ended.connect(_on_drag_ended)
+	_mode = _mode_now()
+	_last_parent_size = _parent.size
+	_settle = 4
+	set_process(true)
+
+## First run for a mode: keep a sane on-screen width, else fall back to a
+## comfortable default (avoids adopting a stale/clamped layout).
+func _first_run_width() -> float:
+	var w : float = _control_width()
+	if w >= _MIN_PIN_WIDTH and w <= _parent.size.x * 0.5:
+		return w
+	return _DEFAULT_WIDTH
+
+func _on_drag_started() -> void:
+	_dragging = true
+
+func _on_drag_ended() -> void:
+	_dragging = false
+	if _mode >= 0:
+		_capture_width(_mode)
+
+func _process(_delta : float) -> void:
+	if !_pinning or _dragging:
+		return
+	if !is_instance_valid(_parent) or !is_instance_valid(_pin_control):
+		return
+	
+	if _frames > 0:
+		_frames -= 1
+	else:
+		set_process(false)
+	
+	var changed : bool = false
+	var mode : int = _mode_now()
+	if mode != _mode:
+		# Distraction-free toggled: keep the two modes' widths independent.
+		var outgoing : int = _mode
+		_mode = mode
+		if _get_width(_mode) <= 0.0:
+			var seed : float = _get_width(outgoing)
+			if seed > 0.0:
+				_set_width(_mode, seed)
+		changed = true
+	if _parent.size != _last_parent_size:
+		_last_parent_size = _parent.size
+		changed = true
+	# After a mode switch / resize the children can be one frame stale, so a
+	# single delta apply may overshoot and clamp. Re-correct for a few frames.
+	if changed:
+		_settle = 4
+	if _get_width(_mode) <= 0.0:
+		# First run for this mode: let the layout settle, then pick a width.
+		if _settle > 0:
+			_settle -= 1
+			return
+		if _control_width() > 0.0:
+			var first : float = _first_run_width()
+			_set_width(_mode, first)
+			_apply_width(first)
+		return
+	if _settle > 0:
+		var current : float = _control_width()
+		if current <= 0.0:
+			return
+		_settle -= 1
+		if absf(current - _get_width(_mode)) > 0.5:
+			_apply_width(_get_width(_mode))
+
 func _on_changes() -> void:
 	var settings : EditorSettings = EditorInterface.get_editor_settings()
 	if settings:
@@ -87,6 +233,14 @@ func _init() -> void:
 		_as_right_container = as_right_container
 	else:
 		IDE.set_config("fancy_filters_script", "script_list_and_filter_to_right", _as_right_container)
+	
+	var width_off : Variant = IDE.get_config("fancy_filters_script", "width_focus_off")
+	if width_off is float or width_off is int:
+		_width_focus_off = float(width_off)
+	
+	var width_on : Variant = IDE.get_config("fancy_filters_script", "width_focus_on")
+	if width_on is float or width_on is int:
+		_width_focus_on = float(width_on)
 	
 	if input0 is InputEventKey:
 		_c_input_show_hide = input0
@@ -151,6 +305,10 @@ func _m_offset(node : SplitContainer, default : float) -> float:
 		return wd - ml - mr - sep
 	return default
 
+func _on_change_rect() -> void:
+	_frames = _REFRESING_FRAMES
+	set_process(true)
+
 func _enter_tree() -> void:
 	if !is_node_ready():
 		await ready
@@ -158,7 +316,11 @@ func _enter_tree() -> void:
 		if !(await _await()):
 			return
 	
+	if is_node_ready():
+		set_process(true)
+	
 	var container : VSplitContainer = IDE.get_script_list_container()
+	_script_container = container
 	if container:				
 		container.name = "Script List"
 		_container = TAB.instantiate()
@@ -170,6 +332,7 @@ func _enter_tree() -> void:
 			
 		var parent : Control = container.get_parent()
 		_parent = parent
+		
 		if !_as_separate_container:
 			var x : int = container.get_child_count()
 			if x > 1:
@@ -224,14 +387,18 @@ func _enter_tree() -> void:
 					
 					parent.move_child(_container, -1)
 			else:
+				# Filters on the left: do not force a fixed offset. The stored
+				# per-mode width is applied by _setup_pinning() below, or the
+				# current native width is adopted on first run.
 				if _container.get_index() != 0:
-					if _parent is SplitContainer:
-						if _parent.get_child_count() > 1:
-							_parent.set_deferred(&"split_offset", 10)
-						_parent.clamp_split_offset.call_deferred()
-						
 					parent.move_child(_container, 0)
-			
+		
+		for ctrl : Control in [container.get_parent(), _parent, _script_info]:
+			if is_instance_valid(ctrl) and !ctrl.item_rect_changed.is_connected(_on_change_rect):
+				ctrl.item_rect_changed.connect(_on_change_rect)
+		
+		_setup_pinning()
+		
 		var menu : MenuButton = IDE.get_menu_button()		
 		if is_instance_valid(menu):
 			if _input_defined:
@@ -292,9 +459,17 @@ func _offset(node : SplitContainer, size : float) -> void:
 		node.clamp_split_offset.call_deferred()
 
 func _exit_tree() -> void:
+	set_process(false)
+	_pinning = false
+	_dragging = false
+	
 	var container : VSplitContainer = IDE.get_script_list_container()
 
 	if container:
+		for ctrl : Control in [container.get_parent(), _parent, _script_info]:
+			if is_instance_valid(ctrl) and ctrl.item_rect_changed.is_connected(_on_change_rect):
+				ctrl.item_rect_changed.disconnect(_on_change_rect)
+			
 		var current_parent : Node = container.get_parent()
 		
 		if _placeholder:
